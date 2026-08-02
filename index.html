@@ -756,6 +756,7 @@ details.ex summary .mg{font-size:11px;color:var(--mist-dim);font-family:var(--mo
       <button data-go="quotes"><span class="ic">❝</span> Quotes</button>
       <button id="open-sync" class="nav-util"><span class="ic">⤓</span> Backup &amp; sync</button>
       <button id="auth-logout" class="nav-util"><span class="ic">⏻</span> Log out</button>
+      <button id="cloud-refresh" class="nav-util"><span class="ic">⟳</span> Refresh from cloud</button>
     </nav>
     <div class="side-foot">
       <div class="day" id="today-date"></div>
@@ -1100,13 +1101,32 @@ async function loadRaw(){
   if(sb&&currentUserId){
     try{
       const{data,error}=await sb.from('momentum_state').select('data').eq('user_id',currentUserId).maybeSingle();
-      if(!error&&data&&data.data){
+      if(error){
+        console.error('Supabase load error:',error);
+        setTimeout(()=>toast('Couldn\u2019t reach the cloud — showing the last local copy on this device.',5000),300);
+      }else if(data&&data.data){
         try{localStorage.setItem(KEY,data.data);}catch(e){}
         return JSON.parse(data.data);
       }
-    }catch(e){}
+      // no row yet for this account is normal for a brand-new signup — not an error
+    }catch(e){
+      console.error('Supabase load exception:',e);
+      setTimeout(()=>toast('Couldn\u2019t reach the cloud — showing the last local copy on this device.',5000),300);
+    }
   }
   try{const v=localStorage.getItem(KEY);return v?JSON.parse(v):null;}catch(e){return null;}
+}
+async function forceRefreshFromCloud(){
+  if(!sb||!currentUserId){toast('Not logged in — nothing to refresh from.');return;}
+  toast('Refreshing from cloud…');
+  try{
+    const{data,error}=await sb.from('momentum_state').select('data').eq('user_id',currentUserId).maybeSingle();
+    if(error||!data||!data.data){toast('No cloud data found for this account yet.');return;}
+    S=JSON.parse(data.data);
+    try{localStorage.setItem(KEY,data.data);}catch(e){}
+    render();
+    toast('Refreshed — showing the latest saved version.');
+  }catch(e){toast('Couldn\u2019t reach the cloud. Check your connection and try again.');}
 }
 let saveTimer=null;
 function save(){
@@ -2948,6 +2968,8 @@ if(authLogoutBtn)authLogoutBtn.addEventListener('click',async()=>{
   currentUserId=null;
   location.reload();
 });
+const cloudRefreshBtn=document.getElementById('cloud-refresh');
+if(cloudRefreshBtn)cloudRefreshBtn.addEventListener('click',forceRefreshFromCloud);
 initAuth();
 </script>
 </body>
