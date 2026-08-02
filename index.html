@@ -45,6 +45,13 @@ body{
 ::selection{background:var(--current-soft);color:#fff}
 
 .app{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+.auth-gate{position:fixed;inset:0;background:var(--deep);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.auth-gate.hidden{display:none}
+.auth-card{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:32px}
+.auth-card input{width:100%;background:var(--deep-2);border:1px solid var(--line);color:var(--text);padding:11px 14px;border-radius:10px;font-family:var(--body);font-size:14px;margin-bottom:10px}
+.auth-card input:focus{outline:none;border-color:var(--current-soft)}
+.auth-error{color:var(--red);font-size:12.5px;min-height:16px;margin:4px 0}
+.auth-status{color:var(--mist-dim);font-size:12.5px;text-align:center;margin-top:14px}
 
 /* ---------- Sidebar ---------- */
 .side{
@@ -711,8 +718,24 @@ details.ex summary .mg{font-size:11px;color:var(--mist-dim);font-family:var(--mo
   .ring-flow{animation:none}.brand .mark{animation:none}.panel{animation:none}
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
+<div id="auth-gate" class="auth-gate">
+  <div class="auth-card">
+    <div class="brand" style="justify-content:center;margin-bottom:22px">
+      <span class="mark"></span>
+      <div><h1 style="margin:0">Momentum</h1></div>
+    </div>
+    <p class="sub" style="text-align:center;margin-bottom:20px">Log in to sync across every device. First time here? Sign up once, then log in the same way anywhere else.</p>
+    <input type="email" id="auth-email" placeholder="Email" autocomplete="username">
+    <input type="password" id="auth-password" placeholder="Password" autocomplete="current-password">
+    <div id="auth-error" class="auth-error"></div>
+    <button class="btn" id="auth-login" style="width:100%;margin-top:6px">Log In</button>
+    <button class="btn ghost" id="auth-signup" style="width:100%;margin-top:10px">Sign Up (first time only)</button>
+    <div id="auth-status" class="auth-status"></div>
+  </div>
+</div>
 <div class="app">
   <aside class="side">
     <div class="brand">
@@ -732,10 +755,11 @@ details.ex summary .mg{font-size:11px;color:var(--mist-dim);font-family:var(--mo
       <button data-go="capture"><span class="ic">✎</span> Capture <span class="badge" id="b-cap">0</span></button>
       <button data-go="quotes"><span class="ic">❝</span> Quotes</button>
       <button id="open-sync" class="nav-util"><span class="ic">⤓</span> Backup &amp; sync</button>
+      <button id="auth-logout" class="nav-util"><span class="ic">⏻</span> Log out</button>
     </nav>
     <div class="side-foot">
       <div class="day" id="today-date"></div>
-      <div class="store" id="store-state"><span class="dot"></span> Saved on this device</div>
+      <div class="store" id="store-state"><span class="dot"></span> Synced to your account</div>
     </div>
   </aside>
 
@@ -1066,11 +1090,21 @@ details.ex summary .mg{font-size:11px;color:var(--mist-dim);font-family:var(--mo
 <script>
 /* ---------------- Persistence ---------------- */
 const KEY='secondbrain:v1';
-const hasStore = typeof window!=='undefined' && window.storage && typeof window.storage.get==='function';
+const SUPABASE_URL='https://zndqhtemvwzfqzjtkmph.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuZHFodGVtdnd6ZnF6anRrbXBoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2ODA4NjUsImV4cCI6MjEwMTI1Njg2NX0.wyEmvkFGa7Io_SbtxLIk-tYQCfZMHCYtWPg2_2efAes';
+const sb=(typeof supabase!=='undefined')?supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
+let currentUserId=null;
+const hasStore=false; // legacy flag kept for the store-state UI text below; cloud sync now handled via Supabase
 
 async function loadRaw(){
-  if(hasStore){
-    try{const r=await window.storage.get(KEY,false);return r&&r.value?JSON.parse(r.value):null;}catch(e){return null;}
+  if(sb&&currentUserId){
+    try{
+      const{data,error}=await sb.from('momentum_state').select('data').eq('user_id',currentUserId).maybeSingle();
+      if(!error&&data&&data.data){
+        try{localStorage.setItem(KEY,data.data);}catch(e){}
+        return JSON.parse(data.data);
+      }
+    }catch(e){}
   }
   try{const v=localStorage.getItem(KEY);return v?JSON.parse(v):null;}catch(e){return null;}
 }
@@ -1079,8 +1113,10 @@ function save(){
   clearTimeout(saveTimer);
   saveTimer=setTimeout(async()=>{
     const json=JSON.stringify(S);
-    if(hasStore){try{await window.storage.set(KEY,json,false);}catch(e){}}
-    else{try{localStorage.setItem(KEY,json);}catch(e){}}
+    try{localStorage.setItem(KEY,json);}catch(e){}
+    if(sb&&currentUserId){
+      try{await sb.from('momentum_state').upsert({user_id:currentUserId,data:json,updated_at:new Date().toISOString()});}catch(e){}
+    }
   },300);
 }
 
@@ -2673,9 +2709,8 @@ $('#sync-file').addEventListener('change',e=>{
 });
 
 /* ---------------- Boot ---------------- */
-(async function(){
+async function bootApp(){
   $('#today-date').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
-  if(!hasStore){$('#store-state').innerHTML='<span class="dot off"></span> Saved in this browser';}
   const saved=await loadRaw();
   S=saved||freshState();
   // migrate: ensure fields exist
@@ -2854,7 +2889,66 @@ $('#sync-file').addEventListener('change',e=>{
   if(!S.activeCat)S.activeCat='all';
   render();
   if(!window.Sortable)window.addEventListener('load',()=>render());
-})();
+}
+
+/* ---------------- Auth gate ---------------- */
+async function initAuth(){
+  if(!sb){
+    // Supabase SDK failed to load (e.g. offline first load) — fall back to local-only mode
+    $('#auth-gate').classList.add('hidden');
+    bootApp();
+    return;
+  }
+  const{data:{session}}=await sb.auth.getSession();
+  if(session){
+    currentUserId=session.user.id;
+    $('#auth-gate').classList.add('hidden');
+    bootApp();
+  }else{
+    $('#auth-gate').classList.remove('hidden');
+  }
+}
+function authBusy(msg){$('#auth-status').textContent=msg||'';$('#auth-error').textContent='';}
+function authErr(msg){$('#auth-error').textContent=msg;$('#auth-status').textContent='';}
+const authSignupBtn=document.getElementById('auth-signup');
+if(authSignupBtn)authSignupBtn.addEventListener('click',async()=>{
+  const email=(document.getElementById('auth-email').value||'').trim();
+  const password=document.getElementById('auth-password').value;
+  if(!email||!password){authErr('Enter both email and password.');return;}
+  authBusy('Signing up…');
+  try{
+    const{data,error}=await sb.auth.signUp({email,password});
+    if(error){authErr(error.message);return;}
+    if(data.session){
+      currentUserId=data.session.user.id;
+      $('#auth-gate').classList.add('hidden');
+      bootApp();
+    }else{
+      authBusy('Check your email to confirm, then log in below.');
+    }
+  }catch(e){authErr('Something went wrong — check your connection and try again.');}
+});
+const authLoginBtn=document.getElementById('auth-login');
+if(authLoginBtn)authLoginBtn.addEventListener('click',async()=>{
+  const email=(document.getElementById('auth-email').value||'').trim();
+  const password=document.getElementById('auth-password').value;
+  if(!email||!password){authErr('Enter both email and password.');return;}
+  authBusy('Logging in…');
+  try{
+    const{data,error}=await sb.auth.signInWithPassword({email,password});
+    if(error){authErr(error.message);return;}
+    currentUserId=data.session.user.id;
+    $('#auth-gate').classList.add('hidden');
+    bootApp();
+  }catch(e){authErr('Something went wrong — check your connection and try again.');}
+});
+const authLogoutBtn=document.getElementById('auth-logout');
+if(authLogoutBtn)authLogoutBtn.addEventListener('click',async()=>{
+  if(sb)await sb.auth.signOut();
+  currentUserId=null;
+  location.reload();
+});
+initAuth();
 </script>
 </body>
 </html>
