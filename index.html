@@ -73,7 +73,7 @@ body{
 .brand h1{font-family:var(--display);font-weight:600;font-size:21px;letter-spacing:.2px}
 .brand span{font-size:10px;color:var(--mist-dim);text-transform:uppercase;letter-spacing:.18em}
 
-.nav{display:flex;flex-direction:column;gap:3px;flex:1}
+.nav{display:flex;flex-direction:column;gap:3px;flex:1;overflow-y:auto;min-height:0}
 .nav button{
   display:flex;align-items:center;gap:12px;
   background:none;border:none;color:var(--mist);
@@ -672,6 +672,9 @@ body{
   .side-foot{display:none}
   .main{padding:24px 18px 70px}
   .today-grid{grid-template-columns:1fr}
+  /* margin-top:auto only makes sense in the desktop vertical sidebar — on this horizontal,
+     wrapping mobile nav there's no "bottom" to flush to, so reset it to a normal small gap */
+  .nav-section-break{margin-top:0;border-top:none;padding-top:8px!important}
 }
 @media(prefers-reduced-motion:reduce){
   .ring-flow{animation:none}.brand .mark{animation:none}.panel{animation:none}
