@@ -1134,7 +1134,7 @@ async function forceSaveToCloud(){
   toast('Saving to cloud…');
   try{
     const json=JSON.stringify(S);
-    const{error}=await sb.from('momentum_state').upsert({user_id:currentUserId,data:json,updated_at:new Date().toISOString()});
+    const{error}=await sb.from('momentum_state').upsert({user_id:currentUserId,data:json,updated_at:new Date().toISOString()},{onConflict:'user_id'});
     if(error){console.error('Supabase save error:',error);toast('Couldn\u2019t save to the cloud. Check your connection and try again.');return;}
     try{localStorage.setItem(KEY,json);}catch(e){}
     toast('Saved to the cloud — your other device can now pull this with Refresh.');
@@ -1148,7 +1148,7 @@ function save(){
     try{localStorage.setItem(KEY,json);}catch(e){}
     if(sb&&currentUserId){
       try{
-        const{error}=await sb.from('momentum_state').upsert({user_id:currentUserId,data:json,updated_at:new Date().toISOString()});
+        const{error}=await sb.from('momentum_state').upsert({user_id:currentUserId,data:json,updated_at:new Date().toISOString()},{onConflict:'user_id'});
         if(error){console.error('Supabase save error:',error);toast('Couldn\u2019t save to the cloud — check your connection or RLS policy.',5000);}
       }catch(e){console.error('Supabase save exception:',e);toast('Couldn\u2019t save to the cloud — check your connection.',5000);}
     }
