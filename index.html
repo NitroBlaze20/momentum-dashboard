@@ -636,14 +636,6 @@ body{
 .step-prev{font-family:var(--mono);font-size:13px;color:var(--current);align-self:center;min-width:78px}
 
 /* ---------- Gym ---------- */
-.gym-stats{display:flex;align-items:center;gap:20px;background:linear-gradient(150deg,#15292d,#10211f);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:20px 0 6px;flex-wrap:wrap}
-.gym-stats .gw{font-family:var(--display);font-size:30px;font-weight:600;color:var(--sand);line-height:1}
-.gym-stats .gw small{font-size:13px;color:var(--mist-dim);font-family:var(--mono);font-weight:400}
-.gym-stats .gmeta{font-size:12px;color:var(--mist);font-family:var(--mono);margin-top:4px}
-.gym-stats .gbar{flex:1;min-width:170px}
-.gym-stats .gbar .glabel{font-size:11px;color:var(--mist-dim);font-family:var(--mono)}
-.gym-stats .gbar .track{height:6px;background:#ffffff0d;border-radius:6px;overflow:hidden;margin-top:6px}
-.gym-stats .gbar .track i{display:block;height:100%;background:linear-gradient(90deg,var(--current),var(--sand))}
 .gym-intro{font-size:13.5px;color:var(--mist);line-height:1.65;margin:16px 0 22px;max-width:66ch}
 .gym-intro em{color:var(--sand);font-style:normal}
 details.ex{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
@@ -1090,6 +1082,37 @@ details.ex summary .mg{font-size:11px;color:var(--mist-dim);font-family:var(--mo
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.6/Sortable.min.js"></script>
 <script>
+/* ==========================================================================
+   MOMENTUM — architecture overview
+   ==========================================================================
+   A single-file personal dashboard. No build step, no framework — plain
+   JS rendering strings into innerHTML, event delegation via a handful of
+   document-level click/input/change listeners rather than per-element
+   handlers.
+
+   Rough file order, top to bottom:
+     1. Persistence      — Supabase (cross-device sync) + localStorage
+                            (offline cache / fallback)
+     2. Seed data        — default categories, starter goals, starter habits
+     3. State (S)        — the one object holding your entire app; every
+                            render() call reads from it, every user action
+                            mutates it then calls save()
+     4. Render functions — one per tab (renderToday, renderGoals, renderFuel,
+                            etc.), each rebuilds its panel's innerHTML from S
+     5. Event handlers    — delegated listeners that read data-* attributes
+                            off whatever was clicked/typed, to figure out
+                            which action to run
+     6. Auth              — Supabase email/password login gate
+     7. Migrations        — one-time, versioned fixes to saved data, each
+                            gated behind `if(!S.someFlagV1){...}` so they
+                            run exactly once per user, ever
+     8. Boot sequence     — initAuth() → bootApp() → first render()
+
+   Data flow in one line: user action → mutate S → save() (debounced,
+   writes to Supabase + localStorage) → other devices get it instantly via
+   a realtime subscription, or on their next load if they're offline.
+   ========================================================================== */
+
 /* ---------------- Persistence ---------------- */
 const KEY='secondbrain:v1';
 const SUPABASE_URL='https://zndqhtemvwzfqzjtkmph.supabase.co';
@@ -1862,9 +1885,7 @@ function localMealEstimate(text){
   });
   return matched?{kcal:Math.round(kcal),protein:Math.round(p),carbs:Math.round(c),fat:Math.round(f)}:null;
 }
-const MET={'Basketball':6.5,'Football / soccer':7.0,'Badminton':5.5,'Gym / weights':5.0,'HIIT':8.0,'Run':9.8,'Cycle':7.5,'Swim':7.0,'Home workout':5.5,'Stretch / physio':2.5};
 const estimating=new Set();
-function burnKcal(act,min){const met=MET[act]||4;const w=(S.body&&S.body.weight)||70;return Math.round(met*w*(min/60));}
 function stepKcal(steps){const w=(S.body&&S.body.weight)||70;return Math.round(steps*0.0005*w);}
 
 /* --- calorie deficit science (Mifflin–St Jeor) --- */
@@ -2057,16 +2078,6 @@ function estimateMeal(id,text){
   if(m&&out){m.kcal=out.kcal;m.protein=out.protein;m.carbs=out.carbs;m.fat=out.fat;}
   render();
   if(!out)toast('Couldn\u2019t match that to a known food — tap the P / C / F / kcal boxes to fill them in.');
-}
-
-function renderGym(){
-  const b=S.body||{};
-  const cur=b.weight||b.startWeight||85, start=b.startWeight||85, goal=b.goalWeight||75;
-  const lost=Math.max(0,start-cur), need=Math.max(0.1,start-goal);
-  const pct=Math.min(100,Math.max(0,Math.round(lost/need*100)));
-  $('#gym-stats').innerHTML=`
-    <div><div class="gw">${cur}<small> kg now</small></div><div class="gmeta">${b.age||19} yrs · ${b.height||180} cm</div></div>
-    <div class="gbar"><div class="glabel">${lost>0?lost.toFixed(1)+' kg down · ':''}goal ${goal} kg</div><div class="track"><i style="width:${pct}%"></i></div></div>`;
 }
 
 /* ---------------- Drag to reorder ---------------- */
