@@ -1,4 +1,5 @@
-[README.md](https://github.com/user-attachments/files/30642736/README.md)# Momentum
+[README.md](https://github.com/user-attachments/files/30642741/README.md)
+# Momentum
 
 A single-file personal dashboard — goals, habits, calorie/fitness tracking, deadlines, quick capture, and daily motivation — built as one self-contained HTML file with real cross-device sync via Supabase.
 
@@ -141,4 +142,3 @@ The app uses a simple versioned-flag pattern for evolving saved data without bre
 - **No password reset flow** is wired in yet — Supabase supports it, but the UI for it hasn't been built
 - **Meal/exercise calorie estimates** are approximations (keyword-matched database / fixed MET formulas), not lab-measured — treat them as consistent ballparks, not exact figures
 - **No offline-first conflict resolution** — if two devices go offline and both make changes, the last one to reconnect and save wins; there's no merge logic
-
