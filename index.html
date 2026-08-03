@@ -757,6 +757,7 @@ details.ex summary .mg{font-size:11px;color:var(--mist-dim);font-family:var(--mo
       <button id="open-sync" class="nav-util"><span class="ic">⤓</span> Backup &amp; sync</button>
       <button id="auth-logout" class="nav-util"><span class="ic">⏻</span> Log out</button>
       <button id="cloud-refresh" class="nav-util"><span class="ic">⟳</span> Refresh from cloud</button>
+      <button id="cloud-save" class="nav-util"><span class="ic">☁</span> Save to cloud</button>
     </nav>
     <div class="side-foot">
       <div class="day" id="today-date"></div>
@@ -1128,6 +1129,17 @@ async function forceRefreshFromCloud(){
     toast('Refreshed — showing the latest saved version.');
   }catch(e){toast('Couldn\u2019t reach the cloud. Check your connection and try again.');}
 }
+async function forceSaveToCloud(){
+  if(!sb||!currentUserId){toast('Not logged in — nothing to save to.');return;}
+  toast('Saving to cloud…');
+  try{
+    const json=JSON.stringify(S);
+    const{error}=await sb.from('momentum_state').upsert({user_id:currentUserId,data:json,updated_at:new Date().toISOString()});
+    if(error){console.error('Supabase save error:',error);toast('Couldn\u2019t save to the cloud. Check your connection and try again.');return;}
+    try{localStorage.setItem(KEY,json);}catch(e){}
+    toast('Saved to the cloud — your other device can now pull this with Refresh.');
+  }catch(e){toast('Couldn\u2019t save to the cloud. Check your connection and try again.');}
+}
 let saveTimer=null;
 function save(){
   clearTimeout(saveTimer);
@@ -1135,7 +1147,10 @@ function save(){
     const json=JSON.stringify(S);
     try{localStorage.setItem(KEY,json);}catch(e){}
     if(sb&&currentUserId){
-      try{await sb.from('momentum_state').upsert({user_id:currentUserId,data:json,updated_at:new Date().toISOString()});}catch(e){}
+      try{
+        const{error}=await sb.from('momentum_state').upsert({user_id:currentUserId,data:json,updated_at:new Date().toISOString()});
+        if(error){console.error('Supabase save error:',error);toast('Couldn\u2019t save to the cloud — check your connection or RLS policy.',5000);}
+      }catch(e){console.error('Supabase save exception:',e);toast('Couldn\u2019t save to the cloud — check your connection.',5000);}
     }
   },300);
 }
@@ -2909,6 +2924,31 @@ async function bootApp(){
   if(!S.activeCat)S.activeCat='all';
   render();
   if(!window.Sortable)window.addEventListener('load',()=>render());
+  subscribeRealtime();
+}
+
+let realtimeChannel=null;
+function subscribeRealtime(){
+  if(!sb||!currentUserId)return;
+  if(realtimeChannel)sb.removeChannel(realtimeChannel);
+  realtimeChannel=sb.channel('momentum-sync-'+currentUserId)
+    .on('postgres_changes',
+      {event:'*',schema:'public',table:'momentum_state',filter:'user_id=eq.'+currentUserId},
+      (payload)=>{
+        // ignore the echo of our own just-made save; only react to a genuinely newer row
+        if(payload.new&&payload.new.data){
+          try{
+            const incoming=JSON.parse(payload.new.data);
+            if(JSON.stringify(incoming)!==JSON.stringify(S)){
+              S=incoming;
+              try{localStorage.setItem(KEY,payload.new.data);}catch(e){}
+              render();
+              toast('Updated from another device.',2500);
+            }
+          }catch(e){}
+        }
+      })
+    .subscribe();
 }
 
 /* ---------------- Auth gate ---------------- */
@@ -2970,6 +3010,8 @@ if(authLogoutBtn)authLogoutBtn.addEventListener('click',async()=>{
 });
 const cloudRefreshBtn=document.getElementById('cloud-refresh');
 if(cloudRefreshBtn)cloudRefreshBtn.addEventListener('click',forceRefreshFromCloud);
+const cloudSaveBtn=document.getElementById('cloud-save');
+if(cloudSaveBtn)cloudSaveBtn.addEventListener('click',forceSaveToCloud);
 initAuth();
 </script>
 </body>
