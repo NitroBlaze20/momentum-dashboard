@@ -136,6 +136,10 @@ body{
 .fw-remove:hover{color:var(--coral);opacity:1}
 .focus-day-picker.fw{padding:12px 0 0;border-bottom:none}
 .fw-add-row{display:flex;gap:10px;flex-wrap:wrap}
+.fw-term-filter{display:flex;gap:6px;margin-bottom:10px}
+.fw-urgent-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid var(--amber);border-radius:12px;margin-bottom:10px;background:rgba(224,164,88,.08)}
+.fw-urgent-title{font-size:14.5px;font-weight:500}
+.fw-urgent-when{font-size:11.5px;color:var(--amber);font-family:var(--mono);margin-top:2px}
 .fw-add-row input{flex:1;min-width:180px;background:var(--deep-2);border:1px solid var(--line);color:var(--text);padding:9px 12px;border-radius:10px;font-family:var(--body);font-size:13.5px}
 .fw-add-row input:focus{outline:none;border-color:var(--current-soft)}
 @media(max-width:1000px){.today-grid{grid-template-columns:1fr}}
@@ -776,12 +780,18 @@ body{
       <p class="sub">Set your 5 Deep Focus goals here and assign the days you'll work on each. Today only shows what's scheduled for today.</p>
       <div class="today-grid">
         <div>
-          <div class="card glass">
+          <div class="card glass" id="fw-urgent-card" style="display:none">
+            <div class="card-head"><h3>⚠ Fixed deadlines needing attention</h3></div>
+            <p class="fuel-tip" style="margin-top:0">Not in Deep Focus yet, but time-bound — these are the ones most likely to get missed if they don't get picked up soon.</p>
+            <div id="fw-urgent-list"></div>
+          </div>
+          <div class="card glass" style="margin-top:20px">
             <div class="card-head"><h3>Your 5 Deep Focus goals</h3></div>
             <div id="fw-focus-list"></div>
           </div>
           <div class="card glass" style="margin-top:20px">
             <div class="card-head"><h3>Add a goal to focus</h3></div>
+            <div class="fw-term-filter" id="fw-term-filter"></div>
             <div class="fw-add-row" style="position:relative">
               <input type="text" id="fw-goal-search" placeholder="Search your goals…" autocomplete="off">
               <div id="fw-goal-suggest" class="ms-drop"></div>
@@ -1186,7 +1196,7 @@ function freshState(){
 }
 
 /* ---------------- State ---------------- */
-let S=null, view='today', habView='all', fuelDate=null, historyOffset=0;
+let S=null, view='today', habView='all', fuelDate=null, historyOffset=0, fwTermFilter='all';
 const openGoals=new Set();
 const editingSubs=new Set();
 const editingGoals=new Set();
@@ -1418,6 +1428,26 @@ function currentWeekDates(){
   return DOWN.map((abbr,i)=>{const d=new Date(sun);d.setDate(sun.getDate()+i);return{abbr,num:d.getDate()};});
 }
 function renderFlywheel(){
+  renderFwTermFilter();
+  // -- Fixed-deadline goals not yet in Deep Focus, surfaced by urgency so they don't get missed --
+  const uc=$('#fw-urgent-card'), ul=$('#fw-urgent-list');
+  const urgent=S.goals.filter(g=>g.term==='fixed'&&!g.star&&!g.done&&g.deadline)
+    .sort((a,b)=>daysTo(a.deadline)-daysTo(b.deadline));
+  if(uc&&ul){
+    if(urgent.length){
+      uc.style.display='';
+      ul.innerHTML=urgent.map(g=>{
+        const ws=windowStatus(g);
+        return `<div class="fw-urgent-item">
+          <div class="fw-urgent-body"><div class="fw-urgent-title">${esc(g.title)}</div><div class="fw-urgent-when">${ws.txt}</div></div>
+          <button class="btn" data-fwpick="${g.id}">+ Add to focus</button>
+        </div>`;
+      }).join('');
+    }else{
+      uc.style.display='none';
+    }
+  }
+
   // Your Deep Focus goals, with inline day-pickers (showing this week's real dates) and a remove option
   const weekDates=currentWeekDates();
   const fl=$('#fw-focus-list');
@@ -1474,14 +1504,20 @@ function renderFlywheel(){
 }
 function renderFwGoalSuggest(filterStr){
   const el=$('#fw-goal-suggest');if(!el)return;
-  const avail=S.goals.filter(g=>!g.star&&!g.done);
+  let avail=S.goals.filter(g=>!g.star&&!g.done);
+  if(fwTermFilter!=='all')avail=avail.filter(g=>g.term===fwTermFilter);
   let list=avail;
   if(filterStr){const f=filterStr.toLowerCase();list=avail.filter(g=>g.title.toLowerCase().includes(f));}
-  if(!list.length){el.innerHTML=`<div class="ms-item" style="cursor:default"><span class="ms-txt" style="color:var(--mist-dim)">${filterStr?'No matching goals':'No goals available'}</span></div>`;el.classList.add('show');return;}
+  if(!list.length){el.innerHTML=`<div class="ms-item" style="cursor:default"><span class="ms-txt" style="color:var(--mist-dim)">${filterStr?'No matching goals':'No goals available for this filter'}</span></div>`;el.classList.add('show');return;}
   el.innerHTML=list.slice(0,8).map(g=>`<div class="ms-item" data-fwpick="${g.id}"><span class="ms-txt">${esc(g.title)}</span><span class="ms-meta">${esc(g.cat)}</span></div>`).join('');
   el.classList.add('show');
 }
 function hideFwGoalSuggest(){const el=$('#fw-goal-suggest');if(el){el.classList.remove('show');el.innerHTML='';}}
+function renderFwTermFilter(){
+  const el=$('#fw-term-filter');if(!el)return;
+  const opts=[['all','All'],['short','Short'],['long','Long'],['fixed','Fixed']];
+  el.innerHTML=opts.map(([key,label])=>`<button class="term-chip ${key} ${fwTermFilter===key?'on':''}" data-fwterm="${key}">${label}</button>`).join('');
+}
 
 /* ---------------- HABITS (streaks + 18-week consistency heatmap) ---------------- */
 function renderHeatmap(){
@@ -2151,6 +2187,13 @@ document.addEventListener('click',e=>{
       }
     }
     // no early return here — lets expand/subtoggle/subedit/etc. reach the .goal handler below
+  }
+  const fwTermChip=e.target.closest('[data-fwterm]');
+  if(fwTermChip){
+    fwTermFilter=fwTermChip.dataset.fwterm;
+    renderFwTermFilter();
+    renderFwGoalSuggest($('#fw-goal-search')?$('#fw-goal-search').value.trim():'');
+    return;
   }
   const fwPick=e.target.closest('[data-fwpick]');
   if(fwPick){
