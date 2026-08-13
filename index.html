@@ -137,9 +137,6 @@ body{
 .focus-day-picker.fw{padding:12px 0 0;border-bottom:none}
 .fw-add-row{display:flex;gap:10px;flex-wrap:wrap}
 .fw-term-filter{display:flex;gap:6px;margin-bottom:10px}
-.fw-urgent-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid var(--amber);border-radius:12px;margin-bottom:10px;background:rgba(224,164,88,.08)}
-.fw-urgent-title{font-size:14.5px;font-weight:500}
-.fw-urgent-when{font-size:11.5px;color:var(--amber);font-family:var(--mono);margin-top:2px}
 .fw-add-row input{flex:1;min-width:180px;background:var(--deep-2);border:1px solid var(--line);color:var(--text);padding:9px 12px;border-radius:10px;font-family:var(--body);font-size:13.5px}
 .fw-add-row input:focus{outline:none;border-color:var(--current-soft)}
 @media(max-width:1000px){.today-grid{grid-template-columns:1fr}}
@@ -780,12 +777,7 @@ body{
       <p class="sub">Set your 5 Deep Focus goals here and assign the days you'll work on each. Today only shows what's scheduled for today.</p>
       <div class="today-grid">
         <div>
-          <div class="card glass" id="fw-urgent-card" style="display:none">
-            <div class="card-head"><h3>⚠ Fixed deadlines needing attention</h3></div>
-            <p class="fuel-tip" style="margin-top:0">Not in Deep Focus yet, but time-bound — these are the ones most likely to get missed if they don't get picked up soon.</p>
-            <div id="fw-urgent-list"></div>
-          </div>
-          <div class="card glass" style="margin-top:20px">
+          <div class="card glass">
             <div class="card-head"><h3>Your 5 Deep Focus goals</h3></div>
             <div id="fw-focus-list"></div>
           </div>
@@ -1429,25 +1421,6 @@ function currentWeekDates(){
 }
 function renderFlywheel(){
   renderFwTermFilter();
-  // -- Fixed-deadline goals not yet in Deep Focus, surfaced by urgency so they don't get missed --
-  const uc=$('#fw-urgent-card'), ul=$('#fw-urgent-list');
-  const urgent=S.goals.filter(g=>g.term==='fixed'&&!g.star&&!g.done&&g.deadline)
-    .sort((a,b)=>daysTo(a.deadline)-daysTo(b.deadline));
-  if(uc&&ul){
-    if(urgent.length){
-      uc.style.display='';
-      ul.innerHTML=urgent.map(g=>{
-        const ws=windowStatus(g);
-        return `<div class="fw-urgent-item">
-          <div class="fw-urgent-body"><div class="fw-urgent-title">${esc(g.title)}</div><div class="fw-urgent-when">${ws.txt}</div></div>
-          <button class="btn" data-fwpick="${g.id}">+ Add to focus</button>
-        </div>`;
-      }).join('');
-    }else{
-      uc.style.display='none';
-    }
-  }
-
   // Your Deep Focus goals, with inline day-pickers (showing this week's real dates) and a remove option
   const weekDates=currentWeekDates();
   const fl=$('#fw-focus-list');
@@ -1476,15 +1449,18 @@ function renderFlywheel(){
           const done=!!h.log[tk];
           return `<div class="fw-work-row linked"><span class="fw-work-badge ${done?'done':''}">${done?'✓ Done today':'Not done yet'} — tracked via <b>${esc(h.name)}</b> habit</span><button class="fw-unlink" data-act="unlinkhabit" data-fwid="${g.id}" data-habitid="${h.id}" title="Unlink">✕</button></div>`;
         }).join('');
-        const addMore=unlinkedHabits.length?`<select class="fw-link-pick" data-fwid="${g.id}"><option value="">+ Link another habit…</option>${unlinkedHabits.map(h=>`<option value="${h.id}">${esc(h.name)}</option>`).join('')}</select>`:'';
+        const addMore=(g.cat==='Health'&&unlinkedHabits.length)?`<select class="fw-link-pick" data-fwid="${g.id}"><option value="">+ Link another habit…</option>${unlinkedHabits.map(h=>`<option value="${h.id}">${esc(h.name)}</option>`).join('')}</select>`:'';
         workRow=badges+addMore;
       }else{
         const done=!!(g.workLog&&g.workLog[tk]);
         const streak=workStreak(g);
+        const linkPicker=g.cat==='Health'
+          ?`<select class="fw-link-pick" data-fwid="${g.id}"><option value="">Link to a habit…</option>${S.habits.map(h=>`<option value="${h.id}">${esc(h.name)}</option>`).join('')}</select>`
+          :'';
         workRow=`<div class="fw-work-row">
           <div class="fw-work-chk ${done?'done':''} ${scheduledToday?'':'off'}" data-act="worktoggle" data-fwid="${g.id}" title="${scheduledToday?'Mark today\u2019s work done':'Not scheduled today'}"></div>
-          <span class="fw-work-label">${scheduledToday?"Did you work on this today?":'Not scheduled today'}${streak>0?` <b>· ${streak}d streak</b>`:''}</span>
-          <select class="fw-link-pick" data-fwid="${g.id}"><option value="">Link to a habit…</option>${S.habits.map(h=>`<option value="${h.id}">${esc(h.name)}</option>`).join('')}</select>
+          <span class="fw-work-label">${scheduledToday?"Did you work on this today? (auto-checks when you tick a checklist item)":'Not scheduled today'}${streak>0?` <b>· ${streak}d streak</b>`:''}</span>
+          ${linkPicker}
         </div>`;
       }
       return `<div class="fw-focus-item goal" data-id="${g.id}">
@@ -2234,7 +2210,24 @@ document.addEventListener('click',e=>{
       if(act.dataset.act==='goaltitlesave'){saveGoalTitleEdit(g);return;}
       if(act.dataset.act==='expand'){const k=String(g.id);openGoals.has(k)?openGoals.delete(k):openGoals.add(k);render();return;}
       // -- checklist item actions: toggle done / delete / edit / save an edit --
-      if(act.dataset.act==='subtoggle'){const se=e.target.closest('[data-subid]');const s=(g.subs||[]).find(x=>x.id==se.dataset.subid);if(s){s.done=!s.done;render();}return;}
+      // Checking off a checklist item counts as "did you work on this today" automatically,
+      // as long as today is actually a scheduled focus day for this goal — no separate manual
+      // tap needed in the common case. Un-checking a sub-item does NOT undo that, since the
+      // work still genuinely happened.
+      if(act.dataset.act==='subtoggle'){
+        const se=e.target.closest('[data-subid]');
+        const s=(g.subs||[]).find(x=>x.id==se.dataset.subid);
+        if(s){
+          s.done=!s.done;
+          if(s.done){
+            const todayAbbr=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date().getDay()];
+            const scheduledToday=!g.focusDays||!g.focusDays.length||g.focusDays.includes(todayAbbr);
+            if(scheduledToday){g.workLog=g.workLog||{};g.workLog[todayKey()]=1;}
+          }
+          render();
+        }
+        return;
+      }
       if(act.dataset.act==='subdel'){const se=e.target.closest('[data-subid]');g.subs=(g.subs||[]).filter(x=>x.id!=se.dataset.subid);editingSubs.delete(se.dataset.subid);render();return;}
       if(act.dataset.act==='subedit'){const se=e.target.closest('[data-subid]');editingSubs.add(String(se.dataset.subid));render();
         const ni=document.querySelector(`.goal[data-id="${g.id}"] [data-subedit="${se.dataset.subid}"]`);if(ni){ni.focus();ni.select();}return;}
