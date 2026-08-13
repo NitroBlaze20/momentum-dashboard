@@ -125,7 +125,6 @@ body{
 .fw-work-chk.off{opacity:.3;cursor:default;border-color:var(--line)}
 .fw-work-label{font-size:12.5px;color:var(--mist-dim)}
 .fw-work-label b{color:var(--sand);font-weight:600}
-.fw-link-pick{margin-left:auto;background:var(--deep-2);border:1px solid var(--line);color:var(--mist-dim);padding:5px 8px;border-radius:8px;font-family:var(--body);font-size:11.5px}
 .fw-work-row.linked{background:#ffffff05;border-radius:9px;padding:9px 12px}
 .fw-work-badge{font-size:12.5px;color:var(--mist-dim)}
 .fw-work-badge.done{color:var(--current)}
@@ -970,6 +969,7 @@ body{
       <p class="sub">Your whole board lives here. Star up to five to make them today's focus — that's the only decision that matters right now.</p>
       <div class="cat-bar" id="cat-bar"></div>
       <div class="term-bar" id="term-bar"></div>
+      <div class="term-bar" id="focused-bar" style="margin-top:-14px"></div>
       <div id="goals-body"></div>
     </section>
 
@@ -1233,7 +1233,33 @@ function fuelDayInfo(){
 }
 function last7(){const arr=[];const d=new Date();d.setHours(0,0,0,0);for(let i=6;i>=0;i--){const x=new Date(d);x.setDate(d.getDate()-i);arr.push(x);}return arr;}
 function habitStreak(h){let s=0;const d=new Date();d.setHours(0,0,0,0);if(!h.log[dKey(d)])d.setDate(d.getDate()-1);while(h.log[dKey(d)]){s++;d.setDate(d.getDate()-1);}return s;}
-function workStreak(g){g.workLog=g.workLog||{};let s=0;const d=new Date();d.setHours(0,0,0,0);if(!g.workLog[dKey(d)])d.setDate(d.getDate()-1);while(g.workLog[dKey(d)]){s++;d.setDate(d.getDate()-1);}return s;}
+/* Finds the habit whose name best matches a goal's title by word overlap in either
+   direction — e.g. "Practice Good Dental Hygiene" <-> "Dental Care" both share "dental".
+   Used only for Health-category goals, to link them to an existing habit automatically,
+   with no manual picking required. Returns null if nothing overlaps meaningfully. */
+function bestHabitMatch(title,habits){
+  const gt=title.toLowerCase();
+  const gWords=gt.split(/\s+/).filter(w=>w.length>=4);
+  let best=null,bestScore=0;
+  habits.forEach(h=>{
+    const hn=h.name.toLowerCase();
+    let score=0;
+    if(hn.split(/\s+/).some(w=>w.length>=4&&gt.includes(w)))score++;
+    if(gWords.some(w=>hn.includes(w)))score++;
+    if(score>bestScore){bestScore=score;best=h;}
+  });
+  return bestScore>0?best:null;
+}
+/* Called whenever a goal gets starred into Deep Focus. If it's a Health goal with no
+   habit linked yet, tries to auto-find and link the best-matching habit — no manual
+   picking. Silently does nothing if it's not Health, already linked, or no match found. */
+function autoLinkHealthGoal(g){
+  if(g.cat!=='Health')return;
+  const already=g.linkedHabits||(g.linkedHabit?[g.linkedHabit]:[]);
+  if(already.length)return;
+  const match=bestHabitMatch(g.title,S.habits);
+  if(match)g.linkedHabits=[match.id];
+}
 function doneToday(h){return !!h.log[dKey(new Date())];}
 function ymd(toStr){let a=new Date();a.setHours(0,0,0,0);const b=new Date(toStr+'T00:00:00');
   let y=b.getFullYear()-a.getFullYear(),m=b.getMonth()-a.getMonth(),d=b.getDate()-a.getDate();
@@ -1438,31 +1464,24 @@ function renderFlywheel(){
       const dc=subs.filter(s=>s.done).length;
       const countBadge=subs.length?`<span class="g-subcount ${dc===subs.length?'done':''}">✓ ${dc}/${subs.length}</span>`:'';
       const tk=todayKey();
+      // Health goals auto-link to their best-matching habit (no manual picking) — the checkbox
+      // below writes directly to that habit's own log, so checking it here or on the Habits
+      // page is the exact same action reflected in both places, not two separate trackers.
       const linkedIds=g.linkedHabits||(g.linkedHabit?[g.linkedHabit]:[]);
       const linkedHabits=linkedIds.map(id=>S.habits.find(h=>h.id==id)).filter(Boolean);
-      const todayAbbr=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date().getDay()];
-      const scheduledToday=!g.focusDays||!g.focusDays.length||g.focusDays.includes(todayAbbr);
-      const unlinkedHabits=S.habits.filter(h=>!linkedIds.includes(h.id));
-      let workRow;
-      if(linkedHabits.length){
-        const badges=linkedHabits.map(h=>{
+      let workRow='';
+      if(g.cat==='Health'&&linkedHabits.length){
+        workRow=linkedHabits.map(h=>{
           const done=!!h.log[tk];
-          return `<div class="fw-work-row linked"><span class="fw-work-badge ${done?'done':''}">${done?'✓ Done today':'Not done yet'} — tracked via <b>${esc(h.name)}</b> habit</span><button class="fw-unlink" data-act="unlinkhabit" data-fwid="${g.id}" data-habitid="${h.id}" title="Unlink">✕</button></div>`;
+          return `<div class="fw-work-row linked">
+            <div class="fw-work-chk ${done?'done':''}" data-act="habittoggle" data-habitid="${h.id}" title="Toggle ${esc(h.name)} for today"></div>
+            <span class="fw-work-label">${esc(h.name)}${done?' — done today':''}</span>
+            <button class="fw-unlink" data-act="unlinkhabit" data-fwid="${g.id}" data-habitid="${h.id}" title="Unlink">✕</button>
+          </div>`;
         }).join('');
-        const addMore=(g.cat==='Health'&&unlinkedHabits.length)?`<select class="fw-link-pick" data-fwid="${g.id}"><option value="">+ Link another habit…</option>${unlinkedHabits.map(h=>`<option value="${h.id}">${esc(h.name)}</option>`).join('')}</select>`:'';
-        workRow=badges+addMore;
-      }else{
-        const done=!!(g.workLog&&g.workLog[tk]);
-        const streak=workStreak(g);
-        const linkPicker=g.cat==='Health'
-          ?`<select class="fw-link-pick" data-fwid="${g.id}"><option value="">Link to a habit…</option>${S.habits.map(h=>`<option value="${h.id}">${esc(h.name)}</option>`).join('')}</select>`
-          :'';
-        workRow=`<div class="fw-work-row">
-          <div class="fw-work-chk ${done?'done':''} ${scheduledToday?'':'off'}" data-act="worktoggle" data-fwid="${g.id}" title="${scheduledToday?'Mark today\u2019s work done':'Not scheduled today'}"></div>
-          <span class="fw-work-label">${scheduledToday?"Did you work on this today? (auto-checks when you tick a checklist item)":'Not scheduled today'}${streak>0?` <b>· ${streak}d streak</b>`:''}</span>
-          ${linkPicker}
-        </div>`;
       }
+      // Non-Health goals get no work-confirmation row at all — the checklist and the
+      // day-assignment ARE the record now, nothing extra to track alongside them.
       return `<div class="fw-focus-item goal" data-id="${g.id}">
         <div class="fw-focus-top">
           <button class="fw-caret" data-act="expand" title="Checklist">${open?'▾':'▸'}</button>
@@ -1596,11 +1615,14 @@ function renderGoals(){
     const cnt=key==='all'?S.goals.filter(g=>!g.done).length:S.goals.filter(g=>!g.done&&g.term===key).length;
     return `<button class="term-chip ${key} ${S.activeTerm===key?'on':''}" data-term="${key}">${label} <span class="ct">${cnt}</span></button>`;
   }).join('');
+  const focusedCnt=S.goals.filter(g=>g.star&&!g.done).length;
+  const fbar=$('#focused-bar');
+  if(fbar)fbar.innerHTML=`<button class="term-chip fixed ${S.focusedOnly?'on':''}" data-focusedtoggle="1">★ Focused in Flywheel <span class="ct">${focusedCnt}</span></button>`;
 
   const body=$('#goals-body');
   const cats=S.activeCat==='all'?S.cats.map(c=>c.name):[S.activeCat];
   body.innerHTML=cats.map(cn=>{
-    const items=S.goals.filter(g=>g.cat===cn&&(S.activeTerm==='all'||g.term===S.activeTerm));
+    const items=S.goals.filter(g=>g.cat===cn&&(S.activeTerm==='all'||g.term===S.activeTerm)&&(!S.focusedOnly||g.star));
     if(!items.length)return'';
     const done=items.filter(g=>g.done).length;
     const pct=items.length?Math.round(done/items.length*100):0;
@@ -2147,13 +2169,11 @@ document.addEventListener('click',e=>{
         else g.focusDays.push(day);
         render();return;
       }
-      if(act&&act.dataset.act==='worktoggle'){
-        const todayAbbr=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date().getDay()];
-        const scheduledToday=!g.focusDays||!g.focusDays.length||g.focusDays.includes(todayAbbr);
-        if(!scheduledToday){toast('Not scheduled for today — check its Focus days.');return;}
-        const tk=todayKey();g.workLog=g.workLog||{};
-        if(g.workLog[tk])delete g.workLog[tk];else g.workLog[tk]=1;
-        render();return;
+      if(act&&act.dataset.act==='habittoggle'){
+        const h=S.habits.find(x=>x.id==act.dataset.habitid);
+        if(h&&h.auto==='deficit'){toast('This habit is auto-tracked from your Fuel deficit — log meals to change it.');return;}
+        if(h){const k=todayKey();h.log[k]?delete h.log[k]:h.log[k]=1;render();}
+        return;
       }
       if(act&&act.dataset.act==='unlinkhabit'){
         g.linkedHabits=g.linkedHabits||(g.linkedHabit?[g.linkedHabit]:[]);
@@ -2178,6 +2198,7 @@ document.addEventListener('click',e=>{
       const starredCount=S.goals.filter(x=>x.star&&!x.done).length;
       if(starredCount>=5){toast('Five is the limit — that\u2019s the point.');return;}
       g.star=true;
+      autoLinkHealthGoal(g);
       const sEl=$('#fw-goal-search');if(sEl)sEl.value='';
       hideFwGoalSuggest();render();
     }
@@ -2210,24 +2231,7 @@ document.addEventListener('click',e=>{
       if(act.dataset.act==='goaltitlesave'){saveGoalTitleEdit(g);return;}
       if(act.dataset.act==='expand'){const k=String(g.id);openGoals.has(k)?openGoals.delete(k):openGoals.add(k);render();return;}
       // -- checklist item actions: toggle done / delete / edit / save an edit --
-      // Checking off a checklist item counts as "did you work on this today" automatically,
-      // as long as today is actually a scheduled focus day for this goal — no separate manual
-      // tap needed in the common case. Un-checking a sub-item does NOT undo that, since the
-      // work still genuinely happened.
-      if(act.dataset.act==='subtoggle'){
-        const se=e.target.closest('[data-subid]');
-        const s=(g.subs||[]).find(x=>x.id==se.dataset.subid);
-        if(s){
-          s.done=!s.done;
-          if(s.done){
-            const todayAbbr=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date().getDay()];
-            const scheduledToday=!g.focusDays||!g.focusDays.length||g.focusDays.includes(todayAbbr);
-            if(scheduledToday){g.workLog=g.workLog||{};g.workLog[todayKey()]=1;}
-          }
-          render();
-        }
-        return;
-      }
+      if(act.dataset.act==='subtoggle'){const se=e.target.closest('[data-subid]');const s=(g.subs||[]).find(x=>x.id==se.dataset.subid);if(s){s.done=!s.done;render();}return;}
       if(act.dataset.act==='subdel'){const se=e.target.closest('[data-subid]');g.subs=(g.subs||[]).filter(x=>x.id!=se.dataset.subid);editingSubs.delete(se.dataset.subid);render();return;}
       if(act.dataset.act==='subedit'){const se=e.target.closest('[data-subid]');editingSubs.add(String(se.dataset.subid));render();
         const ni=document.querySelector(`.goal[data-id="${g.id}"] [data-subedit="${se.dataset.subid}"]`);if(ni){ni.focus();ni.select();}return;}
@@ -2238,7 +2242,9 @@ document.addEventListener('click',e=>{
       if(act.dataset.act==='star'){
         const starredCount=S.goals.filter(x=>x.star&&!x.done).length;
         if(!g.star&&starredCount>=5){toast('Five is the limit — that\u2019s the point.');return;}
-        g.star=!g.star;render();return;
+        g.star=!g.star;
+        if(g.star)autoLinkHealthGoal(g);
+        render();return;
       }
       if(act.dataset.act==='toggleday'){
         const day=act.dataset.day;
@@ -2253,6 +2259,10 @@ document.addEventListener('click',e=>{
   // category filter
   const chip=e.target.closest('.cat-chip');
   if(chip){S.activeCat=chip.dataset.cat;render();return;}
+
+  // focused-in-Flywheel filter toggle (checked first since it reuses .term-chip styling)
+  const focusedToggle=e.target.closest('[data-focusedtoggle]');
+  if(focusedToggle){S.focusedOnly=!S.focusedOnly;render();return;}
 
   // term filter
   const termChip=e.target.closest('.term-chip');
@@ -2654,16 +2664,6 @@ document.addEventListener('change',e=>{
   if(e.target.matches&&e.target.matches('[data-wokcal]')){const w=S.workouts.find(x=>x.id==e.target.dataset.wokcal);if(w){const v=parseInt(e.target.value,10);w.kcal=isNaN(v)?null:v;render();}}
   if(e.target.matches&&e.target.matches('[data-mealmac]')){const[id,key]=e.target.dataset.mealmac.split(':');const m=S.meals.find(x=>x.id==id);if(m){const v=parseInt(e.target.value,10);m[key]=isNaN(v)?null:v;render();}}
   if(e.target.id==='pf-sex'){S.body=S.body||{};S.body.sex=e.target.value;render();}
-  if(e.target.matches&&e.target.matches('.fw-link-pick')){
-    const g=findGoal(e.target.dataset.fwid);
-    const v=e.target.value;
-    if(g&&v){
-      g.linkedHabits=g.linkedHabits||(g.linkedHabit?[g.linkedHabit]:[]);
-      if(!g.linkedHabits.includes(v))g.linkedHabits.push(v);
-      g.linkedHabit=null;
-      render();
-    }
-  }
 });
 
 document.addEventListener('keydown',e=>{
