@@ -325,6 +325,83 @@ body{
 .btn.ghost:hover{color:var(--text);border-color:var(--current-soft);box-shadow:none}
 
 /* ---------- Deadlines panel ---------- */
+.dl-view-toggle{display:flex;gap:6px;margin-bottom:20px}
+.dl-view-btn{background:none;border:1px solid var(--line);color:var(--mist-dim);padding:6px 14px;border-radius:20px;font-size:12.5px;cursor:pointer;transition:.18s;font-family:var(--body)}
+.dl-view-btn:hover{color:var(--text);border-color:var(--current-soft)}
+.dl-view-btn.on{background:var(--surface-2);color:var(--text);border-color:var(--current-soft)}
+#dl-timeline{position:relative;height:280px;margin:20px 0 10px;overflow-x:auto;overflow-y:hidden}
+.dl-tl-line{position:absolute;left:0;right:0;top:140px;height:2px;background:var(--line)}
+.dl-tl-today{position:absolute;top:140px;width:1px;height:110px;background:var(--mist-dim);transform:translateX(-50%)}
+.dl-tl-today span{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9.5px;color:var(--mist-dim);font-family:var(--mono);white-space:nowrap}
+.dl-tl-dot{position:absolute;top:135px;width:11px;height:11px;margin-left:-5.5px;border-radius:50%;border:2px solid var(--deep-2)}
+.dl-tl-bar{position:absolute;top:137px;height:8px;border-radius:5px;opacity:.85}
+.dl-tl-label{position:absolute;transform:translateX(-50%);text-align:center;width:150px;line-height:1.35}
+.dl-tl-tick{position:absolute;top:134px;width:1px;height:12px;background:var(--line)}
+.dl-tl-tick.month{top:126px;width:2px;height:28px;background:var(--mist-dim)}
+.dl-tl-month-label{position:absolute;bottom:6px;transform:translateX(-50%);font-size:10px;font-family:var(--mono);
+  color:var(--mist-dim);white-space:nowrap;letter-spacing:.04em}
+.dl-tl-highlight{position:absolute;top:0;bottom:0;background:linear-gradient(180deg,#e0a45822,#e0a45806);
+  border-left:2px solid var(--amber);border-right:2px solid var(--amber);pointer-events:none}
+.dl-tl-highlight-label{position:absolute;top:8px;transform:translateX(4px);font-size:10.5px;font-family:var(--mono);
+  color:var(--amber);background:var(--deep-2);border:1px solid var(--amber);padding:2px 8px;border-radius:6px;
+  white-space:nowrap;pointer-events:none}
+.dl-tl-label .tt{font-size:11.5px;font-weight:500;line-height:1.3}
+.dl-tl-label .td{font-size:10.5px;font-family:var(--mono);margin-top:2px}
+
+/* ---------- Roadmap section (Deadlines panel) ---------- */
+.dl-section{margin-bottom:22px}
+.dl-section-head{display:flex;align-items:center;gap:10px;width:100%;background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;padding:13px 16px;cursor:pointer;transition:.15s;text-align:left;font-family:var(--body);color:var(--text)}
+.dl-section-head:hover{border-color:var(--current-soft)}
+.dl-caret{color:var(--mist-dim);font-size:11px;flex:none;width:12px}
+.dl-section-title{font-family:var(--display);font-size:16px;font-weight:600;display:flex;align-items:center;gap:9px;flex:1;min-width:0}
+.dl-section-title.plain{font-family:var(--body);font-size:12.5px;color:var(--mist-dim);text-transform:uppercase;letter-spacing:.1em;
+  font-weight:600;padding:0 2px;margin-bottom:10px;background:none;border:none;cursor:default}
+.dl-section-ct{font-size:11px;font-family:var(--mono);color:var(--mist-dim);background:#ffffff0a;padding:2px 9px;border-radius:20px;flex:none}
+.dl-section-next{font-size:12px;color:var(--mist-dim);font-family:var(--mono);flex:none;white-space:nowrap}
+.dl-roadmap-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.dl-goal-wrap{display:contents}
+.dl-sprint{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px 15px;transition:.15s}
+.dl-sprint:hover{border-color:var(--current-soft)}
+.dl-sprint.is-done{opacity:.6}
+.dl-sprint-top{display:flex;align-items:center;gap:10px}
+.dl-sprint-title{flex:1;font-size:14px;font-weight:500;min-width:0}
+.dl-sprint.is-done .dl-sprint-title{text-decoration:line-through;color:var(--mist-dim)}
+.dl-sprint-count{font-size:11.5px;font-family:var(--mono);flex:none;white-space:nowrap}
+.dl-sprint-bar{height:5px;background:#ffffff0d;border-radius:5px;overflow:hidden;margin:9px 0 6px}
+.dl-sprint-bar i{display:block;height:100%;border-radius:5px;transition:width .25s}
+.dl-sprint-meta{font-size:11px;color:var(--mist-dim);font-family:var(--mono)}
+.dl-sprint .g-subs{margin-top:10px}
+
+/* Gantt strip */
+.dl-gantt-wrap{margin-bottom:26px}
+.dl-gantt{position:relative;display:flex;gap:4px;margin-top:12px}
+.dl-gantt-block{position:relative;flex:1;min-width:0;background:var(--surface);border:1px solid var(--line);
+  border-radius:9px;padding:10px 12px;cursor:pointer;transition:.15s;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:space-between;min-height:134px}
+.dl-gantt-block:hover{border-color:var(--current-soft)}
+.dl-gantt-block.done{background:linear-gradient(160deg,#1a3338,#15292d)}
+.dl-gantt-block.current{border-color:var(--current);box-shadow:0 0 0 1px var(--current-soft)}
+.dl-gantt-block.expanded{border-color:var(--current);box-shadow:0 0 0 2px var(--current-soft),0 0 22px 2px #5fb3a840}
+.dl-gantt-num{font-family:var(--mono);font-size:10px;color:var(--mist-dim);letter-spacing:.08em;text-transform:uppercase}
+.dl-gantt-label{font-size:12px;font-weight:500;margin-top:3px;line-height:1.3;min-height:31px}
+.dl-gantt-dates{font-size:10px;color:var(--mist-dim);font-family:var(--mono);margin-top:2px}
+.dl-gantt-bar{height:4px;background:#ffffff0d;border-radius:4px;overflow:hidden;margin-top:8px}
+.dl-gantt-bar i{display:block;height:100%;border-radius:4px}
+.dl-gantt-days{font-size:10px;color:var(--mist-dim);font-family:var(--mono);margin-top:5px}
+.dl-panel-head{display:flex;align-items:center;gap:9px;font-family:var(--display);font-size:14px;font-weight:600;
+  color:var(--text);padding:4px 2px 10px;border-bottom:1px solid var(--line);margin-bottom:2px}
+.dl-panel-dot{width:8px;height:8px;border-radius:50%;background:var(--current);box-shadow:0 0 8px var(--current-soft);flex:none}
+.dl-panel-dates{margin-left:auto;font-family:var(--mono);font-size:11px;font-weight:400;color:var(--mist-dim)}
+@media(max-width:900px){.dl-gantt{flex-wrap:wrap}.dl-gantt-block{flex:1 1 46%}}
+.rem-range-label{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--mist-dim);flex:none;white-space:nowrap}
+.rem-range-label input{width:auto}
+.rem-error{color:var(--coral);font-size:12px;min-height:16px;margin-top:6px}
+.rem-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.rem-chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:20px;padding:5px 6px 5px 12px;color:var(--mist)}
+.rem-chip button{background:none;border:none;color:var(--mist-dim);cursor:pointer;font-size:12px;padding:2px;display:flex;line-height:1}
+.rem-chip button:hover{color:var(--coral)}
+
 .dl-row{display:flex;align-items:center;gap:18px;padding:18px 20px;background:var(--surface);border:1px solid var(--line);
   border-radius:14px;margin-bottom:11px}
 .dl-row .big{font-family:var(--mono);font-size:30px;font-weight:500;width:84px;text-align:center;flex:none;line-height:1}
@@ -969,7 +1046,6 @@ body{
       <p class="sub">Your whole board lives here. Star up to five to make them today's focus — that's the only decision that matters right now.</p>
       <div class="cat-bar" id="cat-bar"></div>
       <div class="term-bar" id="term-bar"></div>
-      <div class="term-bar" id="focused-bar" style="margin-top:-14px"></div>
       <div id="goals-body"></div>
     </section>
 
@@ -978,12 +1054,32 @@ body{
       <div class="eyebrow">Time, made visible</div>
       <h2 class="h2">Deadlines</h2>
       <p class="sub">No deadline is an emergency until it's the nearest one. Here they are, sorted so you only ever worry about the top of the list.</p>
-      <div class="add-row" style="margin:22px 0 26px">
+      <div class="add-row" style="margin:22px 0 18px">
         <input id="dl-name" placeholder="What's the commitment?">
         <input id="dl-date" type="date" style="flex:none">
         <button class="btn" id="dl-add">Add</button>
       </div>
+      <div class="dl-view-toggle" id="dl-view-toggle">
+        <button class="dl-view-btn on" data-dlview="list">List</button>
+        <button class="dl-view-btn" data-dlview="timeline">Timeline</button>
+      </div>
       <div id="dl-list"></div>
+      <div id="dl-timeline-wrap" style="display:none">
+        <div id="dl-roadmap-gantt"></div>
+        <div id="dl-timeline"></div>
+        <p class="fuel-tip" style="margin-top:14px">Goal deadlines show automatically, colored by urgency. Add your own reminders below — a single day, or a window if it spans a range.</p>
+        <div class="add-row" style="margin-top:16px">
+          <input id="rem-title" placeholder="What's the reminder?">
+          <input id="rem-start" type="date" style="flex:none">
+          <label class="rem-range-label"><input id="rem-range" type="checkbox"> window</label>
+        </div>
+        <div id="rem-end-row" class="add-row" style="display:none;margin-top:8px">
+          <input id="rem-end" type="date" placeholder="Ends">
+        </div>
+        <div id="rem-error" class="rem-error"></div>
+        <button class="btn" id="rem-add" style="margin-top:10px">Add reminder</button>
+        <div id="rem-chips" class="rem-chips"></div>
+      </div>
     </section>
 
     <!-- CAPTURE -->
@@ -1175,6 +1271,39 @@ const HABIT_SEED=[
 ];
 function seedHabits(){return HABIT_SEED.map((h,i)=>({id:i+1,name:h.name,type:h.type||'check',log:{}}));}
 
+// Aug 2026 → Jun 2027 cert/module/project roadmap, added as its own Goals category so it
+// gets checklists, deadlines (shows on the Deadlines timeline), and focus-star for free.
+const ROADMAP_SPRINTS=[
+  {title:'Sprint 1 — Foundations (18 Aug – 30 Sep 2026)',start:'2026-08-18',deadline:'2026-09-30',subs:[
+    'AWS Cloud Practitioner — start','SC1003 Computational Thinking (Python)','Python Refresher',
+    'CV / Automation project — MVP','Gait Correction — research + PCB basics (weekends)'
+  ]},
+  {title:'Sprint 2 — Momentum (1 Oct – 15 Nov 2026)',start:'2026-10-01',deadline:'2026-11-15',subs:[
+    'AWS Cloud Practitioner — finish','ML/AI Specialisation — start','SC1004 Linear Algebra',
+    'DSA + Leetcode — standing weekly slot begins','CV / Automation project — ship to GitHub',
+    'Gait Correction — build phase + CAD basics (weekends)'
+  ]},
+  {title:'Sprint 3 — Cert Deadline Checkpoint (16 Nov – 31 Dec 2026)',start:'2026-11-16',deadline:'2026-12-31',subs:[
+    'ML/AI Specialisation — continue (~70–85% is fine)','SC2000 Probability & Statistics','DSA + Leetcode — continue',
+    'F1 / Football AI project — start','Gait Correction — finish (weekends)',
+    '⚠ Decide: CCNA in H1 2027? Confirm Security+ is cut'
+  ]},
+  {title:'Sprint 4 — Reset (1 Jan – 15 Feb 2027)',start:'2027-01-01',deadline:'2027-02-15',subs:[
+    'ML/AI Specialisation — finish','CCNA — start','SC1008 C & C++ Programming','C++ learn track',
+    'F1 / Football AI project — finish','Inverse Kinematics — start (weekends)'
+  ]},
+  {title:'Sprint 5 — Deep Work (16 Feb – 1 Apr 2027)',start:'2027-02-16',deadline:'2027-04-01',subs:[
+    'CCNA — continue','C++ learn track — continue','Blackholes with C++ project',
+    'Inverse Kinematics — continue (weekends)'
+  ]},
+  {title:'Sprint 6 — Home Stretch (2 Apr – 15 May 2027)',start:'2027-04-02',deadline:'2027-05-15',subs:[
+    'CCNA — push to finish','Physics Engine with C++ project','Inverse Kinematics — finish (weekends)'
+  ]},
+  {title:'Sprint 7 — Capstone + Buffer (16 May – 30 Jun 2027)',start:'2027-05-16',deadline:'2027-06-30',subs:[
+    'Full-Stack Cloud project (capstone)','Buffer for slippage from earlier sprints'
+  ]}
+];
+
 function freshState(){
   let id=1;
   return {
@@ -1183,7 +1312,7 @@ function freshState(){
     goals:SEED.map(s=>({id:id++,cat:s[0],title:s[1],done:false,star:false,deadline:s[2]||null,pinned:s[3]||false})),
     habits:seedHabits(),habitSeed:2,nsCountdownV1:true,nsCountdownV2:true,nsCountdownV3:true,nusDeadlineV1:true,driveDeadlineV1:true,goalCheckpointsCleanupV1:true,movieGoalV1:true,csDomainsTitleV1:true,flywheelLinksV1:true,weightLinksV1:true,focusResetV1:true,
     meals:[],workouts:[],body:{weight:85,startWeight:85,goalWeight:75,height:180,age:19},bodyStatsV1:true,offDays:{},
-    dumps:[],reviews:[],activeCat:'all',activeTerm:'all',quotes:[]
+    dumps:[],reviews:[],activeCat:'all',activeTerm:'all',quotes:[],reminders:[]
   };
 }
 
@@ -1611,13 +1740,11 @@ function renderGoals(){
   if(!S.activeTerm)S.activeTerm='all';
   const tbar=$('#term-bar');
   const termOpts=[['all','All'],['short','Short term'],['long','Long term'],['fixed','Fixed']];
+  const focusedCnt=S.goals.filter(g=>g.star&&!g.done).length;
   tbar.innerHTML=termOpts.map(([key,label])=>{
     const cnt=key==='all'?S.goals.filter(g=>!g.done).length:S.goals.filter(g=>!g.done&&g.term===key).length;
     return `<button class="term-chip ${key} ${S.activeTerm===key?'on':''}" data-term="${key}">${label} <span class="ct">${cnt}</span></button>`;
-  }).join('');
-  const focusedCnt=S.goals.filter(g=>g.star&&!g.done).length;
-  const fbar=$('#focused-bar');
-  if(fbar)fbar.innerHTML=`<button class="term-chip fixed ${S.focusedOnly?'on':''}" data-focusedtoggle="1">★ Focused in Flywheel <span class="ct">${focusedCnt}</span></button>`;
+  }).join('')+`<button class="term-chip fixed ${S.focusedOnly?'on':''}" data-focusedtoggle="1">★ Focused in Flywheel <span class="ct">${focusedCnt}</span></button>`;
 
   const body=$('#goals-body');
   const cats=S.activeCat==='all'?S.cats.map(c=>c.name):[S.activeCat];
@@ -1689,35 +1816,241 @@ function goalRow(g){
 /* DEADLINES */
 function renderDeadlines(){
   const list=$('#dl-list');
-  const items=S.goals.filter(g=>g.deadline).sort((a,b)=>daysTo(a.deadline)-daysTo(b.deadline));
-  if(!items.length){list.innerHTML=`<div class="empty">No deadlines yet. Add one above, or set a date on any goal.</div>`;return;}
-  const now=Date.now();
-  list.innerHTML=items.map(g=>{
-    const ws=windowStatus(g);
-    if(ws.cls==='upcoming'){
-      const opD=daysTo(g.opensOn);
-      return `<div class="dl-row upcoming" data-id="${g.id}">
-        <div class="big" style="color:var(--mist-dim)">${opD}<small>d til opens</small></div>
-        <div class="info"><div class="t">${esc(g.title)}</div><div class="when">Window: ${fmtDate(g.opensOn)} → ${fmtDate(g.deadline)} · ${esc(g.cat)}</div></div>
-        <div class="barwrap"><div class="bar"><i style="width:4%;background:var(--mist-dim)"></i></div></div>
-        <button class="x" data-act="cleardate" title="Remove date">✕</button>
-      </div>`;
-    }
-    const d=daysTo(g.deadline);const cls=d<0?'over':d<=14?'near':'calm';
-    const lbl=d<0?'over':d===0?'today':d===1?'day':'days';const n=d<0?Math.abs(d):d;
-    const windowLabel=g.opensOn?`${fmtDate(g.opensOn)} → ${fmtDate(g.deadline)}`:fmtDate(g.deadline);
-    const spanStart=g.opensOn?new Date(g.opensOn+'T00:00:00').getTime():S.settings.started;
-    const span=Math.max(1,Math.round((new Date(g.deadline)-spanStart)/864e5));
-    const elapsed=Math.round((now-spanStart)/864e5);
-    const pct=Math.min(100,Math.max(4,Math.round(elapsed/span*100)));
-    const col=d<0?'var(--coral)':d<=14?'var(--amber)':'var(--current)';
-    return `<div class="dl-row ${cls}" data-id="${g.id}">
-      <div class="big" style="color:${col}">${n}<small>${lbl}${d>=0&&d!==0?' left':''}</small></div>
-      <div class="info"><div class="t">${esc(g.title)}</div><div class="when">${windowLabel} · ${esc(g.cat)}</div></div>
-      <div class="barwrap"><div class="bar"><i style="width:${pct}%;background:${col}"></i></div></div>
+  const roadmap=S.goals.filter(g=>g.cat==='Roadmap'&&g.deadline).sort((a,b)=>daysTo(a.deadline)-daysTo(b.deadline));
+  const others=S.goals.filter(g=>g.cat!=='Roadmap'&&g.deadline).sort((a,b)=>daysTo(a.deadline)-daysTo(b.deadline));
+  if(typeof S.dlRoadmapOpen==='undefined')S.dlRoadmapOpen=false;
+  let html='';
+  if(roadmap.length){
+    const doneCt=roadmap.filter(g=>g.done).length;
+    const next=roadmap.find(g=>!g.done);
+    const nd=next?daysTo(next.deadline):null;
+    html+=`<div class="dl-section">
+      <button class="dl-section-head" data-act="toggledlroadmap">
+        <span class="dl-caret">${S.dlRoadmapOpen?'▾':'▸'}</span>
+        <span class="dl-section-title">🛣 Roadmap <span class="dl-section-ct">${doneCt}/${roadmap.length} sprints</span></span>
+        ${!S.dlRoadmapOpen&&next?`<span class="dl-section-next">Next up: ${esc(next.title.split(' — ')[0].split(' (')[0])} · ${nd<0?Math.abs(nd)+'d over':nd+'d left'}</span>`:''}
+      </button>
+      ${S.dlRoadmapOpen?`<div class="dl-roadmap-list">${roadmap.map(g=>dlSprintRow(g)).join('')}</div>`:''}
+    </div>`;
+  }
+  if(others.length){
+    html+=`<div class="dl-section"><div class="dl-section-title plain">Other deadlines</div>${others.map(g=>dlOtherRow(g)).join('')}</div>`;
+  }
+  if(!html){list.innerHTML=`<div class="empty">No deadlines yet. Add one above, or set a date on any goal.</div>`;return;}
+  list.innerHTML=html;
+  renderRoadmapGantt();
+  renderDeadlineTimeline();
+}
+/* Compact checklist row for a Roadmap sprint — reuses the same .goal delegation (expand,
+   subtoggle, done) as the Goals panel via the .goal class + data-id, so no new handlers needed. */
+function dlSprintRow(g){
+  const subs=g.subs||[];
+  const dc=subs.filter(s=>s.done).length;
+  const pct=subs.length?Math.round(dc/subs.length*100):0;
+  const ws=windowStatus(g);
+  const d=daysTo(g.deadline);
+  const col=ws.cls==='upcoming'?'var(--mist-dim)':d<0?'var(--coral)':d<=14?'var(--amber)':'var(--current)';
+  const open=openGoals.has(String(g.id));
+  const windowLabel=g.opensOn?`${fmtDate(g.opensOn)} → ${fmtDate(g.deadline)}`:fmtDate(g.deadline);
+  return `<div class="dl-sprint goal dl-goal-wrap ${g.done?'is-done':''}" data-id="${g.id}">
+    <div class="dl-sprint-top">
+      <button class="g-caret" data-act="expand" title="Show checklist">${open?'▾':'▸'}</button>
+      <div class="chk ${g.done?'done':''}" data-act="done" title="Mark sprint done"></div>
+      <div class="dl-sprint-title">${esc(g.title)}</div>
+      <div class="dl-sprint-count" style="color:${col}">${ws.txt}</div>
+    </div>
+    <div class="dl-sprint-bar"><i style="width:${pct}%;background:${col}"></i></div>
+    <div class="dl-sprint-meta">${windowLabel} · ${dc}/${subs.length} done</div>
+    ${open?buildSubsPanel(g):''}
+  </div>`;
+}
+/* Original single-line row, unchanged behaviour, for every non-Roadmap dated goal. */
+function dlOtherRow(g){
+  const ws=windowStatus(g);
+  if(ws.cls==='upcoming'){
+    const opD=daysTo(g.opensOn);
+    return `<div class="dl-row upcoming" data-id="${g.id}">
+      <div class="big" style="color:var(--mist-dim)">${opD}<small>d til opens</small></div>
+      <div class="info"><div class="t">${esc(g.title)}</div><div class="when">Window: ${fmtDate(g.opensOn)} → ${fmtDate(g.deadline)} · ${esc(g.cat)}</div></div>
+      <div class="barwrap"><div class="bar"><i style="width:4%;background:var(--mist-dim)"></i></div></div>
       <button class="x" data-act="cleardate" title="Remove date">✕</button>
     </div>`;
-  }).join('');
+  }
+  const now=Date.now();
+  const d=daysTo(g.deadline);const cls=d<0?'over':d<=14?'near':'calm';
+  const lbl=d<0?'over':d===0?'today':d===1?'day':'days';const n=d<0?Math.abs(d):d;
+  const windowLabel=g.opensOn?`${fmtDate(g.opensOn)} → ${fmtDate(g.deadline)}`:fmtDate(g.deadline);
+  const spanStart=g.opensOn?new Date(g.opensOn+'T00:00:00').getTime():S.settings.started;
+  const span=Math.max(1,Math.round((new Date(g.deadline)-spanStart)/864e5));
+  const elapsed=Math.round((now-spanStart)/864e5);
+  const pct=Math.min(100,Math.max(4,Math.round(elapsed/span*100)));
+  const col=d<0?'var(--coral)':d<=14?'var(--amber)':'var(--current)';
+  return `<div class="dl-row ${cls}" data-id="${g.id}">
+    <div class="big" style="color:${col}">${n}<small>${lbl}${d>=0&&d!==0?' left':''}</small></div>
+    <div class="info"><div class="t">${esc(g.title)}</div><div class="when">${windowLabel} · ${esc(g.cat)}</div></div>
+    <div class="barwrap"><div class="bar"><i style="width:${pct}%;background:${col}"></i></div></div>
+    <button class="x" data-act="cleardate" title="Remove date">✕</button>
+  </div>`;
+}
+/* Clean sequential Gantt strip just for the 7 sprints — far more readable than plotting
+   7 close-together dots on the general dot-timeline below, which is what was overlapping. */
+// Sprint 5 and 6 have no " — subtitle" part in their title, only a trailing date range —
+// the old regex left a dangling "S5 ·" with nothing after it for those. This strips the
+// trailing "(...)" date range first, then only adds the "· subtitle" part if one exists.
+function sprintShortLabel(title){
+  const noDate=title.replace(/\s*\([^)]*\)\s*$/,'');
+  const m=noDate.match(/^Sprint (\d+)(?:\s+—\s+(.*))?$/);
+  if(!m)return noDate;
+  return m[2]?`S${m[1]} · ${m[2]}`:`Sprint ${m[1]}`;
+}
+function renderRoadmapGantt(){
+  const wrap=$('#dl-roadmap-gantt');if(!wrap)return;
+  const roadmap=S.goals.filter(g=>g.cat==='Roadmap'&&g.deadline).sort((a,b)=>daysTo(a.deadline)-daysTo(b.deadline));
+  if(!roadmap.length){wrap.innerHTML='';return;}
+  if(typeof S.dlRoadmapOpen==='undefined')S.dlRoadmapOpen=false;
+  const doneCt=roadmap.filter(g=>g.done).length;
+  const next=roadmap.find(g=>!g.done);
+  const nd=next?daysTo(next.deadline):null;
+  let html=`<button class="dl-section-head" data-act="toggledlroadmap">
+    <span class="dl-caret">${S.dlRoadmapOpen?'▾':'▸'}</span>
+    <span class="dl-section-title">🛣 Roadmap <span class="dl-section-ct">${doneCt}/${roadmap.length} sprints</span></span>
+    ${!S.dlRoadmapOpen&&next?`<span class="dl-section-next">Next up: ${esc(next.title.split(' — ')[0].split(' (')[0])} · ${nd<0?Math.abs(nd)+'d over':nd+'d left'}</span>`:''}
+  </button>`;
+  if(S.dlRoadmapOpen){
+    html+=`<div class="dl-gantt">${roadmap.map(g=>{
+      const subs=g.subs||[];const dc=subs.filter(s=>s.done).length;
+      const pct=subs.length?Math.round(dc/subs.length*100):0;
+      const d=daysTo(g.deadline);const isOpen=daysTo(g.opensOn)<=0;
+      const isCurrent=!g.done&&isOpen&&d>=0&&roadmap.filter(x=>!x.done&&daysTo(x.opensOn)<=0).indexOf(g)===0;
+      const isExpanded=openGoals.has(String(g.id));
+      const col=g.done?'var(--current)':d<0?'var(--coral)':isCurrent?'var(--amber)':'var(--mist-dim)';
+      const shortTitle=sprintShortLabel(g.title);
+      const days=g.done?'Done':d<0?Math.abs(d)+'d overdue':!isOpen?'Not started':d+'d left';
+      const dateRange=`${fmtDate(g.opensOn).replace(/ \d{4}$/,'')} – ${fmtDate(g.deadline)}`;
+      return `<div class="dl-gantt-block ${g.done?'done':''} ${isCurrent?'current':''} ${isExpanded?'expanded':''} goal" data-id="${g.id}" data-act="expand" title="Click to show/hide checklist below">
+        <div class="dl-gantt-num">${g.done?'✓ complete':isCurrent?'current':!isOpen?'upcoming':'in progress'}</div>
+        <div class="dl-gantt-label">${esc(shortTitle)}</div>
+        <div class="dl-gantt-dates">${dateRange}</div>
+        <div class="dl-gantt-bar"><i style="width:${pct}%;background:${col}"></i></div>
+        <div class="dl-gantt-days" style="color:${col}">${days} · ${dc}/${subs.length}</div>
+      </div>`;
+    }).join('')}</div>
+    <div class="dl-roadmap-list" style="margin-top:12px">${roadmap.filter(g=>openGoals.has(String(g.id))).map(g=>{
+      const dateRange=`${fmtDate(g.opensOn)} – ${fmtDate(g.deadline)}`;
+      return `<div class="goal dl-goal-wrap" data-id="${g.id}">
+        <div class="dl-panel-head"><span class="dl-panel-dot"></span>${esc(g.title.split(' (')[0])} <span class="dl-panel-dates">${dateRange}</span></div>
+        ${buildSubsPanel(g)}
+      </div>`;
+    }).join('')}</div>`;
+  }
+  wrap.innerHTML=html;
+}
+
+/* Horizontal scale timeline of every dated goal — dots for a single deadline, bars for
+   a goal with a real opensOn->deadline window. Pulled live from S.goals, nothing manual.
+   Roadmap sprints are excluded here (they get the dedicated Gantt strip above instead) so
+   this stays readable for the rest of your dated goals. */
+function renderDeadlineTimeline(){
+  const canvas=$('#dl-timeline');if(!canvas)return;
+  S.reminders=S.reminders||[];
+  const goalEvents=S.goals.filter(g=>g.deadline&&!g.done&&g.cat!=='Roadmap').map(g=>({
+    id:'g'+g.id,title:g.title,start:g.opensOn||g.deadline,end:g.opensOn?g.deadline:null,
+    sortDate:g.deadline,removable:false,
+    col:(()=>{const d=daysTo(g.deadline);return d<0?'var(--coral)':d<=14?'var(--amber)':'var(--current)';})()
+  }));
+  const remEvents=S.reminders.map(r=>({
+    id:'r'+r.id,title:r.title,start:r.start,end:r.end||null,sortDate:r.start,removable:true,col:'var(--sand)'
+  }));
+  const items=[...goalEvents,...remEvents];
+  renderReminderChips();
+  // A selected (expanded) Roadmap sprint gets reflected on this timeline as a highlighted
+  // band, even though sprint dots/bars themselves stay off it (they live on the Gantt strip).
+  const selectedSprints=S.goals.filter(g=>g.cat==='Roadmap'&&g.deadline&&g.opensOn&&openGoals.has(String(g.id)));
+  if(!items.length&&!selectedSprints.length){canvas.innerHTML=`<div class="empty">Nothing dated yet — add a reminder below, or set a date on a goal.</div>`;return;}
+  const allDates=items.flatMap(it=>it.end?[it.start,it.end]:[it.start])
+    .concat(selectedSprints.flatMap(g=>[g.opensOn,g.deadline]))
+    .map(d=>new Date(d+'T00:00:00').getTime());
+  const todayMs=new Date().setHours(0,0,0,0);
+  allDates.push(todayMs);
+  let min=Math.min(...allDates), max=Math.max(...allDates);
+  const pad=Math.max((max-min)*0.1,864e5*7);
+  min-=pad;max+=pad;
+  const span=max-min;
+  const pctOf=ms=>((ms-min)/span)*100;
+  const sorted=[...items].sort((a,b)=>a.sortDate.localeCompare(b.sortDate));
+  const todayPct=pctOf(todayMs);
+
+  // Week ticks (small dash, every Monday) + month ticks (big dash + label) along the axis —
+  // same idea as a normal calendar/planner ruler, so you can read the scale at a glance.
+  let rulerHtml='';
+  let wk=new Date(min);wk.setHours(0,0,0,0);
+  wk.setDate(wk.getDate()-((wk.getDay()+6)%7)); // snap back to the preceding Monday
+  for(;wk.getTime()<=max;wk.setDate(wk.getDate()+7)){
+    if(wk.getTime()<min)continue;
+    rulerHtml+=`<div class="dl-tl-tick week" style="left:${pctOf(wk.getTime())}%"></div>`;
+  }
+  let mo=new Date(min);mo=new Date(mo.getFullYear(),mo.getMonth(),1);
+  if(mo.getTime()<min)mo=new Date(mo.getFullYear(),mo.getMonth()+1,1);
+  for(;mo.getTime()<=max;mo=new Date(mo.getFullYear(),mo.getMonth()+1,1)){
+    const pct=pctOf(mo.getTime());
+    rulerHtml+=`<div class="dl-tl-tick month" style="left:${pct}%"></div>
+      <div class="dl-tl-month-label" style="left:${pct}%">${mo.toLocaleDateString('en-GB',{month:'short',year:'2-digit'})}</div>`;
+  }
+
+  // Selected sprint highlight band(s)
+  let highlightHtml='';
+  selectedSprints.forEach(g=>{
+    const sPct=pctOf(new Date(g.opensOn+'T00:00:00').getTime());
+    const ePct=pctOf(new Date(g.deadline+'T00:00:00').getTime());
+    highlightHtml+=`<div class="dl-tl-highlight" style="left:${sPct}%;width:${Math.max(ePct-sPct,0.3)}%"></div>
+      <div class="dl-tl-highlight-label" style="left:${sPct}%">${esc(sprintShortLabel(g.title))}</div>`;
+  });
+
+  let html=highlightHtml+rulerHtml+`<div class="dl-tl-line"></div><div class="dl-tl-today" style="left:${todayPct}%"><span>Today</span></div>`;
+  sorted.forEach((it,i)=>{
+    const startPct=pctOf(new Date(it.start+'T00:00:00').getTime());
+    const above=i%2===0;
+    const tier=Math.floor(i/2)%2;
+    // Above labels anchor with `bottom` (grow upward, away from the line) and below labels
+    // anchor with `top` (grow downward, away from the line) — this is what was clipping
+    // into the bar before: a 2-line date range under a top-anchored label just grows
+    // straight down onto the line/bar it's meant to sit above.
+    const gap=14+tier*54;
+    const posStyle=above?`bottom:${140+gap}px`:`top:${140+gap}px`;
+    if(it.end){
+      const endPct=pctOf(new Date(it.end+'T00:00:00').getTime());
+      html+=`<div class="dl-tl-bar" style="left:${startPct}%;width:${endPct-startPct}%;background:${it.col}"></div>`;
+    }else{
+      html+=`<div class="dl-tl-dot" style="left:${startPct}%;background:${it.col}"></div>`;
+    }
+    html+=`<div class="dl-tl-label" style="left:${startPct}%;${posStyle}">
+      <div class="tt">${esc(it.title)}</div>
+      <div class="td" style="color:${it.col}">${fmtDate(it.start)}${it.end?' – '+fmtDate(it.end):''}</div>
+    </div>`;
+  });
+  canvas.innerHTML=html;
+}
+function renderReminderChips(){
+  const el=$('#rem-chips');if(!el)return;
+  S.reminders=S.reminders||[];
+  if(!S.reminders.length){el.innerHTML='';return;}
+  el.innerHTML=[...S.reminders].sort((a,b)=>a.start.localeCompare(b.start)).map(r=>`
+    <span class="rem-chip">${esc(r.title)}<button data-act="remdel" data-id="${r.id}" aria-label="Remove ${esc(r.title)}">✕</button></span>
+  `).join('');
+}
+function addReminder(){
+  const titleEl=$('#rem-title'),startEl=$('#rem-start'),endEl=$('#rem-end'),isRange=$('#rem-range').checked,errEl=$('#rem-error');
+  const title=(titleEl.value||'').trim(), start=startEl.value;
+  errEl.textContent='';
+  if(!title||!start){errEl.textContent=isRange?'Enter a title, start date, and end date.':'Enter a title and a date.';return;}
+  if(isRange&&!endEl.value){errEl.textContent='Add an end date, or uncheck window.';return;}
+  if(isRange&&endEl.value<start){errEl.textContent='End date needs to be after the start date.';return;}
+  S.reminders=S.reminders||[];
+  const entry={id:Date.now(),title,start};
+  if(isRange)entry.end=endEl.value;
+  S.reminders.push(entry);
+  titleEl.value='';startEl.value='';endEl.value='';
+  render();
 }
 
 /* CAPTURE */
@@ -2283,6 +2616,29 @@ document.addEventListener('click',e=>{
     const g=findGoal(dlrow.dataset.id);if(g){g.deadline=null;render();}return;
   }
 
+  // deadlines: Roadmap section collapse/expand (shared by both List and Timeline views)
+  const dlRoadmapToggle=e.target.closest('[data-act="toggledlroadmap"]');
+  if(dlRoadmapToggle){S.dlRoadmapOpen=!S.dlRoadmapOpen;renderDeadlines();return;}
+
+  // deadlines: List / Timeline view toggle
+  const dlViewBtn=e.target.closest('[data-dlview]');
+  if(dlViewBtn){
+    const mode=dlViewBtn.dataset.dlview;
+    $$('.dl-view-btn').forEach(b=>b.classList.toggle('on',b.dataset.dlview===mode));
+    $('#dl-list').style.display=mode==='list'?'':'none';
+    $('#dl-timeline-wrap').style.display=mode==='timeline'?'':'none';
+    if(mode==='timeline')renderDeadlineTimeline();
+    return;
+  }
+
+  // reminders: add / remove
+  if(e.target.id==='rem-add'){addReminder();return;}
+  const remDel=e.target.closest('[data-act="remdel"]');
+  if(remDel){
+    S.reminders=(S.reminders||[]).filter(r=>String(r.id)!==remDel.dataset.id);
+    render();return;
+  }
+
   // capture item tools
   const dump=e.target.closest('.dump-item');
   if(dump){
@@ -2630,6 +2986,7 @@ function addSport(){
   hideSportSuggest();render();
 }
 bindEnter('#sport-name',addSport);bindEnter('#sport-min',addSport);bindEnter('#sport-sec',addSport);
+bindEnter('#rem-title',addReminder);bindEnter('#rem-start',addReminder);bindEnter('#rem-end',addReminder);
 $('#sport-add').addEventListener('click',addSport);
 const sportNameEl=$('#sport-name');
 if(sportNameEl){
@@ -2664,6 +3021,7 @@ document.addEventListener('change',e=>{
   if(e.target.matches&&e.target.matches('[data-wokcal]')){const w=S.workouts.find(x=>x.id==e.target.dataset.wokcal);if(w){const v=parseInt(e.target.value,10);w.kcal=isNaN(v)?null:v;render();}}
   if(e.target.matches&&e.target.matches('[data-mealmac]')){const[id,key]=e.target.dataset.mealmac.split(':');const m=S.meals.find(x=>x.id==id);if(m){const v=parseInt(e.target.value,10);m[key]=isNaN(v)?null:v;render();}}
   if(e.target.id==='pf-sex'){S.body=S.body||{};S.body.sex=e.target.value;render();}
+  if(e.target.id==='rem-range'){const row=$('#rem-end-row');if(row)row.style.display=e.target.checked?'':'none';}
 });
 
 document.addEventListener('keydown',e=>{
@@ -2943,6 +3301,44 @@ async function bootApp(){
   if(!S.quotesClearV1){
     S.quotes=[];
     S.quotesClearV1=true;
+  }
+  if(!S.roadmapSeedV1){
+    // Adds the Aug 2026 → Jun 2027 cert/module/project roadmap as its own Goals category.
+    // Runs once, same as the other one-shot migrations above — won't re-add or duplicate
+    // on later loads, and won't touch anything you've already customised elsewhere.
+    if(!S.cats.find(c=>c.name==='Roadmap'))S.cats.push({name:'Roadmap',color:'#5fb3a8'});
+    const maxId=S.goals.reduce((m,g)=>Math.max(m,g.id||0),0);
+    const base=Date.now();
+    ROADMAP_SPRINTS.forEach((sp,i)=>{
+      const subs=sp.subs.map((t,j)=>({id:base+i*100+j,text:t,done:false}));
+      S.goals.push({id:maxId+i+1,cat:'Roadmap',title:sp.title,done:false,star:false,term:'fixed',opensOn:sp.start,deadline:sp.deadline,subs});
+    });
+    const starredCount=S.goals.filter(x=>x.star&&!x.done).length;
+    const firstSprint=S.goals.find(g=>g.cat==='Roadmap'&&/Sprint 1/.test(g.title));
+    if(firstSprint&&starredCount<5)firstSprint.star=true;
+    S.roadmapSeedV1=true;
+  }
+  if(!S.roadmapOpensOnV1){
+    // Patch for anyone who got the Roadmap seed before sprint start dates (opensOn) were
+    // added — backfills them onto the existing Sprint goals by matching title, no duplicates.
+    ROADMAP_SPRINTS.forEach(sp=>{
+      const g=S.goals.find(x=>x.cat==='Roadmap'&&x.title===sp.title);
+      if(g&&!g.opensOn)g.opensOn=sp.start;
+    });
+    S.roadmapOpensOnV1=true;
+  }
+  if(!S.roadmapTitleSyncV2){
+    // Sprint 5 & 6 originally had no name, just a date range — gave them names (Deep Work,
+    // Home Stretch) to match the others. Match by sprint NUMBER (not exact title, since the
+    // title text itself is what changed) so this updates existing goals instead of duplicating.
+    S.goals.forEach(g=>{
+      if(g.cat!=='Roadmap')return;
+      const num=(g.title.match(/^Sprint (\d+)/)||[])[1];
+      if(!num)return;
+      const sp=ROADMAP_SPRINTS.find(s=>s.title.startsWith('Sprint '+num+' '));
+      if(sp){g.title=sp.title;if(!g.opensOn)g.opensOn=sp.start;}
+    });
+    S.roadmapTitleSyncV2=true;
   }
   if(!S.activeCat)S.activeCat='all';
   render();
