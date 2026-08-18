@@ -372,6 +372,8 @@ body{
 .dl-sprint-bar{height:5px;background:#ffffff0d;border-radius:5px;overflow:hidden;margin:9px 0 6px}
 .dl-sprint-bar i{display:block;height:100%;border-radius:5px;transition:width .25s}
 .dl-sprint-meta{font-size:11px;color:var(--mist-dim);font-family:var(--mono)}
+.dl-sprint-note{font-size:11.5px;color:var(--sand);background:#e0a45812;border:1px solid #e0a45830;border-radius:9px;
+  padding:8px 11px;margin-top:9px;line-height:1.5}
 .dl-sprint .g-subs{margin-top:10px}
 
 /* Gantt strip */
@@ -1267,41 +1269,53 @@ const SEED=[
   ['Social / Fun','Try new experiences / restaurants in Singapore'],['Social / Fun','Go out with friends every 2\u20133 weeks'],['Social / Fun','Watch 365 movies in a year'],['Social / Fun','Buy new wants'],['Social / Fun','Build a new PC'],['Social / Fun','Keep a balanced downtime schedule'],['Social / Fun','Plan trips with the boys (JB, Thailand, Australia, Europe, 2030 WC)']
 ];
 const HABIT_SEED=[
-  {name:'Coding Course'},{name:'Driving Course'},{name:'Dental Care'},{name:'Gym'},
+  {name:'Coding Course'},{name:'Cert Study'},{name:'NTU Module Study'},{name:'Software Project'},{name:'DSA / Leetcode'},
+  {name:'Driving Theory'},{name:'Dental Care'},{name:'Gym'},
   {name:'Physiotherapy'},{name:'Push-ups'},{name:'Vitamins & Water'}
 ];
 function seedHabits(){return HABIT_SEED.map((h,i)=>({id:i+1,name:h.name,type:h.type||'check',log:{}}));}
 
 // Aug 2026 → Jun 2027 cert/module/project roadmap, added as its own Goals category so it
 // gets checklists, deadlines (shows on the Deadlines timeline), and focus-star for free.
+const WK_SPLIT_NO_DSA='Weekdays: 1.5h Cert Study OR NTU Module (alternate by day) + 1.5h Software Project + 30–45min Driving Theory.';
+const WK_SPLIT='Weekdays: 1.5h Cert Study OR NTU Module (alternate by day) + 1.5h Software Project + 30–45min Driving Theory + 30min DSA/Leetcode.';
+const WE_SPLIT_HW='Weekends: Sat — Hardware + PCB/CAD (3–3.5h), Driving Theory mock test (1–1.5h), Cert/Module catch-up. Sun — Software Project (2–2.5h), Cert/Module (1–1.5h), Driving Theory (45min).';
+const WE_SPLIT_CAPSTONE='Weekends: full days on the capstone project + buffer for any earlier slippage. Keep Driving Theory daily until the practical is booked.';
 const ROADMAP_SPRINTS=[
-  {title:'Sprint 1 — Foundations (18 Aug – 30 Sep 2026)',start:'2026-08-18',deadline:'2026-09-30',subs:[
-    'AWS Cloud Practitioner — start','SC1003 Computational Thinking (Python)','Python Refresher',
-    'CV / Automation project — MVP','Gait Correction — research + PCB basics (weekends)'
+  {title:'Sprint 1 — Foundations (18 Aug – 30 Sep 2026)',start:'2026-08-18',deadline:'2026-09-30',
+   note:`${WK_SPLIT_NO_DSA} ${WE_SPLIT_HW}`,subs:[
+    '🎓 Cert: AWS Cloud Practitioner — start','📘 Module: SC1003 Computational Thinking (Python)','📘 Learn: Python Refresher',
+    '💻 Project: CV / Automation project — MVP','🔧 Hardware: Gait Correction — research + PCB basics (weekends)'
   ]},
-  {title:'Sprint 2 — Momentum (1 Oct – 15 Nov 2026)',start:'2026-10-01',deadline:'2026-11-15',subs:[
-    'AWS Cloud Practitioner — finish','ML/AI Specialisation — start','SC1004 Linear Algebra',
-    'DSA + Leetcode — standing weekly slot begins','CV / Automation project — ship to GitHub',
-    'Gait Correction — build phase + CAD basics (weekends)'
+  {title:'Sprint 2 — Momentum (1 Oct – 15 Nov 2026)',start:'2026-10-01',deadline:'2026-11-15',
+   note:`${WK_SPLIT} ${WE_SPLIT_HW}`,subs:[
+    '🎓 Cert: AWS Cloud Practitioner — finish','🎓 Cert: ML/AI Specialisation — start','📘 Module: SC1004 Linear Algebra',
+    '🧮 DSA: DSA + Leetcode — standing weekly slot begins','💻 Project: CV / Automation project — ship to GitHub',
+    '🔧 Hardware: Gait Correction — build phase + CAD basics (weekends)'
   ]},
-  {title:'Sprint 3 — Cert Deadline Checkpoint (16 Nov – 31 Dec 2026)',start:'2026-11-16',deadline:'2026-12-31',subs:[
-    'ML/AI Specialisation — continue (~70–85% is fine)','SC2000 Probability & Statistics','DSA + Leetcode — continue',
-    'F1 / Football AI project — start','Gait Correction — finish (weekends)',
+  {title:'Sprint 3 — Cert Deadline Checkpoint (16 Nov – 31 Dec 2026)',start:'2026-11-16',deadline:'2026-12-31',
+   note:`${WK_SPLIT} ${WE_SPLIT_HW}`,subs:[
+    '🎓 Cert: ML/AI Specialisation — continue (~70–85% is fine)','📘 Module: SC2000 Probability & Statistics','🧮 DSA: DSA + Leetcode — continue',
+    '💻 Project: F1 / Football AI project — start','🔧 Hardware: Gait Correction — finish (weekends)',
     '⚠ Decide: CCNA in H1 2027? Confirm Security+ is cut'
   ]},
-  {title:'Sprint 4 — Reset (1 Jan – 15 Feb 2027)',start:'2027-01-01',deadline:'2027-02-15',subs:[
-    'ML/AI Specialisation — finish','CCNA — start','SC1008 C & C++ Programming','C++ learn track',
-    'F1 / Football AI project — finish','Inverse Kinematics — start (weekends)'
+  {title:'Sprint 4 — Reset (1 Jan – 15 Feb 2027)',start:'2027-01-01',deadline:'2027-02-15',
+   note:`${WK_SPLIT} ${WE_SPLIT_HW}`,subs:[
+    '🎓 Cert: ML/AI Specialisation — finish','🎓 Cert: CCNA — start','📘 Module: SC1008 C & C++ Programming','📘 Learn: C++ learn track',
+    '💻 Project: F1 / Football AI project — finish','🔧 Hardware: Inverse Kinematics — start (weekends)'
   ]},
-  {title:'Sprint 5 — Deep Work (16 Feb – 1 Apr 2027)',start:'2027-02-16',deadline:'2027-04-01',subs:[
-    'CCNA — continue','C++ learn track — continue','Blackholes with C++ project',
-    'Inverse Kinematics — continue (weekends)'
+  {title:'Sprint 5 — Deep Work (16 Feb – 1 Apr 2027)',start:'2027-02-16',deadline:'2027-04-01',
+   note:`${WK_SPLIT} ${WE_SPLIT_HW}`,subs:[
+    '🎓 Cert: CCNA — continue','📘 Learn: C++ learn track — continue','💻 Project: Blackholes with C++ project',
+    '🔧 Hardware: Inverse Kinematics — continue (weekends)'
   ]},
-  {title:'Sprint 6 — Home Stretch (2 Apr – 15 May 2027)',start:'2027-04-02',deadline:'2027-05-15',subs:[
-    'CCNA — push to finish','Physics Engine with C++ project','Inverse Kinematics — finish (weekends)'
+  {title:'Sprint 6 — Home Stretch (2 Apr – 15 May 2027)',start:'2027-04-02',deadline:'2027-05-15',
+   note:`${WK_SPLIT} ${WE_SPLIT_HW}`,subs:[
+    '🎓 Cert: CCNA — push to finish','💻 Project: Physics Engine with C++ project','🔧 Hardware: Inverse Kinematics — finish (weekends)'
   ]},
-  {title:'Sprint 7 — Capstone + Buffer (16 May – 30 Jun 2027)',start:'2027-05-16',deadline:'2027-06-30',subs:[
-    'Full-Stack Cloud project (capstone)','Buffer for slippage from earlier sprints'
+  {title:'Sprint 7 — Capstone + Buffer (16 May – 30 Jun 2027)',start:'2027-05-16',deadline:'2027-06-30',
+   note:`${WK_SPLIT} ${WE_SPLIT_CAPSTONE}`,subs:[
+    '💻 Project: Full-Stack Cloud project (capstone)','🧮 Buffer: for slippage from earlier sprints'
   ]}
 ];
 
@@ -1868,6 +1882,7 @@ function dlSprintRow(g){
     </div>
     <div class="dl-sprint-bar"><i style="width:${pct}%;background:${col}"></i></div>
     <div class="dl-sprint-meta">${windowLabel} · ${dc}/${subs.length} done</div>
+    ${open&&g.note?`<div class="dl-sprint-note">⏱ ${esc(g.note)}</div>`:''}
     ${open?buildSubsPanel(g):''}
   </div>`;
 }
@@ -1946,6 +1961,7 @@ function renderRoadmapGantt(){
       const dateRange=`${fmtDate(g.opensOn)} – ${fmtDate(g.deadline)}`;
       return `<div class="goal dl-goal-wrap" data-id="${g.id}">
         <div class="dl-panel-head"><span class="dl-panel-dot"></span>${esc(g.title.split(' (')[0])} <span class="dl-panel-dates">${dateRange}</span></div>
+        ${g.note?`<div class="dl-sprint-note">⏱ ${esc(g.note)}</div>`:''}
         ${buildSubsPanel(g)}
       </div>`;
     }).join('')}</div>`;
@@ -3160,6 +3176,41 @@ async function bootApp(){
     S.habitSeed=2;
   }
   S.habits.forEach(h=>{if(h.type==='counter'){h.type='check';if(/push-?up/i.test(h.name))h.name='Push-ups';}});
+  if(!S.habitRenameDrivingV1){
+    // "Driving Course" → "Driving Theory": renamed in place (not re-seeded) so any days
+    // you've already checked off stay checked — you're studying theory daily until the
+    // practical booking opens in December, so the habit name should say that.
+    const dh=S.habits.find(h=>h.name==='Driving Course');
+    if(dh)dh.name='Driving Theory';
+    S.habitRenameDrivingV1=true;
+  }
+  if(!S.habitRoadmapBlocksV1){
+    // Splits the daily schedule into independently-checkable habits — so a day where you
+    // only did Cert + DSA and skipped the project isn't "incomplete", it's just two ticks
+    // instead of three. The Roadmap sprint checklist is separate and only gets ticked once
+    // a deliverable is actually finished, whichever day that lands on.
+    const toAdd=['Cert Study','NTU Module Study','Software Project','DSA / Leetcode'];
+    const maxId=S.habits.reduce((m,h)=>Math.max(m,h.id||0),0);
+    toAdd.forEach((name,i)=>{
+      if(!S.habits.find(h=>h.name===name))S.habits.push({id:maxId+i+1,name,type:'check',log:{}});
+    });
+    S.habitRoadmapBlocksV1=true;
+  }
+  if(!S.habitSplitCertModuleV1){
+    // "Cert / Module Study" combined the two into one checkbox — which quietly let one slip
+    // while the other kept the streak alive. Splitting makes cert-vs-module balance visible,
+    // which is the whole point of tracking them "side by side" in the first place. Existing
+    // check-off history moves to Cert Study; NTU Module Study starts fresh alongside it.
+    const old=S.habits.find(h=>h.name==='Cert / Module Study');
+    if(old){
+      old.name='Cert Study';
+      if(!S.habits.find(h=>h.name==='NTU Module Study')){
+        const maxId=S.habits.reduce((m,h)=>Math.max(m,h.id||0),0);
+        S.habits.push({id:maxId+1,name:'NTU Module Study',type:'check',log:{}});
+      }
+    }
+    S.habitSplitCertModuleV1=true;
+  }
   if(!S.nsCountdownV1){
     const ns=S.goals.find(g=>/NS Disruption/i.test(g.title));
     if(ns){if(!ns.deadline)ns.deadline='2027-08-02';ns.pinned=true;}
@@ -3318,7 +3369,7 @@ async function bootApp(){
     const base=Date.now();
     ROADMAP_SPRINTS.forEach((sp,i)=>{
       const subs=sp.subs.map((t,j)=>({id:base+i*100+j,text:t,done:false}));
-      S.goals.push({id:maxId+i+1,cat:'Roadmap',title:sp.title,done:false,star:false,term:'fixed',opensOn:sp.start,deadline:sp.deadline,subs});
+      S.goals.push({id:maxId+i+1,cat:'Roadmap',title:sp.title,done:false,star:false,term:'fixed',opensOn:sp.start,deadline:sp.deadline,note:sp.note,subs});
     });
     const starredCount=S.goals.filter(x=>x.star&&!x.done).length;
     const firstSprint=S.goals.find(g=>g.cat==='Roadmap'&&/Sprint 1/.test(g.title));
@@ -3346,6 +3397,24 @@ async function bootApp(){
       if(sp){g.title=sp.title;if(!g.opensOn)g.opensOn=sp.start;}
     });
     S.roadmapTitleSyncV2=true;
+  }
+  if(!S.roadmapTagsNoteSyncV1){
+    // Checklist items got 🎓/📘/💻/🧮/🔧 tags matching the Cert Study / NTU Module Study /
+    // Software Project / DSA split, plus each sprint got a `note` with the actual weekday +
+    // weekend time budget. Item count/order per sprint is unchanged, so this maps old subs
+    // to new text by position — done/id are preserved, only the label text and note update.
+    S.goals.forEach(g=>{
+      if(g.cat!=='Roadmap')return;
+      const num=(g.title.match(/^Sprint (\d+)/)||[])[1];
+      if(!num)return;
+      const sp=ROADMAP_SPRINTS.find(s=>s.title.startsWith('Sprint '+num+' '));
+      if(!sp)return;
+      if(Array.isArray(g.subs)&&g.subs.length===sp.subs.length){
+        g.subs.forEach((sub,i)=>{sub.text=sp.subs[i];});
+      }
+      g.note=sp.note;
+    });
+    S.roadmapTagsNoteSyncV1=true;
   }
   if(!S.activeCat)S.activeCat='all';
   render();
