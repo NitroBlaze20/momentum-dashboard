@@ -373,9 +373,14 @@ body{
 .dl-sprint-bar i{display:block;height:100%;border-radius:5px;transition:width .25s}
 .dl-sprint-meta{font-size:11px;color:var(--mist-dim);font-family:var(--mono)}
 .dl-sprint-note{font-size:11.5px;color:var(--sand);background:#e0a45812;border:1px solid #e0a45830;border-radius:9px;
-  padding:10px 12px;margin-top:9px}
-.dl-note-head{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--mist-dim);font-family:var(--mono);margin-bottom:7px}
-.dl-note-line{padding:4px 0;line-height:1.4}
+  padding:9px 12px;margin-top:9px}
+.dl-note-head{display:flex;align-items:center;gap:7px;width:100%;background:none;border:none;padding:0;cursor:pointer;
+  font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--mist-dim);font-family:var(--mono);text-align:left}
+.dl-note-head:hover{color:var(--sand)}
+.dl-note-caret{font-size:9px;flex:none}
+.dl-note-ct{font-family:var(--mono);color:var(--mist-dim);background:#ffffff0a;padding:1px 7px;border-radius:20px;margin-left:2px}
+.dl-note-line{padding:4px 0 4px 17px;line-height:1.4}
+.dl-note-line:first-of-type{margin-top:7px}
 .dl-note-line+.dl-note-line{border-top:1px solid #e0a45820}
 .dl-sprint .g-subs{margin-top:10px}
 
@@ -1356,6 +1361,7 @@ function freshState(){
 /* ---------------- State ---------------- */
 let S=null, view='today', habView='all', fuelDate=null, historyOffset=0, fwTermFilter='all';
 const openGoals=new Set();
+const openNotes=new Set(); // which sprints' "Daily time budget" note is expanded, keyed by goal id
 const editingSubs=new Set();
 const editingGoals=new Set();
 const STAGES=[
@@ -1942,13 +1948,17 @@ function dlOtherRow(g){
 // Sprint 5 and 6 have no " — subtitle" part in their title, only a trailing date range —
 // the old regex left a dangling "S5 ·" with nothing after it for those. This strips the
 // trailing "(...)" date range first, then only adds the "· subtitle" part if one exists.
-// Renders a sprint's daily time-budget note as separate spaced-out lines instead of one
-// run-on paragraph — each entry in g.note is its own row.
+// Renders a sprint's daily time-budget note as its own collapsible block — separate from
+// the checklist expand/collapse, since the note is chunky and often not needed once you
+// already know the split. Collapsed by default; state persists per-sprint via openNotes.
 function renderSprintNote(g,extraStyle){
   if(!g.note||!g.note.length)return '';
+  const open=openNotes.has(String(g.id));
   return `<div class="dl-sprint-note" style="${extraStyle||''}">
-    <div class="dl-note-head">⏱ Daily time budget</div>
-    ${g.note.map(l=>`<div class="dl-note-line">${esc(l)}</div>`).join('')}
+    <button class="dl-note-head" data-act="togglenote" title="${open?'Collapse':'Expand'} daily time budget">
+      <span class="dl-note-caret">${open?'▾':'▸'}</span>⏱ Daily time budget${!open?` <span class="dl-note-ct">${g.note.length}</span>`:''}
+    </button>
+    ${open?g.note.map(l=>`<div class="dl-note-line">${esc(l)}</div>`).join(''):''}
   </div>`;
 }
 function sprintShortLabel(title){
@@ -2618,6 +2628,7 @@ document.addEventListener('click',e=>{
         const ni=document.querySelector(`.goal[data-id="${g.id}"] [data-goaledit]`);if(ni){ni.focus();ni.select();}return;}
       if(act.dataset.act==='goaltitlesave'){saveGoalTitleEdit(g);return;}
       if(act.dataset.act==='expand'){const k=String(g.id);openGoals.has(k)?openGoals.delete(k):openGoals.add(k);render();return;}
+      if(act.dataset.act==='togglenote'){const k=String(g.id);openNotes.has(k)?openNotes.delete(k):openNotes.add(k);render();return;}
       // -- checklist item actions: toggle done / delete / edit / save an edit --
       if(act.dataset.act==='subtoggle'){const se=e.target.closest('[data-subid]');const s=(g.subs||[]).find(x=>x.id==se.dataset.subid);if(s){s.done=!s.done;render();}return;}
       if(act.dataset.act==='subdel'){const se=e.target.closest('[data-subid]');g.subs=(g.subs||[]).filter(x=>x.id!=se.dataset.subid);editingSubs.delete(se.dataset.subid);render();return;}
@@ -3248,6 +3259,27 @@ async function bootApp(){
     const ch=S.habits.find(h=>h.name==='Cert Study');
     if(ch)ch.name='Certification Study';
     S.habitRenameCertV1=true;
+  }
+  // Defensive repair, runs every load (not one-shot): fixes any habit that ended up with a
+  // missing/broken id or log object — e.g. from an in-between version while these Roadmap
+  // habits were being iterated on — which would silently break its checkbox/dot clicks
+  // without affecting any other, already-sound habit.
+  S.habits.forEach((h,i)=>{
+    if(h.id===undefined||h.id===null||Number.isNaN(h.id))h.id=Date.now()+i;
+    if(!h.log||typeof h.log!=='object')h.log={};
+  });
+  // De-duplicate by name (keep the one with more logged history), in case an earlier
+  // migration pass ever created a second copy of the same habit.
+  {
+    const seen=new Map();
+    S.habits.forEach(h=>{
+      const key=h.name;
+      const prev=seen.get(key);
+      if(!prev){seen.set(key,h);return;}
+      const keep=Object.keys(h.log).length>=Object.keys(prev.log).length?h:prev;
+      seen.set(key,keep);
+    });
+    S.habits=Array.from(seen.values());
   }
   if(!S.nsCountdownV1){
     const ns=S.goals.find(g=>/NS Disruption/i.test(g.title));
