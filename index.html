@@ -1634,6 +1634,7 @@ function renderFlywheel(){
           <button class="fw-remove" data-act="unfocus" title="Remove from focus">✕</button>
         </div>
         ${workRow}
+        ${g.cat==='Roadmap'&&g.note?`<div class="dl-sprint-note" style="margin:9px 0 0">⏱ ${esc(g.note)}</div>`:''}
         ${dayPicker}
         ${buildSubsPanel(g)}
       </div>`;
