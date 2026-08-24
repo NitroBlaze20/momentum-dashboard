@@ -767,6 +767,48 @@ body{
 @media(prefers-reduced-motion:reduce){
   .ring-flow{animation:none}.brand .mark{animation:none}.panel{animation:none}
 }
+/* ---------- Investment ---------- */
+.inv-nav{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 20px}
+.inv-nav button{padding:8px 16px;border-radius:20px;border:1px solid var(--line);font-size:13px;color:var(--mist-dim);background:var(--surface);cursor:pointer;font-family:var(--body)}
+.inv-nav button.on{color:var(--current);border-color:var(--current-soft);background:#5fb3a814}
+.inv-nav-ct{font-size:10px;font-family:var(--mono);color:var(--mist-dim)}
+.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.inv-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 15px;position:relative}
+.inv-card-name{font-size:13px;font-weight:500;margin-bottom:6px}
+.inv-card-amt{font-family:var(--mono);font-size:19px;color:var(--current);margin-bottom:3px}
+.inv-card-meta{font-size:11px;color:var(--mist-dim)}
+.inv-card-del{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--mist-dim);cursor:pointer;font-size:12px}
+.inv-card-add{display:flex;flex-direction:column;gap:8px}
+.inv-card-add input{background:var(--deep-2);border:1px solid var(--line);border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px}
+.inv-alloc-bar{display:flex;height:26px;border-radius:8px;overflow:hidden;margin-bottom:12px}
+.inv-alloc-seg{display:flex;align-items:center;justify-content:center;font-size:10px;font-family:var(--mono);color:#04342c}
+.inv-alloc-legend{display:flex;flex-wrap:wrap;gap:14px;font-size:11.5px;color:var(--mist-dim)}
+.inv-alloc-legend span{display:inline-flex;align-items:center;gap:6px}
+.inv-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.inv-tbl{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:12.5px;margin-top:4px}
+.inv-tbl th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--mist-dim);font-family:var(--mono);padding:9px 11px;border-bottom:1px solid var(--line);font-weight:400}
+.inv-tbl td{padding:9px 11px;border-bottom:1px solid var(--line)}
+.inv-tbl tr:last-child td{border-bottom:none}
+.inv-tick{font-family:var(--mono);color:var(--sand)}
+.inv-track-btn{padding:4px 11px;border-radius:20px;border:1px solid var(--line);background:none;color:var(--mist-dim);font-size:11px;cursor:pointer}
+.inv-track-btn.on{color:var(--current);border-color:var(--current-soft)}
+#inv-screen-q{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 13px;font-size:13px}
+.research{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.research-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.research-head .name{font-family:var(--display);font-size:16px;font-weight:600}
+.overall{font-family:var(--mono);font-size:20px;color:var(--current)}
+.crit{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line);font-size:12.5px}
+.crit-val{font-family:var(--mono)}
+.crit-val.pass{color:var(--current)}
+.crit-val.fail{color:var(--coral)}
+.inv-rules{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.inv-rules-title{font-family:var(--display);font-size:15px;font-weight:600;margin:16px 0 8px}
+.inv-rules-title:first-child{margin-top:0}
+.inv-rules ul{padding-left:20px;font-size:13px;color:var(--mist-dim);line-height:1.7}
+.vix{background:#e0a4580f;border:1px solid #e0a45830;border-radius:12px;padding:12px 15px;margin-top:6px}
+.vix-row{display:flex;justify-content:space-between;padding:6px 0;font-size:12.5px}
+.vix-row+.vix-row{border-top:1px solid #e0a45820}
+.vix-range{font-family:var(--mono);color:var(--amber)}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
@@ -802,6 +844,7 @@ body{
       <button data-go="fuel"><span class="ic">◆</span> Fuel <span class="badge" id="b-fuel">0</span></button>
       <button data-go="goals"><span class="ic">⬡</span> Goals <span class="badge" id="b-goals">0</span></button>
       <button data-go="deadlines"><span class="ic">◷</span> Deadlines <span class="badge" id="b-dl">0</span></button>
+      <button data-go="invest"><span class="ic">💰</span> Investment</button>
       <button data-go="capture"><span class="ic">✎</span> Capture <span class="badge" id="b-cap">0</span></button>
       <button data-go="quotes"><span class="ic">❝</span> Quotes</button>
       <button id="open-sync" class="nav-util nav-section-break"><span class="ic">⤓</span> Backup &amp; sync</button>
@@ -1093,6 +1136,21 @@ body{
       </div>
     </section>
 
+    <!-- INVESTMENT -->
+    <section class="panel" id="p-invest">
+      <div class="eyebrow">Where the cash actually goes</div>
+      <h2 class="h2">Investment</h2>
+      <div class="inv-nav" id="inv-nav">
+        <button data-invtab="portfolio" class="on">Portfolio</button>
+        <button data-invtab="allocation">Allocation</button>
+        <button data-invtab="screener">Screener <span class="inv-nav-ct">660</span></button>
+        <button data-invtab="research">Research</button>
+        <button data-invtab="watchlist">Watchlist</button>
+        <button data-invtab="rules">Rules</button>
+      </div>
+      <div id="inv-body"></div>
+    </section>
+
     <!-- CAPTURE -->
     <section class="panel" id="p-capture">
       <div class="eyebrow">Out of your head</div>
@@ -1308,6 +1366,669 @@ const WE_SPLIT_CAPSTONE=[
   '💻 Weekends — full days on the capstone project + buffer for slippage',
   '🚗 Weekends — keep Driving Theory daily until the practical is booked'
 ];
+const INVESTMENT_UNIVERSE=[
+{t:'AAPL',n:'Apple',s:'Technology',u:'Magnificent 7',k:'S'},
+{t:'MSFT',n:'Microsoft',s:'Technology',u:'Magnificent 7',k:'S'},
+{t:'GOOGL',n:'Alphabet – Class C',s:'Technology',u:'Magnificent 7',k:'S'},
+{t:'AMZN',n:'Amazon',s:'Technology',u:'Magnificent 7',k:'S'},
+{t:'NVDA',n:'NVIDIA',s:'Technology',u:'Magnificent 7',k:'S'},
+{t:'META',n:'Meta Platforms',s:'Technology',u:'Magnificent 7',k:'S'},
+{t:'TSLA',n:'Tesla',s:'Technology',u:'Magnificent 7',k:'S'},
+{t:'ORCL',n:'Oracle',s:'Technology',u:'Big Tech',k:'S'},
+{t:'NFLX',n:'Netflix',s:'Technology',u:'Big Tech',k:'S'},
+{t:'CRM',n:'Salesforce',s:'Technology',u:'Big Tech',k:'S'},
+{t:'IBM',n:'IBM',s:'Technology',u:'Big Tech',k:'S'},
+{t:'ADBE',n:'Adobe',s:'Technology',u:'Big Tech',k:'S'},
+{t:'AMD',n:'Advanced Micro Devices',s:'Technology',u:'Big Tech',k:'S'},
+{t:'INTC',n:'Intel',s:'Technology',u:'Big Tech',k:'S'},
+{t:'MU',n:'Micron Technology',s:'Technology',u:'Big Tech',k:'S'},
+{t:'AVGO',n:'Broadcom',s:'Technology',u:'Big Tech',k:'S'},
+{t:'CSCO',n:'Cisco Systems',s:'Technology',u:'Big Tech',k:'S'},
+{t:'UBER',n:'Uber Technologies',s:'Technology',u:'Big Tech',k:'S'},
+{t:'ACN',n:'Accenture Plc',s:'Technology',u:'Big Tech',k:'S'},
+{t:'SPCX',n:'SpaceX',s:'Technology',u:'Big Tech',k:'S'},
+{t:'TSM',n:'Taiwan Semiconductor',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'ASML',n:'ASML Holding',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'ARM',n:'Arm Holdings',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'AMAT',n:'Applied Materials Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'FORM',n:'FormFactor Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'GFS',n:'Globalfoundries Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'SNPS',n:'Synopsys Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'CDNS',n:'Cadence Design Systems Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'AEHR',n:'Aehr Test Systems',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'INDI',n:'indie Semiconductor Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'QCOM',n:'Qualcomm',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'ADI',n:'Analog Devices Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'TXN',n:'Texas Instruments Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'SLAB',n:'Silicon Laboratories Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'ALAB',n:'Astera Labs Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'TSEM',n:'Tower Semiconductor',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'LRCX',n:'Lam Research Corp',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'KLAC',n:'KLA Corp',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'NXPI',n:'NXP Semiconductors NV',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'TRT',n:'Trio-Tech International',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'MRAM',n:'Everspin Technologies Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'CBRM',n:'Cerebras Systems Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'STM',n:'STMicroelectronics NV',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'TER',n:'Teradyne Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'8035',n:'Tokyo Electron Ltd',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'00593KS',n:'Samsung',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'000660',n:'SK Hynix Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'IFX',n:'Infineon Technologies AG',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'MKSI',n:'MKS Incorporated',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'SIVE',n:'Sivers Semiconductors AB',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'ANET',n:'Arista Networks',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'TDY',n:'Teledyne Technologies Inc',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'FRSH',n:'Freshworks Inc',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'CORZ',n:'Core Scientific',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'APLD',n:'Applied Digital',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'CIFR',n:'Cipher Mining',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'MRVL',n:'Marvell Technology Inc',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'LITE',n:'Lumentum Holdings',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'COHR',n:'Coherent Corp',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'CIEN',n:'Ciena Corporation',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'AAOI',n:'Applied Optoelectronics',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'2317.TW',n:'Foxconn',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'P',n:'Everpure Inc',s:'Technology',u:'Data Storage',k:'S'},
+{t:'SNDK',n:'SanDisk',s:'Technology',u:'Data Storage',k:'S'},
+{t:'STX',n:'Seagate',s:'Technology',u:'Data Storage',k:'S'},
+{t:'WDC',n:'Western Digital Corp',s:'Technology',u:'Data Storage',k:'S'},
+{t:'285A',n:'Kioxia Holdings Corporation',s:'Technology',u:'Data Storage',k:'S'},
+{t:'SNOW',n:'Snowflake Inc',s:'Technology',u:'AI Infrastructure',k:'S'},
+{t:'DDOG',n:'Datadog Inc',s:'Technology',u:'AI Infrastructure',k:'S'},
+{t:'FROG',n:'JFrog Ltd',s:'Technology',u:'AI Infrastructure',k:'S'},
+{t:'INOD',n:'Innodata Inc',s:'Technology',u:'AI Infrastructure',k:'S'},
+{t:'NBIS',n:'Nebius Group',s:'Technology',u:'AI Infrastructure',k:'S'},
+{t:'CRWV',n:'CoreWeave Inc',s:'Technology',u:'AI Infrastructure',k:'S'},
+{t:'WYFI',n:'WhiteFiber Inc',s:'Technology',u:'AI Infrastructure',k:'S'},
+{t:'GLW',n:'Corning Inc',s:'Technology',u:'AI Infrastructure',k:'S'},
+{t:'CRDO',n:'Credo Technology Group Holding Ltd',s:'Technology',u:'AI Infrastructure',k:'S'},
+{t:'PANW',n:'Palo Alto Networks',s:'Technology',u:'Cyber Security',k:'S'},
+{t:'CRWD',n:'Crowdstrike Holdings Inc',s:'Technology',u:'Cyber Security',k:'S'},
+{t:'ZS',n:'Zscaler Inc',s:'Technology',u:'Cyber Security',k:'S'},
+{t:'CHKP',n:'Check Point Software Technologies Ltd',s:'Technology',u:'Cyber Security',k:'S'},
+{t:'S',n:'SentinelOne Inc',s:'Technology',u:'Cyber Security',k:'S'},
+{t:'NTSK',n:'Netskope Inc',s:'Technology',u:'Cyber Security',k:'S'},
+{t:'RBRK',n:'Rubrik',s:'Technology',u:'Cyber Security',k:'S'},
+{t:'SAIL',n:'Sailpoint Inc',s:'Technology',u:'Cyber Security',k:'S'},
+{t:'OKTA',n:'Okta Inc',s:'Technology',u:'Cyber Security',k:'S'},
+{t:'PENG',n:'Penguin Solutions Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'ZETA',n:'Zeta Global Holdings',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'TEM',n:'Tempus AI',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'VEEV',n:'Veeva Systems Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'GWRE',n:'Guidewire Software Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'CSGP',n:'CoStar Group Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'TYL',n:'Tyler Technologies Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'QTWO',n:'Q2 Holdings Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'TWLO',n:'Twilio Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'NOW',n:'ServiceNow Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'EPAM',n:'EPAM Systems Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'ZBRA',n:'Zebra Technologies Corp',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'WDAY',n:'Workday Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'APP',n:'Applovin Corp',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'OPEN',n:'Opendoor Technologies Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'SNAP',n:'Snap Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'SOUN',n:'SoundHound AI Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'NOK',n:'Nokia Oyj',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'FIG',n:'Figma Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'MNDY',n:'Monday.Com Ltd',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'6758',n:'Sony Group Corp',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'003550',n:'LG Corp',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'INFQ',n:'Infleqtion',s:'Technology',u:'Quantum',k:'S'},
+{t:'IONQ',n:'IonQ',s:'Technology',u:'Quantum',k:'S'},
+{t:'RGTI',n:'Rigetti Computing Inc',s:'Technology',u:'Quantum',k:'S'},
+{t:'QBTS',n:'D-Wave Quantum Inc',s:'Technology',u:'Quantum',k:'S'},
+{t:'QUBT',n:'Quantum Computing Inc',s:'Technology',u:'Quantum',k:'S'},
+{t:'QNT',n:'Quantinuum Inc',s:'Technology',u:'Quantum',k:'S'},
+{t:'ARQQ',n:'Arqit Quantum',s:'Technology',u:'Quantum',k:'S'},
+{t:'QNC',n:'Quantum eMotion Corp',s:'Technology',u:'Quantum',k:'S'},
+{t:'LAES',n:'SEALSQ',s:'Technology',u:'Quantum',k:'S'},
+{t:'KEYS',n:'Keysight Technologies',s:'Technology',u:'Quantum',k:'S'},
+{t:'QCLS',n:'Q/C Technologies Inc',s:'Technology',u:'Quantum',k:'S'},
+{t:'XNDU',n:'Xanadu Quantum Technologies Ord Shs',s:'Technology',u:'Quantum',k:'S'},
+{t:'OXIGF',n:'Oxford Instruments',s:'Technology',u:'Quantum',k:'S'},
+{t:'SERV',n:'Serve Robotics',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'ARBE',n:'Arbe Robotics',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'ONDS',n:'Ondas',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'RR',n:'Richtech Robotics',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'ABG',n:'Asbury Automotive Group',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'ISRG',n:'Intuitive Surgical Inc',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'HON',n:'Honeywell International Inc',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'EMR',n:'Emerson Electric Co',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'ROK',n:'Rockwell Automation Inc',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'OUST',n:'Ouster Inc',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'SYM',n:'Symbotic Inc',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'AEVA',n:'Aeva Technologies Inc',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'9880',n:'Ubtech Robotics Corp Ltd',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'6954',n:'Fanuc Corp',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'6861',n:'Keyence Corp',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'PNG.V / KRKN',n:'Kraken Robotics',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'KU2G',n:'Kuka AG',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'ABBN',n:'ABB Ltd',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'EXA',n:'Exail Technologies SA',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'TMUS',n:'T-Mobile Us Inc',s:'Communication Services',u:'',k:'S'},
+{t:'VZ',n:'Verizon Communications Inc',s:'Communication Services',u:'',k:'S'},
+{t:'T',n:'AT&T Inc',s:'Communication Services',u:'',k:'S'},
+{t:'CMCSA',n:'Comcast Corporation',s:'Communication Services',u:'',k:'S'},
+{t:'LUMN',n:'Lumen Technologies',s:'Communication Services',u:'',k:'S'},
+{t:'HLIT',n:'Harmonic Inc',s:'Communication Services',u:'',k:'S'},
+{t:'SIRI',n:'Sirius XM Holdings Inc.',s:'Communication Services',u:'',k:'S'},
+{t:'IMAX',n:'Imax Corp',s:'Communication Services',u:'',k:'S'},
+{t:'LON:STC',n:'Filtronic plc',s:'Communication Services',u:'',k:'S'},
+{t:'MA',n:'Mastercard',s:'Finance',u:'Payment Networks',k:'S'},
+{t:'V',n:'Visa',s:'Finance',u:'Payment Networks',k:'S'},
+{t:'AXP',n:'American Express',s:'Finance',u:'Payment Networks',k:'S'},
+{t:'ICE',n:'Intercontinental Exchange Inc',s:'Finance',u:'Payment Networks',k:'S'},
+{t:'VYX',n:'NCR Voyix Corporation',s:'Finance',u:'Payment Networks',k:'S'},
+{t:'JPM',n:'JPMorgan Chase',s:'Finance',u:'Investment Banks',k:'S'},
+{t:'GS',n:'Goldman Sachs',s:'Finance',u:'Investment Banks',k:'S'},
+{t:'MS',n:'Morgan Stanley',s:'Finance',u:'Investment Banks',k:'S'},
+{t:'BAC',n:'Bank of America',s:'Finance',u:'Investment Banks',k:'S'},
+{t:'UBS',n:'UBS Group',s:'Finance',u:'Investment Banks',k:'S'},
+{t:'DB',n:'Deutsche Bank',s:'Finance',u:'Investment Banks',k:'S'},
+{t:'C',n:'Citigroup',s:'Finance',u:'Investment Banks',k:'S'},
+{t:'SCHW',n:'Charles Schwab',s:'Finance',u:'Investment Banks',k:'S'},
+{t:'BLK',n:'BlackRock',s:'Finance',u:'Asset Managers & Private Equity',k:'S'},
+{t:'BX',n:'Blackstone',s:'Finance',u:'Asset Managers & Private Equity',k:'S'},
+{t:'OWL',n:'Blue Owl Capital Inc',s:'Finance',u:'Asset Managers & Private Equity',k:'S'},
+{t:'STT',n:'State Street Global Advisors',s:'Finance',u:'Asset Managers & Private Equity',k:'S'},
+{t:'APO',n:'Apollo Global Management',s:'Finance',u:'Asset Managers & Private Equity',k:'S'},
+{t:'KKR',n:'KKR & Co Inc',s:'Finance',u:'Asset Managers & Private Equity',k:'S'},
+{t:'BRK',n:'Berkshire Hathaway – Class B',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'PS',n:'Pershing Square',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'PSUS',n:'Pershing Square USA Ltd',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'BAM',n:'Brookfield Asset Management Ltd.',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'L',n:'Loews Corporation',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'MKL',n:'Markel Group Inc',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'IEP',n:'Icahn Enterprises LP Common Stock',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'EQH',n:'Equitable Holdings Inc',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'AB',n:'AllianceBernstein',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'TYO: 9984',n:'SoftBank Group Corp',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'SOFI',n:'SoFi Technologies',s:'Finance',u:'FinTech',k:'S'},
+{t:'PGY',n:'Pagaya Technologies',s:'Finance',u:'FinTech',k:'S'},
+{t:'HOOD',n:'Robinhood Markets INC',s:'Finance',u:'FinTech',k:'S'},
+{t:'XYZ',n:'Block Inc',s:'Finance',u:'FinTech',k:'S'},
+{t:'BR',n:'Broadridge Financial Solutions',s:'Finance',u:'FinTech',k:'S'},
+{t:'FICO',n:'Fair Isaac Corp',s:'Finance',u:'Financial Benchmarking',k:'S'},
+{t:'SPGI',n:'S&P Global Inc',s:'Finance',u:'Financial Benchmarking',k:'S'},
+{t:'NDAQ',n:'Nasdaq',s:'Finance',u:'Financial Benchmarking',k:'S'},
+{t:'CME',n:'CME Group Inc',s:'Finance',u:'Financial Benchmarking',k:'S'},
+{t:'MCO',n:'Moody\'s Corp',s:'Finance',u:'Financial Benchmarking',k:'S'},
+{t:'MSCI',n:'MSCI Inc',s:'Finance',u:'Financial Benchmarking',k:'S'},
+{t:'CB',n:'Chubb Limited',s:'Finance',u:'Insurance',k:'S'},
+{t:'CRBG',n:'Corebridge Financial Inc',s:'Finance',u:'Insurance',k:'S'},
+{t:'AIG',n:'American International Group Inc',s:'Finance',u:'Insurance',k:'S'},
+{t:'ALL',n:'Allstate Corp',s:'Finance',u:'Insurance',k:'S'},
+{t:'PGR',n:'Progressive Corp',s:'Finance',u:'Insurance',k:'S'},
+{t:'MFC',n:'Manulife',s:'Finance',u:'Insurance',k:'S'},
+{t:'PRU',n:'Prudential',s:'Finance',u:'Insurance',k:'S'},
+{t:'1299',n:'AIA',s:'Finance',u:'Insurance',k:'S'},
+{t:'EFX',n:'Equifax Inc',s:'Finance',u:'Lending',k:'S'},
+{t:'TRU',n:'TransUnion',s:'Finance',u:'Lending',k:'S'},
+{t:'SLM',n:'SLM Corporation',s:'Finance',u:'Lending',k:'S'},
+{t:'TSLX',n:'Sixth Street Specialty Lending',s:'Finance',u:'Lending',k:'S'},
+{t:'OBDC',n:'Blue Owl Capital Corp',s:'Finance',u:'Lending',k:'S'},
+{t:'EXPN',n:'Experian plc',s:'Finance',u:'Lending',k:'S'},
+{t:'XOM',n:'Exxon Mobil',s:'Energy',u:'Oil & Gas',k:'S'},
+{t:'CVX',n:'Chevron',s:'Energy',u:'Oil & Gas',k:'S'},
+{t:'OXY',n:'Occidental Petroleum',s:'Energy',u:'Oil & Gas',k:'S'},
+{t:'HAL',n:'Halliburton Co',s:'Energy',u:'Oil & Gas',k:'S'},
+{t:'EOG',n:'EOG Resources Inc',s:'Energy',u:'Oil & Gas',k:'S'},
+{t:'SLB',n:'Schlumberger',s:'Energy',u:'Oil & Gas',k:'S'},
+{t:'CCJ',n:'Cameco',s:'Energy',u:'Nuclear',k:'S'},
+{t:'DNN',n:'Denison Mines',s:'Energy',u:'Nuclear',k:'S'},
+{t:'UUUU',n:'Energy Fuels Inc',s:'Energy',u:'Nuclear',k:'S'},
+{t:'UEC',n:'Uranium Energy Corp.',s:'Energy',u:'Nuclear',k:'S'},
+{t:'OKLO',n:'Oklo',s:'Energy',u:'Nuclear',k:'S'},
+{t:'SMR',n:'Nuscale Power Corp',s:'Energy',u:'Nuclear',k:'S'},
+{t:'NNE',n:'Nano Nuclear Energy Inc',s:'Energy',u:'Nuclear',k:'S'},
+{t:'BWXT',n:'BWX Technologies Inc',s:'Energy',u:'Nuclear',k:'S'},
+{t:'EOSE',n:'Eos Energy Enterprises',s:'Energy',u:'Renewable',k:'S'},
+{t:'ENPH',n:'Enphase Energy',s:'Energy',u:'Renewable',k:'S'},
+{t:'LEU',n:'Centrus Energy Corp',s:'Energy',u:'Renewable',k:'S'},
+{t:'FSLR',n:'First Solar',s:'Energy',u:'Renewable',k:'S'},
+{t:'SHLS',n:'Shoals Technologies Group Inc',s:'Energy',u:'Renewable',k:'S'},
+{t:'ARRY',n:'Array Technologies Inc',s:'Energy',u:'Renewable',k:'S'},
+{t:'BE',n:'Bloom Energy Corp',s:'Energy',u:'Renewable',k:'S'},
+{t:'MVST',n:'Microvast',s:'Energy',u:'Renewable',k:'S'},
+{t:'TE',n:'T1 Energy Inc',s:'Energy',u:'Renewable',k:'S'},
+{t:'VST',n:'Vistra Corp',s:'Utilities',u:'Grid Infrastructure',k:'S'},
+{t:'CEG',n:'Constellation Energy Corp',s:'Utilities',u:'Grid Infrastructure',k:'S'},
+{t:'TAC',n:'TransAlta Corp',s:'Utilities',u:'Grid Infrastructure',k:'S'},
+{t:'IREN',n:'Iren Ltd',s:'Utilities',u:'Grid Infrastructure',k:'S'},
+{t:'GEV',n:'GE Vernova',s:'Utilities',u:'Grid Infrastructure',k:'S'},
+{t:'NEE',n:'NextEra Energy',s:'Utilities',u:'Grid Infrastructure',k:'S'},
+{t:'WBI',n:'WaterBridge Infrastructure LLC',s:'Utilities',u:'Utilities Management',k:'S'},
+{t:'AWK',n:'American Water Works Company',s:'Utilities',u:'Utilities Management',k:'S'},
+{t:'XYL',n:'Xylem Inc.',s:'Utilities',u:'Utilities Management',k:'S'},
+{t:'WM',n:'Waste Management',s:'Utilities',u:'Utilities Management',k:'S'},
+{t:'RSG',n:'Republic Services Inc',s:'Utilities',u:'Utilities Management',k:'S'},
+{t:'B',n:'Barrick Mining',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'AU',n:'Anglogold Ashanti',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'GFI',n:'Gold Fields',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'IAG',n:'Iamgold',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'CDE',n:'Coeur Mining',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'KGC',n:'Kinross',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'EQX',n:'Equinox Gold Corp',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'NEM',n:'Newmont Mining',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'PAAS',n:'Pan American Silver',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'HAR',n:'Harmony Gold Mining',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'TMC',n:'The Metals Company',s:'Materials',u:'Diversified Mining',k:'S'},
+{t:'USAR',n:'USA Rare Earth',s:'Materials',u:'Diversified Mining',k:'S'},
+{t:'RIO',n:'Rio Tinto Ltd',s:'Materials',u:'Diversified Mining',k:'S'},
+{t:'NUE',n:'Nucor',s:'Materials',u:'Diversified Mining',k:'S'},
+{t:'MTRN',n:'Materion Corp',s:'Materials',u:'Diversified Mining',k:'S'},
+{t:'ATI',n:'ATI inc',s:'Materials',u:'Diversified Mining',k:'S'},
+{t:'CRS',n:'Carpenter Technologies',s:'Materials',u:'Diversified Mining',k:'S'},
+{t:'MP',n:'Mp Materials Corp',s:'Materials',u:'Diversified Mining',k:'S'},
+{t:'ALOY',n:'REalloys Inc',s:'Materials',u:'Diversified Mining',k:'S'},
+{t:'LIN',n:'Linde plc',s:'Materials',u:'Chemicals',k:'S'},
+{t:'APD',n:'Air Products and Chemicals',s:'Materials',u:'Chemicals',k:'S'},
+{t:'SHW',n:'Sherwin-Williams Company',s:'Materials',u:'Chemicals',k:'S'},
+{t:'AI',n:'L\'Air Liquide S.A.',s:'Materials',u:'Chemicals',k:'S'},
+{t:'ATLKY',n:'Atlas Copco',s:'Materials',u:'Chemicals',k:'S'},
+{t:'ACT',n:'Aduro Clean Technologies Inc',s:'Materials',u:'Chemicals',k:'S'},
+{t:'RKLB',n:'Rocket Lab USA',s:'Industrial',u:'Aerospace',k:'S'},
+{t:'RDW',n:'Redwire Corp',s:'Industrial',u:'Aerospace',k:'S'},
+{t:'PL',n:'Planet Labs',s:'Industrial',u:'Aerospace',k:'S'},
+{t:'LUNR',n:'Intuitive Machines',s:'Industrial',u:'Aerospace',k:'S'},
+{t:'SATS',n:'EchoStar',s:'Industrial',u:'Aerospace',k:'S'},
+{t:'ASTS',n:'AST SpaceMobile',s:'Industrial',u:'Aerospace',k:'S'},
+{t:'SPCE',n:'Virgin Galactic Holdings Inc',s:'Industrial',u:'Aerospace',k:'S'},
+{t:'JOBY',n:'Joby Aviation Inc',s:'Industrial',u:'Aerospace',k:'S'},
+{t:'ACHR',n:'Archer Aviation Inc',s:'Industrial',u:'Aerospace',k:'S'},
+{t:'BA',n:'Boeing',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'LMT',n:'Lockheed Martin',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'RTX',n:'Rtx Corp',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'GD',n:'General Dynamics',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'NOC',n:'Northrop Grumman',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'LHX',n:'L3Harris Technologies',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'HEI',n:'Heico',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'TDG',n:'TransDigm Group Inc',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'GHM',n:'Graham Corporation',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'SARO',n:'Standard Aero',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'OSK',n:'Oshkosh Corp',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'SRFM',n:'Surf Air Mobility',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'PSN',n:'Parsons Corporation',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'KTOS',n:'Kratos Defense & Security Solutions Inc',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'KRMN',n:'Karman Holdings',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'ESLT',n:'Elbit Systems Ltd',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'HWM',n:'Howmet Aerospace Inc',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'GE',n:'GE Aerospace',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'WWD',n:'Woodward',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'HII',n:'Huntington Ingalls',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'SAF',n:'Safran SA',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'RENK',n:'Renk Group AG',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'BCKIY',n:'Babcock International Group ADR',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'RNMBY',n:'Rheinmetall ADR',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'PLTR',n:'Palantir',s:'Industrial',u:'Defence Tech',k:'S'},
+{t:'DPRO',n:'Dragonfly',s:'Industrial',u:'Defence Tech',k:'S'},
+{t:'UMAC',n:'Unusual Machines Inc',s:'Industrial',u:'Defence Tech',k:'S'},
+{t:'AVAV',n:'AeroVironment',s:'Industrial',u:'Defence Tech',k:'S'},
+{t:'LDOS',n:'Leidos Holdings Inc',s:'Industrial',u:'Defence Tech',k:'S'},
+{t:'BAH',n:'Booz Allen Hamilton Holding Corporation',s:'Industrial',u:'Defence Tech',k:'S'},
+{t:'SAIC',n:'Science Applications International Corp',s:'Industrial',u:'Defence Tech',k:'S'},
+{t:'MOG',n:'Moog Inc',s:'Industrial',u:'Defence Tech',k:'S'},
+{t:'DAL',n:'Delta Air Lines Inc',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'AAL',n:'American Airlines Group Inc',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'UAL',n:'United Airlines',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'RYAAY',n:'Ryanair Holdings',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'LUV',n:'Southwest Airlines',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'LTM',n:'Latam Airlines Group',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'UNP',n:'Union Pacific Corp',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'NSC',n:'Norfolk Southern Corp',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'CSX',n:'CSX Corp',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'CHRW',n:'CH Robinson Worldwide Inc',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'DHT',n:'DHT Holdings',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'INSW',n:'INTl Seaways',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'FRO',n:'Frontline',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'UPS',n:'United Parcel Service',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'CP',n:'Canadian Pacific Kansas City Ltd',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'CNI',n:'Canadian National Railway Co',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'FER',n:'Ferrovial NV',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'CAT',n:'Caterpillar Inc.',s:'Industrial',u:'Construction',k:'S'},
+{t:'PWR',n:'Quanta Services, Inc.',s:'Industrial',u:'Construction',k:'S'},
+{t:'VMC',n:'Vulcan Materials Company',s:'Industrial',u:'Construction',k:'S'},
+{t:'MLM',n:'Martin Marietta Materials, Inc',s:'Industrial',u:'Construction',k:'S'},
+{t:'FLR',n:'Fluor Corp',s:'Industrial',u:'Industrial Equipment',k:'S'},
+{t:'J',n:'Jacobs Solutions Inc',s:'Industrial',u:'Industrial Equipment',k:'S'},
+{t:'KBR',n:'KBR Inc',s:'Industrial',u:'Industrial Equipment',k:'S'},
+{t:'FPS',n:'Forgent Power Solutions',s:'Industrial',u:'Industrial Equipment',k:'S'},
+{t:'TKR',n:'Timken Co',s:'Industrial',u:'Industrial Equipment',k:'S'},
+{t:'NOVT',n:'Novanta Inc.',s:'Industrial',u:'Industrial Equipment',k:'S'},
+{t:'OTIS',n:'Otis Worldwide Corp',s:'Industrial',u:'Industrial Equipment',k:'S'},
+{t:'TE',n:'Technip Energies NV',s:'Industrial',u:'Industrial Equipment',k:'S'},
+{t:'BRKR',n:'Bruker Corp',s:'Industrial',u:'Precision Equipment',k:'S'},
+{t:'LEA',n:'Lear Corp',s:'Industrial',u:'Precision Equipment',k:'S'},
+{t:'TMO',n:'Thermo Fisher Scientific Inc.',s:'Industrial',u:'Precision Equipment',k:'S'},
+{t:'DHR',n:'Danaher Corporation',s:'Industrial',u:'Precision Equipment',k:'S'},
+{t:'A',n:'Agilent Technologies, Inc.',s:'Industrial',u:'Precision Equipment',k:'S'},
+{t:'WAT',n:'Waters Corporation',s:'Industrial',u:'Precision Equipment',k:'S'},
+{t:'AFX',n:'Carl Zeiss Meditec AG',s:'Industrial',u:'Precision Equipment',k:'S'},
+{t:'NKE',n:'Nike',s:'Consumer Discretionary',u:'Retail',k:'S'},
+{t:'CROX',n:'Crocs',s:'Consumer Discretionary',u:'Retail',k:'S'},
+{t:'LULU',n:'Lululemon Athletica',s:'Consumer Discretionary',u:'Retail',k:'S'},
+{t:'BROS',n:'Dutch Bros',s:'Consumer Discretionary',u:'Retail',k:'S'},
+{t:'TGT',n:'Target Corp',s:'Consumer Discretionary',u:'Retail',k:'S'},
+{t:'LOW',n:'Lowe\'s Companies Inc',s:'Consumer Discretionary',u:'Retail',k:'S'},
+{t:'HD',n:'The Home Depot Inc',s:'Consumer Discretionary',u:'Retail',k:'S'},
+{t:'MC',n:'LVMH Moet Hennessy Louis Vuitton SE',s:'Consumer Discretionary',u:'Retail',k:'S'},
+{t:'TTWO',n:'Take-Two Interactive Software',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'DUOL',n:'Duolingo',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'COUR',n:'Coursera Inc',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'RDDT',n:'Reddit',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'DIS',n:'Walt Disney Company',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'WBD',n:'Warner Bros Discovery Inc',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'SPOT',n:'Spotify Technology SA',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'TDD',n:'Trade Desk Inc',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'WPP',n:'WPP PLC',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'NTDOY',n:'Nintendo',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'7WH',n:'Udemy Inc',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'GM',n:'General Motors',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'F',n:'Ford Motor Company',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'AUR',n:'Aurora Innovation Inc',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'7269',n:'Suzuki Motor Corp',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'7203',n:'Toyota Motor Corp',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'7261',n:'Mazda Motor Corp',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'7201',n:'Nissan Motor Co., Ltd',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'8058',n:'Mitsubishi Corp',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'000270',n:'Kia Corp',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'BMW',n:'Bayerische Motoren Werke',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'RACE',n:'Ferrari NV',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'CPRT',n:'Copart Inc',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'RBA',n:'RB Global Inc',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'STLAM',n:'Stellantis NV',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'RNO',n:'Renault SA',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'KO',n:'Coca-Cola',s:'Consumer Staples',u:'Retail',k:'S'},
+{t:'PG',n:'Procter & Gamble Co',s:'Consumer Staples',u:'Retail',k:'S'},
+{t:'COST',n:'Costco Wholesale',s:'Consumer Staples',u:'Retail',k:'S'},
+{t:'WMT',n:'Walmart Inc',s:'Consumer Staples',u:'Retail',k:'S'},
+{t:'3382.T',n:'Seven & i Holdings / 7-Eleven',s:'Consumer Staples',u:'Retail',k:'S'},
+{t:'NESN',n:'Nestle SA',s:'Consumer Staples',u:'Retail',k:'S'},
+{t:'CTVA',n:'Corteva',s:'Consumer Staples',u:'Agriculture',k:'S'},
+{t:'ADM',n:'Archer-Daniels-Midland',s:'Consumer Staples',u:'Agriculture',k:'S'},
+{t:'DE',n:'Deere & Co',s:'Consumer Staples',u:'Agriculture',k:'S'},
+{t:'NTR',n:'Nutrien',s:'Consumer Staples',u:'Agriculture',k:'S'},
+{t:'TSN',n:'Tyson Foods',s:'Consumer Staples',u:'Agriculture',k:'S'},
+{t:'O',n:'Realty Income',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'HHH',n:'Howard Hughes Holdings Inc',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'AHR',n:'American Healthcare REIT Inc',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'WELL',n:'Welltower Inc',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'EQIX',n:'Equinix Inc',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'CSGP',n:'CoStar Group, Inc.',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'PLD',n:'Prologis Inc',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'AMT',n:'American Tower Corporation',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'DHI',n:'D.R. Horton Inc',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'LEN',n:'Lennar Corporation',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'LLY',n:'Eli Lilly And Co',s:'Healthcare',u:'',k:'S'},
+{t:'PFE',n:'Pfizer Inc',s:'Healthcare',u:'',k:'S'},
+{t:'NVO',n:'Novo Nordisk A/S',s:'Healthcare',u:'',k:'S'},
+{t:'CLOV',n:'Clover Health Investments Corp',s:'Healthcare',u:'',k:'S'},
+{t:'BFLY',n:'Butterfly Network Inc',s:'Healthcare',u:'',k:'S'},
+{t:'MOH',n:'Molina Healthcare Inc',s:'Healthcare',u:'',k:'S'},
+{t:'PCSA',n:'Processa Pharmaceuticals',s:'Healthcare',u:'',k:'S'},
+{t:'SYK',n:'Stryker Corp',s:'Healthcare',u:'',k:'S'},
+{t:'ABT',n:'Abbott Laboratories',s:'Healthcare',u:'',k:'S'},
+{t:'AMGN',n:'Amgen',s:'Healthcare',u:'',k:'S'},
+{t:'REGN',n:'Regeneron Pharmaceuticals',s:'Healthcare',u:'',k:'S'},
+{t:'ILMN',n:'Illumina Inc',s:'Healthcare',u:'',k:'S'},
+{t:'GTBP',n:'GT Biopharma Inc',s:'Healthcare',u:'',k:'S'},
+{t:'HIMS',n:'Hims & Hers Health Inc',s:'Healthcare',u:'',k:'S'},
+{t:'GILD',n:'Gilead Sciences, Inc',s:'Healthcare',u:'',k:'S'},
+{t:'CRSP',n:'Crispr Therapeutics AG',s:'Healthcare',u:'',k:'S'},
+{t:'KRYS',n:'Krystal Biotech Inc',s:'Healthcare',u:'',k:'S'},
+{t:'ARAY',n:'Accuray Inc',s:'Healthcare',u:'',k:'S'},
+{t:'TLX',n:'Telix Pharmaceuticals Ltd',s:'Healthcare',u:'',k:'S'},
+{t:'WST',n:'West Pharmaceutical Services Inc',s:'Healthcare',u:'',k:'S'},
+{t:'BSX',n:'Boston Scientific Corporation',s:'Healthcare',u:'',k:'S'},
+{t:'SMCI',n:'Super Micro Computer Inc',s:'Failing / Fraud',u:'',k:'S'},
+{t:'MSTR',n:'Strategy Inc Class A',s:'Failing / Fraud',u:'',k:'S'},
+{t:'BMNR',n:'Bitmine Immersion Technologies Inc',s:'Failing / Fraud',u:'',k:'S'},
+{t:'CVNA',n:'Carvana Co',s:'Failing / Fraud',u:'',k:'S'},
+{t:'BBBY',n:'Bed Bath & Beyond Inc',s:'Failing / Fraud',u:'',k:'S'},
+{t:'GME',n:'GameStop Corp',s:'Failing / Fraud',u:'',k:'S'},
+{t:'AMC',n:'AMC Entertainment Holdings Inc',s:'Failing / Fraud',u:'',k:'S'},
+{t:'COIN',n:'Coinbase Global Inc',s:'Failing / Fraud',u:'',k:'S'},
+{t:'BYND',n:'Beyond Meat Inc',s:'Failing / Fraud',u:'',k:'S'},
+{t:'FLUT',n:'Flutter Entertainment',s:'Failing / Fraud',u:'',k:'S'},
+{t:'CMG',n:'Chipotle Mexican Grill Inc',s:'Failing / Fraud',u:'',k:'S'},
+{t:'CAVA',n:'Cava Group INC',s:'Failing / Fraud',u:'',k:'S'},
+{t:'SG',n:'Sweetgreen Inc',s:'Failing / Fraud',u:'',k:'S'},
+{t:'DKNG',n:'DraftKings Inc',s:'Failing / Fraud',u:'',k:'S'},
+{t:'D05',n:'DBS Group Holdings Ltd',s:'Singapore',u:'Finance',k:'S'},
+{t:'U11',n:'United Overseas Bank Ltd',s:'Singapore',u:'Finance',k:'S'},
+{t:'O39',n:'Overseas-Chinese Banking Corporation Limited',s:'Singapore',u:'Finance',k:'S'},
+{t:'S41',n:'Hong Leong Finance',s:'Singapore',u:'Finance',k:'S'},
+{t:'U10',n:'UOB-Kay Hian',s:'Singapore',u:'Finance',k:'S'},
+{t:'S68',n:'Singapore Exchange',s:'Singapore',u:'Finance',k:'S'},
+{t:'G07',n:'Great Eastern Holdings',s:'Singapore',u:'Finance',k:'S'},
+{t:'YF8',n:'Yangzijiang Financial Holding',s:'Singapore',u:'Finance',k:'S'},
+{t:'TRIRF',n:'Triterras',s:'Singapore',u:'Finance',k:'S'},
+{t:'ANTA',n:'Antalpha Platform',s:'Singapore',u:'Finance',k:'S'},
+{t:'AIY',n:'iFAST Corporation',s:'Singapore',u:'Finance',k:'S'},
+{t:'MNY',n:'MoneyHero',s:'Singapore',u:'Finance',k:'S'},
+{t:'EGG',n:'Enigmatig',s:'Singapore',u:'Finance',k:'S'},
+{t:'558',n:'UMS Holdings',s:'Singapore',u:'Technology',k:'S'},
+{t:'KLIC',n:'Kulicke and Soffa Industries',s:'Singapore',u:'Technology',k:'S'},
+{t:'AWX',n:'AEM Holdings',s:'Singapore',u:'Technology',k:'S'},
+{t:'E28',n:'Frencken Group',s:'Singapore',u:'Technology',k:'S'},
+{t:'MZH',n:'Nanofilm Technologies International',s:'Singapore',u:'Technology',k:'S'},
+{t:'BN2',n:'Valuetronics Holdings',s:'Singapore',u:'Technology',k:'S'},
+{t:'8AZ',n:'Aztech Global',s:'Singapore',u:'Technology',k:'S'},
+{t:'FLEX',n:'Flex Ltd',s:'Singapore',u:'Technology',k:'S'},
+{t:'V03',n:'Venture Corporation',s:'Singapore',u:'Technology',k:'S'},
+{t:'SE',n:'Sea Limited',s:'Singapore',u:'Technology',k:'S'},
+{t:'GRAB',n:'Grab Holdings',s:'Singapore',u:'Technology',k:'S'},
+{t:'RYDE',n:'Ryde',s:'Singapore',u:'Technology',k:'S'},
+{t:'TCGL',n:'TechCreate Group',s:'Singapore',u:'Technology',k:'S'},
+{t:'KARO',n:'Karooooo',s:'Singapore',u:'Technology',k:'S'},
+{t:'GNS',n:'Genius Group',s:'Singapore',u:'Technology',k:'S'},
+{t:'ORKT',n:'Orangekloud Technology',s:'Singapore',u:'Technology',k:'S'},
+{t:'POAS',n:'Phaos Technology Holdings',s:'Singapore',u:'Technology',k:'S'},
+{t:'SPPL',n:'SIMPPLE',s:'Singapore',u:'Technology',k:'S'},
+{t:'GFAI',n:'Guardforce AI',s:'Singapore',u:'Technology',k:'S'},
+{t:'544',n:'CSE Global',s:'Singapore',u:'Technology',k:'S'},
+{t:'BLIV',n:'BeLive Holdings',s:'Singapore',u:'Technology',k:'S'},
+{t:'BTDR',n:'Bitdeer Technologies Group',s:'Singapore',u:'Technology',k:'S'},
+{t:'FUFU',n:'BitFuFu',s:'Singapore',u:'Technology',k:'S'},
+{t:'BGIN',n:'Bgin Blockchain',s:'Singapore',u:'Technology',k:'S'},
+{t:'Z74',n:'Singapore Telecommunications Ltd',s:'Singapore',u:'Communication Services',k:'S'},
+{t:'CC3',n:'StarHub Ltd',s:'Singapore',u:'Communication Services',k:'S'},
+{t:'CJLU',n:'NetLink Trust',s:'Singapore',u:'Communication Services',k:'S'},
+{t:'A31',n:'Addvalue Technologies',s:'Singapore',u:'Communication Services',k:'S'},
+{t:'P15',n:'Pacific Century Regional Developments',s:'Singapore',u:'Communication Services',k:'S'},
+{t:'N2IU',n:'Mapletree Pan Asia Commercial Trust',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'C38U',n:'CapitaLand Integrated Commercial Trust',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'J69U',n:'Frasers Centrepoint Trust',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'T82U',n:'Suntec REIT',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'K71U',n:'Keppel REIT',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'M44U',n:'Mapletree Logistics Trust',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'ME8U',n:'Mapletree Industrial Trust',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'A17U',n:'CapitaLand Ascendas REIT',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'BUOU',n:'Frasers Logistics & Industrial Trust',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'Q5T',n:'Far East Hospitality Trust',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'HMN',n:'CapitaLand Ascott Trust',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'9CI',n:'CapitaLand Investment Ltd',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'C09',n:'City Developments Ltd',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'U14',n:'UOL Group Ltd',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'F17',n:'GuocoLand',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'B61',n:'Bukit Sembawang Estates',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'H78',n:'Hongkong Land Holdings Limited',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'H15',n:'Hotel Properties Limited',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'OMH',n:'Ohmyhome',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'U06',n:'Singapore Land',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'Z25',n:'Yanlord',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'W05',n:'Wing Tai Holdings',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'SMJF',n:'SMJ International',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'S63',n:'Singapore Technologies Engineering Ltd',s:'Singapore',u:'Industrial',k:'S'},
+{t:'S59',n:'SIA Engineering Company',s:'Singapore',u:'Industrial',k:'S'},
+{t:'BN4',n:'Keppel Ltd',s:'Singapore',u:'Industrial',k:'S'},
+{t:'5E2',n:'Seatrium Limited',s:'Singapore',u:'Industrial',k:'S'},
+{t:'BS6',n:'Yangzijiang Shipbuilding (Holdings) Ltd.',s:'Singapore',u:'Industrial',k:'S'},
+{t:'S58',n:'SATS',s:'Singapore',u:'Industrial',k:'S'},
+{t:'PMEC',n:'Primech Holdings',s:'Singapore',u:'Industrial',k:'S'},
+{t:'GCL',n:'GCL Global Holdings Ltd',s:'Singapore',u:'Industrial',k:'S'},
+{t:'CHZ',n:'HRnetGroup',s:'Singapore',u:'Industrial',k:'S'},
+{t:'C6L',n:'Singapore Airlines Ltd',s:'Singapore',u:'Industrial',k:'S'},
+{t:'S56',n:'Samudera Shipping Line',s:'Singapore',u:'Industrial',k:'S'},
+{t:'NS8U',n:'HPH Trust',s:'Singapore',u:'Industrial',k:'S'},
+{t:'KEN',n:'Kenon Holdings',s:'Singapore',u:'Industrial',k:'S'},
+{t:'C52',n:'ComfortDelGro',s:'Singapore',u:'Industrial',k:'S'},
+{t:'S08',n:'Singapore Post',s:'Singapore',u:'Industrial',k:'S'},
+{t:'C07',n:'Jardine Cycle & Carriage Ltd',s:'Singapore',u:'Industrial',k:'S'},
+{t:'U96',n:'Sembcorp Industries Ltd',s:'Singapore',u:'Energy',k:'S'},
+{t:'MAXN',n:'Maxeon Solar Technologies',s:'Singapore',u:'Energy',k:'S'},
+{t:'1F2',n:'Union Gas Holdings',s:'Singapore',u:'Energy',k:'S'},
+{t:'BWM',n:'Zheneng Jinjiang Environment',s:'Singapore',u:'Energy',k:'S'},
+{t:'A7RU',n:'Keppel Infrastructure Trust',s:'Singapore',u:'Utilities',k:'S'},
+{t:'U9E',n:'China Everbright Water',s:'Singapore',u:'Utilities',k:'S'},
+{t:'BHK',n:'SIIC Environment Holdings',s:'Singapore',u:'Utilities',k:'S'},
+{t:'S20',n:'Straits Trading Company Ltd',s:'Singapore',u:'Materials',k:'S'},
+{t:'PANU',n:'Pan United Corporation Ltd',s:'Singapore',u:'Materials',k:'S'},
+{t:'H22',n:'Hong Leong Asia Ltd',s:'Singapore',u:'Materials',k:'S'},
+{t:'KUO',n:'International Cement Group',s:'Singapore',u:'Materials',k:'S'},
+{t:'1J4',n:'JEP Holdings',s:'Singapore',u:'Materials',k:'S'},
+{t:'G13',n:'Genting Singapore Ltd',s:'Singapore',u:'Consumer Discretionary',k:'S'},
+{t:'1792',n:'CMON',s:'Singapore',u:'Consumer Discretionary',k:'S'},
+{t:'0799',n:'IGG Inc',s:'Singapore',u:'Consumer Discretionary',k:'S'},
+{t:'9658',n:'Super Hi International',s:'Singapore',u:'Consumer Discretionary',k:'S'},
+{t:'LITB',n:'LightInTheBox Holding',s:'Singapore',u:'Consumer Discretionary',k:'S'},
+{t:'WBUY',n:'Webuy Global',s:'Singapore',u:'Consumer Discretionary',k:'S'},
+{t:'SOPAQ',n:'Society Pass',s:'Singapore',u:'Consumer Discretionary',k:'S'},
+{t:'F34',n:'Wilmar International Ltd',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'Y92',n:'Thai Beverage Public Company Ltd',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'E5H',n:'Golden Agri-Resources',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'VC2',n:'Olam',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'P8Z',n:'Bumitama Agri',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'EB5',n:'First Resources',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'DTCK',n:'Davis Commodities',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'OV8',n:'Sheng Siong Group Ltd',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'D01',n:'DFI Retail Group Holdings Limited',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'P34',n:'Delfi Limited',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'1D0',n:'Kimly Limited',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'BSL',n:'Raffles Medical Group Ltd',s:'Singapore',u:'Healthcare',k:'S'},
+{t:'EUDA',n:'EUDA Health',s:'Singapore',u:'Healthcare',k:'S'},
+{t:'MNDR',n:'Mobile-health Network Solutions',s:'Singapore',u:'Healthcare',k:'S'},
+{t:'AP4',n:'Riverstone Holdings',s:'Singapore',u:'Healthcare',k:'S'},
+{t:'BVA',n:'Top Glove Corporation',s:'Singapore',u:'Healthcare',k:'S'},
+{t:'H02',n:'Haw Par',s:'Singapore',u:'Healthcare',k:'S'},
+{t:'WVE',n:'Wave Life Sciences',s:'Singapore',u:'Healthcare',k:'S'},
+{t:'GDTC',n:'CytoMed Therapeutics',s:'Singapore',u:'Healthcare',k:'S'},
+{t:'VT',n:'Vanguard Total World Stock ETF',s:'Global',u:'All-World',k:'E'},
+{t:'ACWI',n:'iShares MSCI ACWI ETF',s:'Global',u:'All-World',k:'E'},
+{t:'VWRA',n:'Vanguard FTSE All-World UCITS ETF',s:'Global',u:'All-World',k:'E'},
+{t:'VXUS',n:'Vanguard Total International Stock ETF',s:'Global',u:'International (Developed + Emerging)',k:'E'},
+{t:'IXUS',n:'iShares Core MSCI Total International Stock ETF',s:'Global',u:'International (Developed + Emerging)',k:'E'},
+{t:'VEA',n:'Vanguard FTSE Developed Markets ETF',s:'Global',u:'Developed Markets',k:'E'},
+{t:'XEF',n:'iShares Core MSCI EAFE ETF',s:'Global',u:'Developed Markets',k:'E'},
+{t:'VIU',n:'Vanguard FTSE Developed All Cap ex US Index ETF',s:'Global',u:'Developed Markets',k:'E'},
+{t:'VWO',n:'Vanguard FTSE Emerging Markets ETF',s:'Global',u:'Emerging Markets',k:'E'},
+{t:'IEMG',n:'iShares Core MSCI Emerging Markets ETF',s:'Global',u:'Emerging Markets',k:'E'},
+{t:'EEM',n:'iShares MSCI Emerging Markets ETF',s:'Global',u:'Emerging Markets',k:'E'},
+{t:'XEC',n:'iShares Core MSCI Emerging Markets IMI Index ETF',s:'Global',u:'Emerging Markets',k:'E'},
+{t:'ZEM',n:'BMO MSCI Emerging Markets Index ETF',s:'Global',u:'Emerging Markets',k:'E'},
+{t:'XEQT',n:'iShares Core Equity ETF Portfolio',s:'Global',u:'Asset Allocation',k:'E'},
+{t:'VEQT',n:'Vanguard All-Equity ETF Portfolio',s:'Global',u:'Asset Allocation',k:'E'},
+{t:'XGRO',n:'iShares Core Growth ETF Portfolio',s:'Global',u:'Asset Allocation',k:'E'},
+{t:'VOO',n:'Vanguard S&P 500 ETF',s:'US',u:'Broad Market',k:'E'},
+{t:'SPY',n:'SPDR S&P 500 ETF Trust',s:'US',u:'Broad Market',k:'E'},
+{t:'VTI',n:'Vanguard Total Stock Market ETF',s:'US',u:'Broad Market',k:'E'},
+{t:'IVV',n:'iShares Core S&P 500 ETF',s:'US',u:'Broad Market',k:'E'},
+{t:'VUG',n:'Vanguard Growth ETF',s:'US',u:'Large Cap',k:'E'},
+{t:'VOOG',n:'Vanguard S&P 500 Growth ETF',s:'US',u:'Large Cap',k:'E'},
+{t:'SCHG',n:'Schwab U.S. Large-Cap Growth ETF',s:'US',u:'Large Cap',k:'E'},
+{t:'MGK',n:'Vanguard Mega Cap Growth ETF',s:'US',u:'Large Cap',k:'E'},
+{t:'IWM',n:'iShares Russell 2000 ETF',s:'US',u:'Small Cap',k:'E'},
+{t:'SCHD',n:'Schwab U.S. Dividend Equity ETF',s:'US',u:'Dividend',k:'E'},
+{t:'VIG',n:'Vanguard Dividend Appreciation ETF',s:'US',u:'Dividend',k:'E'},
+{t:'DGRO',n:'iShares Core Dividend Growth ETF',s:'US',u:'Dividend',k:'E'},
+{t:'VYM',n:'Vanguard High Dividend Yield ETF',s:'US',u:'Dividend',k:'E'},
+{t:'SPYD',n:'SPDR Portfolio S&P 500 High Dividend ETF',s:'US',u:'Dividend',k:'E'},
+{t:'HDV',n:'iShares Core High Dividend ETF',s:'US',u:'Dividend',k:'E'},
+{t:'DGRW',n:'WisdomTree U.S. Quality Dividend Growth Fund',s:'US',u:'Dividend',k:'E'},
+{t:'JEPI',n:'JPMorgan Equity Premium Income ETF',s:'US',u:'Covered Call',k:'E'},
+{t:'JEPQ',n:'JPMorgan Nasdaq Equity Premium Income ETF',s:'US',u:'Covered Call',k:'E'},
+{t:'SPYI',n:'NEOS S&P 500 High Income ETF',s:'US',u:'Covered Call',k:'E'},
+{t:'QQQI',n:'NEOS Nasdaq-100 High Income ETF',s:'US',u:'Covered Call',k:'E'},
+{t:'GPIX',n:'Goldman Sachs S&P 500 Premium Income ETF',s:'US',u:'Covered Call',k:'E'},
+{t:'GPIQ',n:'Goldman Sachs Nasdaq-100 Premium Income ETF',s:'US',u:'Covered Call',k:'E'},
+{t:'VTV',n:'Vanguard Value ETF',s:'US',u:'Value',k:'E'},
+{t:'SCHV',n:'Schwab U.S. Large-Cap Value ETF',s:'US',u:'Value',k:'E'},
+{t:'IVE',n:'iShares S&P 500 Value ETF',s:'US',u:'Value',k:'E'},
+{t:'VOOV',n:'Vanguard S&P 500 Value ETF',s:'US',u:'Value',k:'E'},
+{t:'USMV',n:'iShares MSCI USA Min Vol Factor ETF',s:'US',u:'Minimum Volatility',k:'E'},
+{t:'SPLV',n:'Invesco S&P 500 Low Volatility ETF',s:'US',u:'Minimum Volatility',k:'E'},
+{t:'QQQ',n:'Invesco QQQ Trust',s:'Technology',u:'NASDAQ',k:'E'},
+{t:'QQQM',n:'Invesco NASDAQ-100 ETF',s:'Technology',u:'NASDAQ',k:'E'},
+{t:'QQQJ',n:'Invesco NASDAQ Next Gen 100 ETF',s:'Technology',u:'NASDAQ',k:'E'},
+{t:'NDQ',n:'BetaShares NASDAQ 100 ETF',s:'Technology',u:'NASDAQ',k:'E'},
+{t:'SMH',n:'VanEck Semiconductor ETF',s:'Technology',u:'Semiconductor',k:'E'},
+{t:'SOXX',n:'iShares Semiconductor ETF',s:'Technology',u:'Semiconductor',k:'E'},
+{t:'XSD',n:'SPDR S&P Semiconductor ETF',s:'Technology',u:'Semiconductor',k:'E'},
+{t:'AIQ',n:'Global X Artificial Intelligence & Technology ETF',s:'Technology',u:'Artificial Intelligence & Robotics',k:'E'},
+{t:'BOTZ',n:'Global X Robotics & Artificial Intelligence ETF',s:'Technology',u:'Artificial Intelligence & Robotics',k:'E'},
+{t:'HUMN',n:'Roundhill Humanoid Robotics ETF',s:'Technology',u:'Artificial Intelligence & Robotics',k:'E'},
+{t:'RBOT',n:'iShares Automation & Robotics UCITS ETF',s:'Technology',u:'Artificial Intelligence & Robotics',k:'E'},
+{t:'ARKQ',n:'ARK Autonomous Technology & Robotics ETF',s:'Technology',u:'Artificial Intelligence & Robotics',k:'E'},
+{t:'UFO',n:'Procure Space ETF',s:'Technology',u:'Space',k:'E'},
+{t:'ARKX',n:'ARK Space Exploration & Innovation ETF',s:'Technology',u:'Space',k:'E'},
+{t:'ARKK',n:'ARK Innovation ETF',s:'Technology',u:'Disruptive Innovation',k:'E'},
+{t:'QTUM',n:'Defiance Quantum ETF',s:'Technology',u:'Quantum Computing',k:'E'},
+{t:'XLV',n:'Health Care Select Sector SPDR Fund',s:'Sector ETFs',u:'Healthcare',k:'E'},
+{t:'VHT',n:'Vanguard Health Care ETF',s:'Sector ETFs',u:'Healthcare',k:'E'},
+{t:'IBB',n:'iShares Biotechnology ETF',s:'Sector ETFs',u:'Healthcare',k:'E'},
+{t:'XBI',n:'SPDR S&P Biotech ETF',s:'Sector ETFs',u:'Healthcare',k:'E'},
+{t:'XLF',n:'Financial Select Sector SPDR Fund',s:'Sector ETFs',u:'Financials',k:'E'},
+{t:'VFH',n:'Vanguard Financials ETF',s:'Sector ETFs',u:'Financials',k:'E'},
+{t:'XLI',n:'Industrial Select Sector SPDR Fund',s:'Sector ETFs',u:'Industrials',k:'E'},
+{t:'ITA',n:'iShares U.S. Aerospace & Defense ETF',s:'Sector ETFs',u:'Industrials',k:'E'},
+{t:'SHLD',n:'Global X Defense Tech ETF',s:'Sector ETFs',u:'Industrials',k:'E'},
+{t:'XLP',n:'Consumer Staples Select Sector SPDR Fund',s:'Sector ETFs',u:'Consumer Staples',k:'E'},
+{t:'XLU',n:'Utilities Select Sector SPDR Fund',s:'Sector ETFs',u:'Utilities',k:'E'},
+{t:'XLC',n:'Communication Services Select Sector SPDR Fund',s:'Sector ETFs',u:'Communication Services',k:'E'},
+{t:'XLB',n:'Materials Select Sector SPDR Fund',s:'Sector ETFs',u:'Materials',k:'E'},
+{t:'XLE',n:'Energy Select Sector SPDR Fund',s:'Sector ETFs',u:'Energy',k:'E'},
+{t:'IXC',n:'iShares Global Energy ETF',s:'Sector ETFs',u:'Energy',k:'E'},
+{t:'OIH',n:'VanEck Oil Services ETF',s:'Sector ETFs',u:'Energy',k:'E'},
+{t:'VNQ',n:'Vanguard Real Estate ETF',s:'Real Estate',u:'REIT',k:'E'},
+{t:'SCHH',n:'Schwab U.S. REIT ETF',s:'Real Estate',u:'REIT',k:'E'},
+{t:'XLRE',n:'Real Estate Select Sector SPDR Fund',s:'Real Estate',u:'REIT',k:'E'},
+{t:'IAU',n:'iShares Gold Trust',s:'Commodities',u:'Precious Metals',k:'E'},
+{t:'SLV',n:'iShares Silver Trust',s:'Commodities',u:'Precious Metals',k:'E'},
+{t:'PALL',n:'abrdn Physical Palladium Shares ETF',s:'Commodities',u:'Precious Metals',k:'E'},
+{t:'PPLT',n:'abrdn Physical Platinum Shares ETF',s:'Commodities',u:'Precious Metals',k:'E'},
+{t:'ICOP',n:'iShares Copper and Metals Mining ETF',s:'Commodities',u:'Precious Metals',k:'E'},
+{t:'COPX',n:'Global X Copper Miners ETF',s:'Commodities',u:'Precious Metals',k:'E'},
+{t:'GLTR',n:'abrdn Physical Precious Metals Basket Shares ETF',s:'Commodities',u:'Precious Metals',k:'E'},
+{t:'REMX',n:'VanEck Rare Earth and Strategic Metals ETF',s:'Commodities',u:'Precious Metals',k:'E'},
+{t:'URA',n:'Global X Uranium ETF',s:'Commodities',u:'Uranium',k:'E'},
+{t:'AQWA',n:'Global X Clean Water ETF',s:'Commodities',u:'Water',k:'E'},
+{t:'FIW',n:'First Trust Water ETF',s:'Commodities',u:'Water',k:'E'},
+{t:'INRG',n:'iShares Global Clean Energy UCITS ETF',s:'Commodities',u:'Clean Energy',k:'E'},
+{t:'HYDR',n:'Global X Hydrogen ETF',s:'Commodities',u:'Clean Energy',k:'E'},
+{t:'BND',n:'Vanguard Total Bond Market ETF',s:'Bonds',u:'',k:'E'},
+{t:'AGG',n:'iShares Core US Aggregate Bond ETF',s:'Bonds',u:'',k:'E'},
+{t:'UPRO',n:'ProShares UltraPro S&P 500',s:'Trading ETFs',u:'Leveraged ETFs',k:'E'},
+{t:'TQQQ',n:'ProShares UltraPro QQQ',s:'Trading ETFs',u:'Leveraged ETFs',k:'E'},
+{t:'SOXL',n:'Direxion Daily Semiconductor Bull 3X Shares',s:'Trading ETFs',u:'Leveraged ETFs',k:'E'},
+{t:'TMF',n:'Direxion Daily 20+ Year Treasury Bull 3X Shares',s:'Trading ETFs',u:'Leveraged ETFs',k:'E'},
+{t:'SH',n:'ProShares Short S&P 500',s:'Trading ETFs',u:'Inverse ETFs',k:'E'},
+{t:'PSQ',n:'ProShares Short QQQ',s:'Trading ETFs',u:'Inverse ETFs',k:'E'},
+{t:'SQQQ',n:'ProShares UltraPro Short QQQ',s:'Trading ETFs',u:'Inverse ETFs',k:'E'},
+{t:'ES3',n:'SPDR Straits Times Index ETF',s:'Singapore',u:'Broad Market',k:'E'},
+{t:'G3B',n:'Amova Singapore STI ETF',s:'Singapore',u:'Broad Market',k:'E'},
+{t:'CLR',n:'Lion-Phillip S-REIT ETF',s:'Singapore',u:'REIT',k:'E'},
+{t:'SRT',n:'CSOP iEdge S-REIT Leaders ETF',s:'Singapore',u:'REIT',k:'E'},
+{t:'CFA',n:'Amova-Straits Trading Asia ex Japan REIT ETF',s:'Singapore',u:'REIT',k:'E'},
+{t:'ESG',n:'Lion-OCBC Securities Singapore Low Carbon ETF',s:'Singapore',u:'ESG',k:'E'},
+{t:'A35',n:'ABF Singapore Bond Index Fund',s:'Singapore',u:'Bonds',k:'E'},
+{t:'MBH',n:'Amova SGD Investment Grade Corporate Bond ETF',s:'Singapore',u:'Bonds',k:'E'},
+{t:'O9P',n:'iShares USD Asia High Yield Bond ETF',s:'Singapore',u:'Bonds',k:'E'},
+{t:'YLD',n:'Lion-OCBC Securities APAC Financials Dividend Plus ETF',s:'Singapore',u:'Dividend',k:'E'},
+{t:'OVQ',n:'Phillip Singapore Income ETF',s:'Singapore',u:'Dividend',k:'E'},
+{t:'HST',n:'Lion-OCBC Securities Hang Seng TECH ETF',s:'Singapore',u:'China / Hong Kong',k:'E'}
+];
+
 const ROADMAP_SPRINTS=[
   {title:'Sprint 1 — Foundations (18 Aug – 30 Sep 2026)',start:'2026-08-18',deadline:'2026-09-30',
    note:[...WK_SPLIT_NO_DSA,...WE_SPLIT_HW],subs:[
@@ -1449,6 +2170,7 @@ function render(){
   if(view==='fuel')renderFuel();
   if(view==='goals')renderGoals();
   if(view==='deadlines')renderDeadlines();
+  if(view==='invest')renderInvest();
   if(view==='capture')renderCapture();
   save();
 }
@@ -2119,6 +2841,155 @@ function addReminder(){
 }
 
 /* CAPTURE */
+/* ============ INVESTMENT ============ */
+// Thresholds pulled directly from your Notion "For Individual Stock Picks" rules. Grading
+// checks whichever fields are actually present on a stock's fundamentals row — a ticker
+// with no data yet just shows "not tracked", nothing fails silently.
+const INV_RUBRIC=[
+  {key:'pe',label:'P/E ratio',op:'<',target:15,fmt:v=>v.toFixed(1)},
+  {key:'peg',label:'PEG ratio',op:'<',target:1.5,fmt:v=>v.toFixed(2)},
+  {key:'roe',label:'ROE',op:'>',target:15,fmt:v=>v.toFixed(1)+'%'},
+  {key:'roa',label:'ROA',op:'>',target:7,fmt:v=>v.toFixed(1)+'%'},
+  {key:'debt_equity',label:'Debt to equity',op:'<',target:1,fmt:v=>v.toFixed(2)},
+  {key:'current_ratio',label:'Current ratio',op:'>',target:1.5,fmt:v=>v.toFixed(2)},
+  {key:'net_margin',label:'Net margin',op:'>',target:10,fmt:v=>v.toFixed(1)+'%'},
+  {key:'fcf_yield',label:'FCF yield',op:'>',target:6,fmt:v=>v.toFixed(1)+'%'},
+  {key:'div_yield',label:'Dividend yield',op:'>',target:4,fmt:v=>v.toFixed(1)+'%'},
+  {key:'payout_ratio',label:'Payout ratio',op:'<',target:70,fmt:v=>v.toFixed(0)+'%'}
+];
+function gradeFundamentals(f){
+  if(!f)return null;
+  const rows=INV_RUBIC.map(r=>{
+    const v=f[r.key];
+    if(v===null||v===undefined||v==='')return null;
+    const pass=r.op==='<'?v<r.target:v>r.target;
+    return{label:r.label,value:r.fmt(v),pass,target:(r.op==='<'?'< ':'> ')+r.target+(r.label.includes('%')||r.key.includes('yield')||r.key==='roe'||r.key==='roa'||r.key==='net_margin'||r.key==='payout_ratio'?'%':'')};
+  }).filter(Boolean);
+  if(!rows.length)return{rows:[],overall:null};
+  const passCt=rows.filter(r=>r.pass).length;
+  return{rows,overall:Math.round(passCt/rows.length*10*10)/10};
+}
+async function fetchInvFundamentals(tickers){
+  if(!sb||!tickers.length)return{};
+  try{
+    const{data,error}=await sb.from('investment_fundamentals').select('*').in('ticker',tickers);
+    if(error||!data)return{};
+    const out={};data.forEach(row=>out[row.ticker]=row);return out;
+  }catch(e){return{};}
+}
+function renderInvest(){
+  const tab=S.investment.invTab||'portfolio';
+  $$('#inv-nav button').forEach(b=>b.classList.toggle('on',b.dataset.invtab===tab));
+  const body=$('#inv-body');
+  if(tab==='portfolio')return renderInvPortfolio(body);
+  if(tab==='allocation')return renderInvAllocation(body);
+  if(tab==='screener')return renderInvScreener(body);
+  if(tab==='research')return renderInvResearch(body);
+  if(tab==='watchlist')return renderInvWatchlist(body);
+  if(tab==='rules')return renderInvRules(body);
+}
+function renderInvPortfolio(body){
+  const total=S.investment.holdings.reduce((s,h)=>s+h.amount,0);
+  body.innerHTML=`<div class="inv-grid">${S.investment.holdings.map((h,i)=>`
+    <div class="inv-card">
+      <div class="inv-card-name">${esc(h.name)}</div>
+      <div class="inv-card-amt">$${h.amount.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+      <div class="inv-card-meta">${esc(h.detail||'')}</div>
+      <button class="inv-card-del" data-act="invholddel" data-i="${i}" title="Remove">✕</button>
+    </div>`).join('')}
+    <div class="inv-card inv-card-add">
+      <input id="inv-hold-name" placeholder="Holding name">
+      <input id="inv-hold-amt" type="number" step="0.01" placeholder="Amount ($)">
+      <input id="inv-hold-detail" placeholder="Detail (optional)">
+      <button class="btn" data-act="invholdadd">Add holding</button>
+    </div>
+  </div>
+  <p class="fuel-tip" style="margin-top:16px">Total invested: <strong>$${total.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</strong>. Manually updated for now — no live pricing.</p>`;
+}
+function renderInvAllocation(body){
+  const buckets=[
+    {name:'Core index',pct:25,col:'#5fb3a8'},{name:'Compounding',pct:20,col:'#8fd0c2'},
+    {name:'Growth',pct:20,col:'#e0a458'},{name:'Value',pct:15,col:'#d98b7a'},
+    {name:'Income',pct:10,col:'#a8c5c0'},{name:'Defensive',pct:10,col:'#7a9590'}
+  ];
+  body.innerHTML=`<div class="inv-alloc">
+    <div class="inv-alloc-bar">${buckets.map(b=>`<div class="inv-alloc-seg" style="width:${b.pct}%;background:${b.col}">${b.pct}%</div>`).join('')}</div>
+    <div class="inv-alloc-legend">${buckets.map(b=>`<span><i class="inv-dot" style="background:${b.col}"></i>${b.name}</span>`).join('')}</div>
+  </div>
+  <p class="fuel-tip" style="margin-top:16px">Rebalance when any bucket drifts more than 5% from its target.</p>`;
+}
+function renderInvScreener(body){
+  S.investment.screenQuery=S.investment.screenQuery||'';
+  S.investment.screenSector=S.investment.screenSector||'All';
+  const sectors=['All',...new Set(INVESTMENT_UNIVERSE.map(r=>r.s))];
+  const q=S.investment.screenQuery.toLowerCase();
+  let matches=INVESTMENT_UNIVERSE.filter(r=>
+    (S.investment.screenSector==='All'||r.s===S.investment.screenSector)&&
+    (!q||r.t.toLowerCase().includes(q)||r.n.toLowerCase().includes(q))
+  );
+  const shown=matches.slice(0,80);
+  body.innerHTML=`<input id="inv-screen-q" placeholder="Search ticker or name…" value="${esc(S.investment.screenQuery)}" style="margin-bottom:12px">
+  <div class="filters">${sectors.map(s=>`<div class="chip ${S.investment.screenSector===s?'on':''}" data-act="invsector" data-sector="${esc(s)}">${esc(s)}</div>`).join('')}</div>
+  <table class="inv-tbl"><tr><th>Ticker</th><th>Name</th><th>Sector</th><th>Type</th><th></th></tr>
+  ${shown.map(r=>{
+    const tracked=S.investment.tracked.includes(r.t);
+    return `<tr><td class="inv-tick">${esc(r.t)}</td><td>${esc(r.n)}</td><td>${esc(r.s)}${r.u?' · '+esc(r.u):''}</td><td>${r.k==='E'?'ETF':'Stock'}</td>
+    <td><button class="inv-track-btn ${tracked?'on':''}" data-act="invtrack" data-t="${esc(r.t)}">${tracked?'Tracking':'Track'}</button></td></tr>`;
+  }).join('')}
+  </table>
+  <p class="fuel-tip" style="margin-top:10px">${matches.length} match${matches.length===1?'':'es'}${matches.length>80?' — showing first 80, refine your search to narrow further':''}. "Track" adds it to auto-refresh once the Supabase edge function is set up.</p>`;
+}
+function renderInvResearch(body){
+  const tracked=S.investment.tracked;
+  if(!tracked.length){
+    body.innerHTML=`<div class="empty">Nothing tracked yet. Go to Screener and hit "Track" on a stock you're actually considering.</div>`;
+    return;
+  }
+  body.innerHTML=`<div class="filters">${tracked.map(t=>`<div class="chip ${S.investment.researchTicker===t?'on':''}" data-act="invresearchpick" data-t="${esc(t)}">${esc(t)}</div>`).join('')}</div><div id="inv-research-detail">Loading…</div>`;
+  const active=S.investment.researchTicker||tracked[0];
+  S.investment.researchTicker=active;
+  fetchInvFundamentals([active]).then(map=>{
+    const f=map[active];
+    const g=gradeFundamentals(f);
+    const detail=$('#inv-research-detail');if(!detail)return;
+    if(!f){
+      detail.innerHTML=`<div class="research"><div class="research-head"><span class="name">${esc(active)}</span></div>
+        <p class="fuel-tip">No data yet. This ticker is tracked but the Supabase edge function hasn't refreshed it — once that's deployed and runs, its numbers will show up here automatically.</p></div>`;
+      return;
+    }
+    detail.innerHTML=`<div class="research"><div class="research-head"><span class="name">${esc(active)}</span>${g.overall!==null?`<span class="overall">${g.overall} / 10</span>`:''}</div>
+      ${g.rows.map(r=>`<div class="crit"><span class="crit-label">${esc(r.label)} (target ${esc(r.target)})</span><span class="crit-val ${r.pass?'pass':'fail'}">${esc(r.value)} ${r.pass?'✓':'✕'}</span></div>`).join('')}
+      <p class="fuel-tip" style="margin-top:10px">Last updated: ${f.updated_at?fmtDate(f.updated_at.slice(0,10)):'unknown'}</p>
+    </div>`;
+  });
+}
+function renderInvWatchlist(body){
+  const items=S.goals.filter(g=>g.cat==='Investment');
+  body.innerHTML=`<div class="inv-grid">${items.map(g=>`
+    <div class="inv-card">
+      <div class="inv-card-name">${esc(g.title)}</div>
+      <div class="inv-card-meta">${esc((g.note&&g.note[0])||'')}</div>
+    </div>`).join('')}</div>
+  <p class="fuel-tip" style="margin-top:16px">Add or remove watchlist tickers from the Goals tab — they live under the "Investment" category there.</p>`;
+}
+function renderInvRules(body){
+  body.innerHTML=`<div class="inv-rules">
+    <div class="inv-rules-title">Portfolio rules</div>
+    <ul><li>No options trading</li><li>No biotech / pharma firms</li><li>No more than 5% of the portfolio in any one stock</li>
+    <li>No more than 20% of the portfolio in any sector</li><li>No more than 40% in any single country</li>
+    <li>Rebalance when a bucket drifts more than 5% from its target</li></ul>
+    <div class="inv-rules-title">Exit strategy</div>
+    <ul><li>Thesis broken — sell immediately if the core reason you bought changes</li>
+    <li>Valuation stretched — trim when price exceeds 2× your entry fair-value target</li>
+    <li>Stop-loss — mandatory thesis review if a position drops more than 25% with no new fundamental reason</li>
+    <li>Better opportunity — sell the weakest position in a sub-portfolio to fund a higher-conviction pick in the same sub-portfolio</li></ul>
+    <div class="inv-rules-title">VIX cash deployment</div>
+    <div class="vix"><div class="vix-row"><span>VIX 25–29</span><span class="vix-range">Deploy 25% of cash reserves</span></div>
+    <div class="vix-row"><span>VIX 30–34</span><span class="vix-range">Deploy 25% of cash reserves</span></div>
+    <div class="vix-row"><span>VIX &gt; 35</span><span class="vix-range">Deploy 50% of cash reserves</span></div></div>
+  </div>`;
+}
+
 function renderCapture(){
   const list=$('#dump-list');
   if(!S.dumps.length){list.innerHTML=`<div class="empty" style="margin-top:20px">Nothing parked. When a thought won't leave you alone, send it here.</div>`;return;}
@@ -2686,6 +3557,44 @@ document.addEventListener('click',e=>{
   const dlRoadmapToggle=e.target.closest('[data-act="toggledlroadmap"]');
   if(dlRoadmapToggle){S.dlRoadmapOpen=!S.dlRoadmapOpen;renderDeadlines();return;}
 
+  // investment: sub-tab nav
+  const invTab=e.target.closest('[data-invtab]');
+  if(invTab){S.investment.invTab=invTab.dataset.invtab;render();return;}
+
+  // investment: sector filter chip
+  const invSector=e.target.closest('[data-act="invsector"]');
+  if(invSector){S.investment.screenSector=invSector.dataset.sector;render();return;}
+
+  // investment: track/untrack a ticker — also writes through to the shared Supabase table
+  // so the Edge Function (which runs independently of your browser) knows what to refresh
+  const invTrack=e.target.closest('[data-act="invtrack"]');
+  if(invTrack){
+    const t=invTrack.dataset.t;
+    const idx=S.investment.tracked.indexOf(t);
+    if(idx>=0){
+      S.investment.tracked.splice(idx,1);
+      if(sb)sb.from('investment_tracked_tickers').delete().eq('ticker',t).then(()=>{},()=>{});
+    }else{
+      S.investment.tracked.push(t);
+      if(sb)sb.from('investment_tracked_tickers').insert({ticker:t}).then(()=>{},()=>{});
+    }
+    render();return;
+  }
+
+  // investment: pick a ticker in Research
+  const invPick=e.target.closest('[data-act="invresearchpick"]');
+  if(invPick){S.investment.researchTicker=invPick.dataset.t;render();return;}
+
+  // investment: add/remove a manual portfolio holding
+  const invHoldAdd=e.target.closest('[data-act="invholdadd"]');
+  if(invHoldAdd){
+    const n=$('#inv-hold-name').value.trim();const a=parseFloat($('#inv-hold-amt').value);const d=$('#inv-hold-detail').value.trim();
+    if(n&&a>0){S.investment.holdings.push({name:n,amount:a,detail:d});render();}
+    return;
+  }
+  const invHoldDel=e.target.closest('[data-act="invholddel"]');
+  if(invHoldDel){S.investment.holdings.splice(+invHoldDel.dataset.i,1);render();return;}
+
   // deadlines: List / Timeline view toggle
   const dlViewBtn=e.target.closest('[data-dlview]');
   if(dlViewBtn){
@@ -3080,9 +3989,12 @@ document.addEventListener('input',e=>{
     const v=parseFloat(e.target.value);S.body[k]=isNaN(v)?null:v;
     render();
   }
-});
-
-document.addEventListener('change',e=>{
+  if(e.target.id==='inv-screen-q'){
+    S.investment.screenQuery=e.target.value;
+    const pos=e.target.selectionStart;
+    render();
+    const ni=$('#inv-screen-q');if(ni){ni.focus();ni.setSelectionRange(pos,pos);}
+  }
   if(e.target.matches&&e.target.matches('[data-mealkcal]')){const m=S.meals.find(x=>x.id==e.target.dataset.mealkcal);if(m){const v=parseInt(e.target.value,10);m.kcal=isNaN(v)?null:v;render();}}
   if(e.target.matches&&e.target.matches('[data-wokcal]')){const w=S.workouts.find(x=>x.id==e.target.dataset.wokcal);if(w){const v=parseInt(e.target.value,10);w.kcal=isNaN(v)?null:v;render();}}
   if(e.target.matches&&e.target.matches('[data-mealmac]')){const[id,key]=e.target.dataset.mealmac.split(':');const m=S.meals.find(x=>x.id==id);if(m){const v=parseInt(e.target.value,10);m[key]=isNaN(v)?null:v;render();}}
@@ -3467,6 +4379,36 @@ async function bootApp(){
       if(sp){g.title=sp.title;if(!g.opensOn)g.opensOn=sp.start;}
     });
     S.roadmapTitleSyncV2=true;
+  }
+  if(!S.investSeedV1){
+    // Adds the Investment tab's starting state: watchlist tickers live as Goals (cat
+    // 'Investment', same pattern as Roadmap sprints) so they get the same UI for free;
+    // portfolio holdings and the auto-refresh tracked-ticker list live in S.investment.
+    if(!S.cats.find(c=>c.name==='Investment'))S.cats.push({name:'Investment',color:'#e8c39e'});
+    const maxId=S.goals.reduce((m,g)=>Math.max(m,g.id||0),0);
+    const WATCHLIST_SEED=[
+      {t:'GOOG',note:'Alphabet — waiting for a pullback'},
+      {t:'ASML/TSMC/ARM',note:'Semicap + foundry + IP moat basket'},
+      {t:'SNPS/CDNS',note:'EDA duopoly'},
+      {t:'V/MA',note:'Payment network duopoly'},
+      {t:'MSCI/SPGI/MCO/CME',note:'Financial benchmarking toll-roads'},
+      {t:'BRK',note:'Core holding company candidate'},
+      {t:'VST',note:'Grid infrastructure / power demand play'},
+      {t:'MP/USAR',note:'Rare earth supply chain'}
+    ];
+    WATCHLIST_SEED.forEach((w,i)=>{
+      if(!S.goals.find(g=>g.cat==='Investment'&&g.title===w.t)){
+        S.goals.push({id:maxId+i+1,cat:'Investment',title:w.t,done:false,star:false,term:null,deadline:null,note:[w.note],subs:[]});
+      }
+    });
+    S.investment=S.investment||{};
+    if(!S.investment.holdings)S.investment.holdings=[
+      {name:'OCBC Precious Metals RoboInvest',amount:6000,detail:'Gold · Silver · Platinum · Palladium · Copper'},
+      {name:'OCBC Precious Metals Account',amount:799.49,detail:'0.13 oz XAU'},
+      {name:'STI (ES3)',amount:495.99,detail:'99 shares'}
+    ];
+    if(!S.investment.tracked)S.investment.tracked=[]; // tickers the Supabase edge function auto-refreshes
+    S.investSeedV1=true;
   }
   if(!S.roadmapTagsNoteSyncV2){
     // Checklist items got 🎓/📘/💻/🧮/🔧 tags matching the Certification Study / NTU Module
