@@ -768,47 +768,112 @@ body{
   .ring-flow{animation:none}.brand .mark{animation:none}.panel{animation:none}
 }
 /* ---------- Investment ---------- */
-.inv-nav{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 20px}
-.inv-nav button{padding:8px 16px;border-radius:20px;border:1px solid var(--line);font-size:13px;color:var(--mist-dim);background:var(--surface);cursor:pointer;font-family:var(--body)}
-.inv-nav button.on{color:var(--current);border-color:var(--current-soft);background:#5fb3a814}
-.inv-nav-ct{font-size:10px;font-family:var(--mono);color:var(--mist-dim)}
-.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
-.inv-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 15px;position:relative}
-.inv-card-name{font-size:13px;font-weight:500;margin-bottom:6px}
-.inv-card-amt{font-family:var(--mono);font-size:19px;color:var(--current);margin-bottom:3px}
-.inv-card-meta{font-size:11px;color:var(--mist-dim)}
-.inv-card-del{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--mist-dim);cursor:pointer;font-size:12px}
-.inv-card-add{display:flex;flex-direction:column;gap:8px}
-.inv-card-add input{background:var(--deep-2);border:1px solid var(--line);border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px}
-.inv-alloc-bar{display:flex;height:26px;border-radius:8px;overflow:hidden;margin-bottom:12px}
-.inv-alloc-seg{display:flex;align-items:center;justify-content:center;font-size:10px;font-family:var(--mono);color:#04342c}
-.inv-alloc-legend{display:flex;flex-wrap:wrap;gap:14px;font-size:11.5px;color:var(--mist-dim)}
-.inv-alloc-legend span{display:inline-flex;align-items:center;gap:6px}
-.inv-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-.inv-tbl{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:12.5px;margin-top:4px}
-.inv-tbl th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--mist-dim);font-family:var(--mono);padding:9px 11px;border-bottom:1px solid var(--line);font-weight:400}
-.inv-tbl td{padding:9px 11px;border-bottom:1px solid var(--line)}
+.inv-nav{display:flex;flex-direction:column;gap:3px;margin:18px 0 26px;background:var(--surface);border:1px solid var(--line);
+  border-radius:14px;padding:6px;max-width:220px}
+@media(min-width:760px){.inv-nav{flex-direction:row;max-width:none;flex-wrap:wrap}}
+.inv-nav button{display:flex;align-items:center;gap:10px;background:none;border:none;color:var(--mist);
+  font-family:var(--body);font-size:13.5px;font-weight:500;padding:10px 14px;border-radius:10px;cursor:pointer;
+  text-align:left;transition:background .18s,color .18s;flex:1}
+.inv-nav button:hover{background:#ffffff08;color:var(--text)}
+.inv-nav button.on{background:var(--surface-2);color:var(--text)}
+.inv-nav .ic{width:16px;text-align:center;flex:none}
+.inv-nav button.on .ic{filter:saturate(1.4)}
+.inv-nav-ct{margin-left:auto;font-size:10px;font-family:var(--mono);color:var(--mist-dim);background:#ffffff0a;padding:1px 7px;border-radius:20px}
+
+/* Portfolio */
+.inv-total{background:linear-gradient(160deg,var(--surface),var(--surface-2));border:1px solid var(--line);border-radius:16px;
+  padding:22px 26px;margin-bottom:18px;display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.inv-total-label{font-family:var(--display);font-size:15px;color:var(--mist-dim)}
+.inv-total-amt{font-family:var(--mono);font-size:32px;color:var(--current);letter-spacing:-.5px}
+.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.inv-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 17px;position:relative;transition:.15s}
+.inv-card:hover{border-color:var(--current-soft);background:#ffffff06}
+.inv-card-name{font-family:var(--display);font-size:14.5px;font-weight:600;margin-bottom:8px;padding-right:18px}
+.inv-card-amt{font-family:var(--mono);font-size:21px;color:var(--current);margin-bottom:4px;letter-spacing:-.3px}
+.inv-card-meta{font-size:11.5px;color:var(--mist-dim);line-height:1.4}
+.inv-card-del{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--mist-dim);cursor:pointer;
+  font-size:12px;opacity:0;transition:opacity .15s}
+.inv-card:hover .inv-card-del{opacity:1}
+.inv-card-del:hover{color:var(--coral)}
+.inv-card-add{display:flex;flex-direction:column;gap:8px;border-style:dashed;background:none}
+.inv-card-add input{background:var(--deep-2);border:1px solid var(--line);border-radius:9px;color:var(--text);
+  font-size:12.5px;padding:9px 11px;font-family:var(--body)}
+.inv-card-add input:focus{outline:none;border-color:var(--current-soft)}
+
+/* Allocation */
+.inv-alloc{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px}
+.inv-alloc-bar{display:flex;height:34px;border-radius:10px;overflow:hidden;margin-bottom:18px;box-shadow:inset 0 0 0 1px var(--line)}
+.inv-alloc-seg{display:flex;align-items:center;justify-content:center;font-size:10.5px;font-family:var(--mono);
+  color:#04342c;font-weight:600;transition:.15s}
+.inv-alloc-legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.inv-alloc-legend span{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text);
+  background:var(--deep-2);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.inv-dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+
+/* Screener */
+#inv-screen-q{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:12px;color:var(--text);
+  padding:12px 15px;font-size:13.5px;font-family:var(--body);margin-bottom:14px;transition:border-color .15s}
+#inv-screen-q:focus{outline:none;border-color:var(--current-soft)}
+#inv-screen-q::placeholder{color:var(--mist-dim)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chip{padding:6px 14px;border-radius:20px;border:1px solid var(--line);font-size:12px;color:var(--mist-dim);
+  background:var(--surface);cursor:pointer;transition:.15s;font-family:var(--body)}
+.chip:hover{border-color:var(--current-soft);color:var(--text)}
+.chip.on{color:var(--current);border-color:var(--current-soft);background:#5fb3a814}
+.inv-tbl-wrap{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:2px}
+.inv-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.inv-tbl th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--mist-dim);
+  font-family:var(--mono);padding:12px 14px;border-bottom:1px solid var(--line);font-weight:500;background:var(--surface-2)}
+.inv-tbl td{padding:11px 14px;border-bottom:1px solid var(--line)}
 .inv-tbl tr:last-child td{border-bottom:none}
-.inv-tick{font-family:var(--mono);color:var(--sand)}
-.inv-track-btn{padding:4px 11px;border-radius:20px;border:1px solid var(--line);background:none;color:var(--mist-dim);font-size:11px;cursor:pointer}
-.inv-track-btn.on{color:var(--current);border-color:var(--current-soft)}
-#inv-screen-q{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 13px;font-size:13px}
-.research{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
-.research-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.research-head .name{font-family:var(--display);font-size:16px;font-weight:600}
-.overall{font-family:var(--mono);font-size:20px;color:var(--current)}
-.crit{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line);font-size:12.5px}
-.crit-val{font-family:var(--mono)}
+.inv-tbl tbody tr{transition:background .12s}
+.inv-tbl tbody tr:hover{background:#ffffff05}
+.inv-tick{font-family:var(--mono);color:var(--sand);font-weight:500}
+.inv-sector-badge{font-size:10.5px;color:var(--mist-dim);background:#ffffff0a;padding:2px 9px;border-radius:20px;
+  display:inline-block}
+.inv-track-btn{padding:5px 13px;border-radius:20px;border:1px solid var(--line);background:none;color:var(--mist-dim);
+  font-size:11px;cursor:pointer;font-family:var(--body);transition:.15s;white-space:nowrap}
+.inv-track-btn:hover{border-color:var(--current-soft);color:var(--text)}
+.inv-track-btn.on{color:var(--current);border-color:var(--current-soft);background:#5fb3a814}
+
+/* Research */
+.inv-ticker-picker{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.inv-ticker-chip{padding:7px 15px;border-radius:20px;border:1px solid var(--line);font-size:12.5px;
+  font-family:var(--mono);color:var(--mist-dim);background:var(--surface);cursor:pointer;transition:.15s}
+.inv-ticker-chip:hover{border-color:var(--current-soft);color:var(--text)}
+.inv-ticker-chip.on{color:var(--current);border-color:var(--current-soft);background:#5fb3a814}
+.research{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px}
+.research-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:16px;
+  border-bottom:1px solid var(--line)}
+.research-head .name{font-family:var(--display);font-size:19px;font-weight:600}
+.overall-ring{display:flex;align-items:center;gap:10px}
+.overall{font-family:var(--mono);font-size:26px;color:var(--current);letter-spacing:-.5px}
+.overall-label{font-size:10px;color:var(--mist-dim);text-transform:uppercase;letter-spacing:.08em;font-family:var(--mono)}
+.crit{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-top:1px solid var(--line);font-size:13px}
+.crit:first-of-type{border-top:none;padding-top:0}
+.crit-label{color:var(--mist)}
+.crit-target{color:var(--mist-dim);font-size:11px;font-family:var(--mono)}
+.crit-val{font-family:var(--mono);font-size:13px;display:flex;align-items:center;gap:7px;font-weight:500}
 .crit-val.pass{color:var(--current)}
 .crit-val.fail{color:var(--coral)}
-.inv-rules{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
-.inv-rules-title{font-family:var(--display);font-size:15px;font-weight:600;margin:16px 0 8px}
-.inv-rules-title:first-child{margin-top:0}
-.inv-rules ul{padding-left:20px;font-size:13px;color:var(--mist-dim);line-height:1.7}
-.vix{background:#e0a4580f;border:1px solid #e0a45830;border-radius:12px;padding:12px 15px;margin-top:6px}
-.vix-row{display:flex;justify-content:space-between;padding:6px 0;font-size:12.5px}
+.crit-icon{width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px}
+.crit-icon.pass{background:#5fb3a81f;color:var(--current)}
+.crit-icon.fail{background:#d98b7a1f;color:var(--coral)}
+
+/* Watchlist */
+.inv-wl-tick{font-family:var(--mono);color:var(--sand);font-size:13px;font-weight:600;letter-spacing:.3px}
+
+/* Rules */
+.inv-rules-grid{display:grid;gap:14px}
+.inv-rules-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.inv-rules-title{font-family:var(--display);font-size:15px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.inv-rules-card ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.inv-rules-card li{font-size:13px;color:var(--mist);line-height:1.5;padding-left:18px;position:relative}
+.inv-rules-card li::before{content:'';position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%;background:var(--current-soft)}
+.vix{background:#e0a4580f;border:1px solid #e0a45830;border-radius:14px;padding:14px 17px;margin-top:6px}
+.vix-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:13px}
 .vix-row+.vix-row{border-top:1px solid #e0a45820}
-.vix-range{font-family:var(--mono);color:var(--amber)}
+.vix-range{font-family:var(--mono);color:var(--amber);font-weight:500}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
@@ -1141,12 +1206,12 @@ body{
       <div class="eyebrow">Where the cash actually goes</div>
       <h2 class="h2">Investment</h2>
       <div class="inv-nav" id="inv-nav">
-        <button data-invtab="portfolio" class="on">Portfolio</button>
-        <button data-invtab="allocation">Allocation</button>
-        <button data-invtab="screener">Screener <span class="inv-nav-ct">660</span></button>
-        <button data-invtab="research">Research</button>
-        <button data-invtab="watchlist">Watchlist</button>
-        <button data-invtab="rules">Rules</button>
+        <button data-invtab="portfolio" class="on"><span class="ic">💼</span> Portfolio</button>
+        <button data-invtab="allocation"><span class="ic">◔</span> Allocation</button>
+        <button data-invtab="screener"><span class="ic">🔍</span> Screener <span class="inv-nav-ct">660</span></button>
+        <button data-invtab="research"><span class="ic">📊</span> Research</button>
+        <button data-invtab="watchlist"><span class="ic">👁</span> Watchlist</button>
+        <button data-invtab="rules"><span class="ic">📖</span> Rules</button>
       </div>
       <div id="inv-body"></div>
     </section>
@@ -2890,12 +2955,16 @@ function renderInvest(){
 }
 function renderInvPortfolio(body){
   const total=S.investment.holdings.reduce((s,h)=>s+h.amount,0);
-  body.innerHTML=`<div class="inv-grid">${S.investment.holdings.map((h,i)=>`
+  body.innerHTML=`<div class="inv-total">
+    <span class="inv-total-label">Total invested</span>
+    <span class="inv-total-amt">$${total.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+  </div>
+  <div class="inv-grid">${S.investment.holdings.map((h,i)=>`
     <div class="inv-card">
+      <button class="inv-card-del" data-act="invholddel" data-i="${i}" title="Remove">✕</button>
       <div class="inv-card-name">${esc(h.name)}</div>
       <div class="inv-card-amt">$${h.amount.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
       <div class="inv-card-meta">${esc(h.detail||'')}</div>
-      <button class="inv-card-del" data-act="invholddel" data-i="${i}" title="Remove">✕</button>
     </div>`).join('')}
     <div class="inv-card inv-card-add">
       <input id="inv-hold-name" placeholder="Holding name">
@@ -2904,7 +2973,7 @@ function renderInvPortfolio(body){
       <button class="btn" data-act="invholdadd">Add holding</button>
     </div>
   </div>
-  <p class="fuel-tip" style="margin-top:16px">Total invested: <strong>$${total.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</strong>. Manually updated for now — no live pricing.</p>`;
+  <p class="fuel-tip" style="margin-top:16px">Manually updated for now — no live pricing.</p>`;
 }
 function renderInvAllocation(body){
   const buckets=[
@@ -2914,7 +2983,7 @@ function renderInvAllocation(body){
   ];
   body.innerHTML=`<div class="inv-alloc">
     <div class="inv-alloc-bar">${buckets.map(b=>`<div class="inv-alloc-seg" style="width:${b.pct}%;background:${b.col}">${b.pct}%</div>`).join('')}</div>
-    <div class="inv-alloc-legend">${buckets.map(b=>`<span><i class="inv-dot" style="background:${b.col}"></i>${b.name}</span>`).join('')}</div>
+    <div class="inv-alloc-legend">${buckets.map(b=>`<span><i class="inv-dot" style="background:${b.col}"></i>${esc(b.name)}</span>`).join('')}</div>
   </div>
   <p class="fuel-tip" style="margin-top:16px">Rebalance when any bucket drifts more than 5% from its target.</p>`;
 }
@@ -2928,15 +2997,16 @@ function renderInvScreener(body){
     (!q||r.t.toLowerCase().includes(q)||r.n.toLowerCase().includes(q))
   );
   const shown=matches.slice(0,80);
-  body.innerHTML=`<input id="inv-screen-q" placeholder="Search ticker or name…" value="${esc(S.investment.screenQuery)}" style="margin-bottom:12px">
+  body.innerHTML=`<input id="inv-screen-q" placeholder="Search ticker or name…" value="${esc(S.investment.screenQuery)}">
   <div class="filters">${sectors.map(s=>`<div class="chip ${S.investment.screenSector===s?'on':''}" data-act="invsector" data-sector="${esc(s)}">${esc(s)}</div>`).join('')}</div>
-  <table class="inv-tbl"><tr><th>Ticker</th><th>Name</th><th>Sector</th><th>Type</th><th></th></tr>
+  <div class="inv-tbl-wrap"><table class="inv-tbl"><tr><th>Ticker</th><th>Name</th><th>Sector</th><th>Type</th><th></th></tr>
   ${shown.map(r=>{
     const tracked=S.investment.tracked.includes(r.t);
-    return `<tr><td class="inv-tick">${esc(r.t)}</td><td>${esc(r.n)}</td><td>${esc(r.s)}${r.u?' · '+esc(r.u):''}</td><td>${r.k==='E'?'ETF':'Stock'}</td>
-    <td><button class="inv-track-btn ${tracked?'on':''}" data-act="invtrack" data-t="${esc(r.t)}">${tracked?'Tracking':'Track'}</button></td></tr>`;
+    return `<tr><td class="inv-tick">${esc(r.t)}</td><td>${esc(r.n)}</td>
+    <td><span class="inv-sector-badge">${esc(r.s)}${r.u?' · '+esc(r.u):''}</span></td><td>${r.k==='E'?'ETF':'Stock'}</td>
+    <td><button class="inv-track-btn ${tracked?'on':''}" data-act="invtrack" data-t="${esc(r.t)}">${tracked?'✓ Tracking':'Track'}</button></td></tr>`;
   }).join('')}
-  </table>
+  </table></div>
   <p class="fuel-tip" style="margin-top:10px">${matches.length} match${matches.length===1?'':'es'}${matches.length>80?' — showing first 80, refine your search to narrow further':''}. "Track" adds it to auto-refresh once the Supabase edge function is set up.</p>`;
 }
 function renderInvResearch(body){
@@ -2945,7 +3015,7 @@ function renderInvResearch(body){
     body.innerHTML=`<div class="empty">Nothing tracked yet. Go to Screener and hit "Track" on a stock you're actually considering.</div>`;
     return;
   }
-  body.innerHTML=`<div class="filters">${tracked.map(t=>`<div class="chip ${S.investment.researchTicker===t?'on':''}" data-act="invresearchpick" data-t="${esc(t)}">${esc(t)}</div>`).join('')}</div><div id="inv-research-detail">Loading…</div>`;
+  body.innerHTML=`<div class="inv-ticker-picker">${tracked.map(t=>`<div class="inv-ticker-chip ${S.investment.researchTicker===t?'on':''}" data-act="invresearchpick" data-t="${esc(t)}">${esc(t)}</div>`).join('')}</div><div id="inv-research-detail">Loading…</div>`;
   const active=S.investment.researchTicker||tracked[0];
   S.investment.researchTicker=active;
   fetchInvFundamentals([active]).then(map=>{
@@ -2957,9 +3027,11 @@ function renderInvResearch(body){
         <p class="fuel-tip">No data yet. This ticker is tracked but the Supabase edge function hasn't refreshed it — once that's deployed and runs, its numbers will show up here automatically.</p></div>`;
       return;
     }
-    detail.innerHTML=`<div class="research"><div class="research-head"><span class="name">${esc(active)}</span>${g.overall!==null?`<span class="overall">${g.overall} / 10</span>`:''}</div>
-      ${g.rows.map(r=>`<div class="crit"><span class="crit-label">${esc(r.label)} (target ${esc(r.target)})</span><span class="crit-val ${r.pass?'pass':'fail'}">${esc(r.value)} ${r.pass?'✓':'✕'}</span></div>`).join('')}
-      <p class="fuel-tip" style="margin-top:10px">Last updated: ${f.updated_at?fmtDate(f.updated_at.slice(0,10)):'unknown'}</p>
+    detail.innerHTML=`<div class="research"><div class="research-head"><span class="name">${esc(active)}</span>
+      ${g.overall!==null?`<div class="overall-ring"><div><div class="overall">${g.overall}<span style="font-size:15px;color:var(--mist-dim)">/10</span></div><div class="overall-label">Rubric score</div></div></div>`:''}</div>
+      ${g.rows.map(r=>`<div class="crit"><span class="crit-label">${esc(r.label)} <span class="crit-target">(target ${esc(r.target)})</span></span>
+        <span class="crit-val ${r.pass?'pass':'fail'}">${esc(r.value)}<span class="crit-icon ${r.pass?'pass':'fail'}">${r.pass?'✓':'✕'}</span></span></div>`).join('')}
+      <p class="fuel-tip" style="margin-top:14px">Last updated: ${f.updated_at?fmtDate(f.updated_at.slice(0,10)):'unknown'}</p>
     </div>`;
   });
 }
@@ -2967,26 +3039,32 @@ function renderInvWatchlist(body){
   const items=S.goals.filter(g=>g.cat==='Investment');
   body.innerHTML=`<div class="inv-grid">${items.map(g=>`
     <div class="inv-card">
-      <div class="inv-card-name">${esc(g.title)}</div>
-      <div class="inv-card-meta">${esc((g.note&&g.note[0])||'')}</div>
+      <div class="inv-wl-tick">${esc(g.title)}</div>
+      <div class="inv-card-meta" style="margin-top:6px">${esc((g.note&&g.note[0])||'')}</div>
     </div>`).join('')}</div>
   <p class="fuel-tip" style="margin-top:16px">Add or remove watchlist tickers from the Goals tab — they live under the "Investment" category there.</p>`;
 }
 function renderInvRules(body){
-  body.innerHTML=`<div class="inv-rules">
-    <div class="inv-rules-title">Portfolio rules</div>
-    <ul><li>No options trading</li><li>No biotech / pharma firms</li><li>No more than 5% of the portfolio in any one stock</li>
-    <li>No more than 20% of the portfolio in any sector</li><li>No more than 40% in any single country</li>
-    <li>Rebalance when a bucket drifts more than 5% from its target</li></ul>
-    <div class="inv-rules-title">Exit strategy</div>
-    <ul><li>Thesis broken — sell immediately if the core reason you bought changes</li>
-    <li>Valuation stretched — trim when price exceeds 2× your entry fair-value target</li>
-    <li>Stop-loss — mandatory thesis review if a position drops more than 25% with no new fundamental reason</li>
-    <li>Better opportunity — sell the weakest position in a sub-portfolio to fund a higher-conviction pick in the same sub-portfolio</li></ul>
-    <div class="inv-rules-title">VIX cash deployment</div>
-    <div class="vix"><div class="vix-row"><span>VIX 25–29</span><span class="vix-range">Deploy 25% of cash reserves</span></div>
-    <div class="vix-row"><span>VIX 30–34</span><span class="vix-range">Deploy 25% of cash reserves</span></div>
-    <div class="vix-row"><span>VIX &gt; 35</span><span class="vix-range">Deploy 50% of cash reserves</span></div></div>
+  body.innerHTML=`<div class="inv-rules-grid">
+    <div class="inv-rules-card">
+      <div class="inv-rules-title">📐 Portfolio rules</div>
+      <ul><li>No options trading</li><li>No biotech / pharma firms</li><li>No more than 5% of the portfolio in any one stock</li>
+      <li>No more than 20% of the portfolio in any sector</li><li>No more than 40% in any single country</li>
+      <li>Rebalance when a bucket drifts more than 5% from its target</li></ul>
+    </div>
+    <div class="inv-rules-card">
+      <div class="inv-rules-title">🚪 Exit strategy</div>
+      <ul><li>Thesis broken — sell immediately if the core reason you bought changes</li>
+      <li>Valuation stretched — trim when price exceeds 2× your entry fair-value target</li>
+      <li>Stop-loss — mandatory thesis review if a position drops more than 25% with no new fundamental reason</li>
+      <li>Better opportunity — sell the weakest position in a sub-portfolio to fund a higher-conviction pick in the same sub-portfolio</li></ul>
+    </div>
+    <div class="inv-rules-card">
+      <div class="inv-rules-title">⚡ VIX cash deployment</div>
+      <div class="vix"><div class="vix-row"><span>VIX 25–29</span><span class="vix-range">Deploy 25% of cash reserves</span></div>
+      <div class="vix-row"><span>VIX 30–34</span><span class="vix-range">Deploy 25% of cash reserves</span></div>
+      <div class="vix-row"><span>VIX &gt; 35</span><span class="vix-range">Deploy 50% of cash reserves</span></div></div>
+    </div>
   </div>`;
 }
 
