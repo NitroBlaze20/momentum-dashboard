@@ -234,6 +234,7 @@ body{
 .term-chip.short.on{color:var(--current);border-color:var(--current-soft)}
 .term-chip.long.on{color:var(--red);border-color:var(--red)}
 .term-chip.fixed.on{color:var(--amber);border-color:var(--amber)}
+.term-chip.roadmap.on{color:#5fb3a8;border-color:#5fb3a8}
 .term-chip .ct{font-family:var(--mono);font-size:10.5px;opacity:.8}
 .term-pill{font-family:var(--mono);font-size:10.5px;padding:2px 10px;border-radius:20px;border:1px solid var(--line);background:none;cursor:pointer;transition:.15s;line-height:1.6;flex:none;white-space:nowrap}
 .term-pill:hover{border-color:var(--sand-soft);color:var(--text)}
@@ -325,6 +326,93 @@ body{
 .btn.ghost:hover{color:var(--text);border-color:var(--current-soft);box-shadow:none}
 
 /* ---------- Deadlines panel ---------- */
+.dl-view-toggle{display:flex;gap:6px;margin-bottom:20px}
+.dl-view-btn{background:none;border:1px solid var(--line);color:var(--mist-dim);padding:6px 14px;border-radius:20px;font-size:12.5px;cursor:pointer;transition:.18s;font-family:var(--body)}
+.dl-view-btn:hover{color:var(--text);border-color:var(--current-soft)}
+.dl-view-btn.on{background:var(--surface-2);color:var(--text);border-color:var(--current-soft)}
+#dl-timeline{position:relative;height:280px;margin:20px 0 10px;overflow-x:auto;overflow-y:hidden}
+.dl-tl-line{position:absolute;left:0;right:0;top:140px;height:2px;background:var(--line)}
+.dl-tl-today{position:absolute;top:140px;width:1px;height:110px;background:var(--mist-dim);transform:translateX(-50%)}
+.dl-tl-today span{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9.5px;color:var(--mist-dim);font-family:var(--mono);white-space:nowrap}
+.dl-tl-dot{position:absolute;top:135px;width:11px;height:11px;margin-left:-5.5px;border-radius:50%;border:2px solid var(--deep-2)}
+.dl-tl-bar{position:absolute;top:137px;height:8px;border-radius:5px;opacity:.85}
+.dl-tl-label{position:absolute;transform:translateX(-50%);text-align:center;width:150px;line-height:1.35}
+.dl-tl-tick{position:absolute;top:134px;width:1px;height:12px;background:var(--line)}
+.dl-tl-tick.month{top:126px;width:2px;height:28px;background:var(--mist-dim)}
+.dl-tl-month-label{position:absolute;bottom:6px;transform:translateX(-50%);font-size:10px;font-family:var(--mono);
+  color:var(--mist-dim);white-space:nowrap;letter-spacing:.04em}
+.dl-tl-highlight{position:absolute;top:0;bottom:0;background:linear-gradient(180deg,#e0a45822,#e0a45806);
+  border-left:2px solid var(--amber);border-right:2px solid var(--amber);pointer-events:none}
+.dl-tl-highlight-label{position:absolute;top:8px;transform:translateX(4px);font-size:10.5px;font-family:var(--mono);
+  color:var(--amber);background:var(--deep-2);border:1px solid var(--amber);padding:2px 8px;border-radius:6px;
+  white-space:nowrap;pointer-events:none}
+.dl-tl-label .tt{font-size:11.5px;font-weight:500;line-height:1.3}
+.dl-tl-label .td{font-size:10.5px;font-family:var(--mono);margin-top:2px}
+
+/* ---------- Roadmap section (Deadlines panel) ---------- */
+.dl-section{margin-bottom:22px}
+.dl-section-head{display:flex;align-items:center;gap:10px;width:100%;background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;padding:13px 16px;cursor:pointer;transition:.15s;text-align:left;font-family:var(--body);color:var(--text)}
+.dl-section-head:hover{border-color:var(--current-soft)}
+.dl-caret{color:var(--mist-dim);font-size:11px;flex:none;width:12px}
+.dl-section-title{font-family:var(--display);font-size:16px;font-weight:600;display:flex;align-items:center;gap:9px;flex:1;min-width:0}
+.dl-section-title.plain{font-family:var(--body);font-size:12.5px;color:var(--mist-dim);text-transform:uppercase;letter-spacing:.1em;
+  font-weight:600;padding:0 2px;margin-bottom:10px;background:none;border:none;cursor:default}
+.dl-section-ct{font-size:11px;font-family:var(--mono);color:var(--mist-dim);background:#ffffff0a;padding:2px 9px;border-radius:20px;flex:none}
+.dl-section-next{font-size:12px;color:var(--mist-dim);font-family:var(--mono);flex:none;white-space:nowrap}
+.dl-roadmap-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.dl-goal-wrap{display:contents}
+.dl-sprint{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px 15px;transition:.15s}
+.dl-sprint:hover{border-color:var(--current-soft)}
+.dl-sprint.is-done{opacity:.6}
+.dl-sprint-top{display:flex;align-items:center;gap:10px}
+.dl-sprint-title{flex:1;font-size:14px;font-weight:500;min-width:0}
+.dl-sprint.is-done .dl-sprint-title{text-decoration:line-through;color:var(--mist-dim)}
+.dl-sprint-count{font-size:11.5px;font-family:var(--mono);flex:none;white-space:nowrap}
+.dl-sprint-bar{height:5px;background:#ffffff0d;border-radius:5px;overflow:hidden;margin:9px 0 6px}
+.dl-sprint-bar i{display:block;height:100%;border-radius:5px;transition:width .25s}
+.dl-sprint-meta{font-size:11px;color:var(--mist-dim);font-family:var(--mono)}
+.dl-sprint-note{font-size:11.5px;color:var(--sand);background:#e0a45812;border:1px solid #e0a45830;border-radius:9px;
+  padding:9px 12px;margin-top:9px}
+.dl-note-head{display:flex;align-items:center;gap:7px;width:100%;background:none;border:none;padding:0;cursor:pointer;
+  font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--mist-dim);font-family:var(--mono);text-align:left}
+.dl-note-head:hover{color:var(--sand)}
+.dl-note-caret{font-size:9px;flex:none}
+.dl-note-ct{font-family:var(--mono);color:var(--mist-dim);background:#ffffff0a;padding:1px 7px;border-radius:20px;margin-left:2px}
+.dl-note-line{padding:4px 0 4px 17px;line-height:1.4}
+.dl-note-line:first-of-type{margin-top:7px}
+.dl-note-line+.dl-note-line{border-top:1px solid #e0a45820}
+.dl-sprint .g-subs{margin-top:10px}
+
+/* Gantt strip */
+.dl-gantt-wrap{margin-bottom:26px}
+.dl-gantt{position:relative;display:flex;gap:4px;margin-top:12px}
+.dl-gantt-block{position:relative;flex:1;min-width:0;background:var(--surface);border:1px solid var(--line);
+  border-radius:9px;padding:10px 12px;cursor:pointer;transition:.15s;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:space-between;min-height:134px}
+.dl-gantt-block:hover{border-color:var(--current-soft)}
+.dl-gantt-block.done{background:linear-gradient(160deg,#1a3338,#15292d)}
+.dl-gantt-block.current{border-color:var(--current);box-shadow:0 0 0 1px var(--current-soft)}
+.dl-gantt-block.expanded{border-color:var(--current);box-shadow:0 0 0 2px var(--current-soft),0 0 22px 2px #5fb3a840}
+.dl-gantt-num{font-family:var(--mono);font-size:10px;color:var(--mist-dim);letter-spacing:.08em;text-transform:uppercase}
+.dl-gantt-label{font-size:12px;font-weight:500;margin-top:3px;line-height:1.3;min-height:31px}
+.dl-gantt-dates{font-size:10px;color:var(--mist-dim);font-family:var(--mono);margin-top:2px}
+.dl-gantt-bar{height:4px;background:#ffffff0d;border-radius:4px;overflow:hidden;margin-top:8px}
+.dl-gantt-bar i{display:block;height:100%;border-radius:4px}
+.dl-gantt-days{font-size:10px;color:var(--mist-dim);font-family:var(--mono);margin-top:5px}
+.dl-panel-head{display:flex;align-items:center;gap:9px;font-family:var(--display);font-size:14px;font-weight:600;
+  color:var(--text);padding:4px 2px 10px;border-bottom:1px solid var(--line);margin-bottom:2px}
+.dl-panel-dot{width:8px;height:8px;border-radius:50%;background:var(--current);box-shadow:0 0 8px var(--current-soft);flex:none}
+.dl-panel-dates{margin-left:auto;font-family:var(--mono);font-size:11px;font-weight:400;color:var(--mist-dim)}
+@media(max-width:900px){.dl-gantt{flex-wrap:wrap}.dl-gantt-block{flex:1 1 46%}}
+.rem-range-label{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--mist-dim);flex:none;white-space:nowrap}
+.rem-range-label input{width:auto}
+.rem-error{color:var(--coral);font-size:12px;min-height:16px;margin-top:6px}
+.rem-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.rem-chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:20px;padding:5px 6px 5px 12px;color:var(--mist)}
+.rem-chip button{background:none;border:none;color:var(--mist-dim);cursor:pointer;font-size:12px;padding:2px;display:flex;line-height:1}
+.rem-chip button:hover{color:var(--coral)}
+
 .dl-row{display:flex;align-items:center;gap:18px;padding:18px 20px;background:var(--surface);border:1px solid var(--line);
   border-radius:14px;margin-bottom:11px}
 .dl-row .big{font-family:var(--mono);font-size:30px;font-weight:500;width:84px;text-align:center;flex:none;line-height:1}
@@ -679,6 +767,125 @@ body{
 @media(prefers-reduced-motion:reduce){
   .ring-flow{animation:none}.brand .mark{animation:none}.panel{animation:none}
 }
+/* ---------- Investment ---------- */
+.inv-nav{display:flex;flex-direction:column;gap:3px;margin:18px 0 26px;background:var(--surface);border:1px solid var(--line);
+  border-radius:14px;padding:6px;max-width:220px}
+@media(min-width:760px){.inv-nav{flex-direction:row;max-width:none;flex-wrap:wrap}}
+.inv-nav button{display:flex;align-items:center;gap:10px;background:none;border:none;color:var(--mist);
+  font-family:var(--body);font-size:13.5px;font-weight:500;padding:10px 14px;border-radius:10px;cursor:pointer;
+  text-align:left;transition:background .18s,color .18s;flex:1}
+.inv-nav button:hover{background:#ffffff08;color:var(--text)}
+.inv-nav button.on{background:var(--surface-2);color:var(--text)}
+.inv-nav .ic{width:16px;text-align:center;flex:none}
+.inv-nav button.on .ic{filter:saturate(1.4)}
+.inv-nav-ct{margin-left:auto;font-size:10px;font-family:var(--mono);color:var(--mist-dim);background:#ffffff0a;padding:1px 7px;border-radius:20px}
+
+/* Portfolio */
+.inv-total{background:linear-gradient(160deg,var(--surface),var(--surface-2));border:1px solid var(--line);border-radius:16px;
+  padding:22px 26px;margin-bottom:18px;display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.inv-total-label{font-family:var(--display);font-size:15px;color:var(--mist-dim)}
+.inv-total-amt{font-family:var(--mono);font-size:32px;color:var(--current);letter-spacing:-.5px}
+.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.inv-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 17px;position:relative;transition:.15s}
+.inv-card:hover{border-color:var(--current-soft);background:#ffffff06}
+.inv-card-name{font-family:var(--display);font-size:14.5px;font-weight:600;margin-bottom:8px;padding-right:18px}
+.inv-card-amt{font-family:var(--mono);font-size:21px;color:var(--current);margin-bottom:4px;letter-spacing:-.3px}
+.inv-card-meta{font-size:11.5px;color:var(--mist-dim);line-height:1.4}
+.inv-card-del{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--mist-dim);cursor:pointer;
+  font-size:12px;opacity:0;transition:opacity .15s}
+.inv-card:hover .inv-card-del{opacity:1}
+.inv-card-del:hover{color:var(--coral)}
+.inv-card-add{display:flex;flex-direction:column;gap:8px;border-style:dashed;background:none}
+.inv-card-add input{background:var(--deep-2);border:1px solid var(--line);border-radius:9px;color:var(--text);
+  font-size:12.5px;padding:9px 11px;font-family:var(--body)}
+.inv-card-add input:focus{outline:none;border-color:var(--current-soft)}
+
+/* Allocation */
+.inv-alloc{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px}
+.inv-alloc-bar{display:flex;height:34px;border-radius:10px;overflow:hidden;margin-bottom:18px;box-shadow:inset 0 0 0 1px var(--line)}
+.inv-alloc-seg{display:flex;align-items:center;justify-content:center;font-size:10.5px;font-family:var(--mono);
+  color:#04342c;font-weight:600;transition:.15s}
+.inv-alloc-legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.inv-alloc-legend span{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text);
+  background:var(--deep-2);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.inv-dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+
+/* Screener */
+#inv-screen-q{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:12px;color:var(--text);
+  padding:12px 15px;font-size:13.5px;font-family:var(--body);margin-bottom:14px;transition:border-color .15s}
+#inv-screen-q:focus{outline:none;border-color:var(--current-soft)}
+#inv-screen-q::placeholder{color:var(--mist-dim)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chip{padding:6px 14px;border-radius:20px;border:1px solid var(--line);font-size:12px;color:var(--mist-dim);
+  background:var(--surface);cursor:pointer;transition:.15s;font-family:var(--body)}
+.chip:hover{border-color:var(--current-soft);color:var(--text)}
+.chip.on{color:var(--current);border-color:var(--current-soft);background:#5fb3a814}
+.inv-tbl-wrap{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:2px}
+.inv-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.inv-tbl th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--mist-dim);
+  font-family:var(--mono);padding:12px 14px;border-bottom:1px solid var(--line);font-weight:500;background:var(--surface-2)}
+.inv-tbl td{padding:11px 14px;border-bottom:1px solid var(--line)}
+.inv-tbl tr:last-child td{border-bottom:none}
+.inv-tbl tbody tr{transition:background .12s}
+.inv-tbl tbody tr:hover{background:#ffffff05}
+.inv-tick{font-family:var(--mono);color:var(--sand);font-weight:500}
+.inv-sector-badge{font-size:10.5px;color:var(--mist-dim);background:#ffffff0a;padding:2px 9px;border-radius:20px;
+  display:inline-block}
+.inv-track-btn{padding:5px 13px;border-radius:20px;border:1px solid var(--line);background:none;color:var(--mist-dim);
+  font-size:11px;cursor:pointer;font-family:var(--body);transition:.15s;white-space:nowrap}
+.inv-track-btn:hover{border-color:var(--current-soft);color:var(--text)}
+.inv-track-btn.on{color:var(--current);border-color:var(--current-soft);background:#5fb3a814}
+
+/* Research */
+.inv-ticker-picker{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.inv-ticker-chip{padding:7px 15px;border-radius:20px;border:1px solid var(--line);font-size:12.5px;
+  font-family:var(--mono);color:var(--mist-dim);background:var(--surface);cursor:pointer;transition:.15s}
+.inv-ticker-chip:hover{border-color:var(--current-soft);color:var(--text)}
+.inv-ticker-chip.on{color:var(--current);border-color:var(--current-soft);background:#5fb3a814}
+.research{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px}
+.research-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:16px;
+  border-bottom:1px solid var(--line)}
+.research-head .name{font-family:var(--display);font-size:19px;font-weight:600}
+.overall-ring{display:flex;align-items:center;gap:10px}
+.overall{font-family:var(--mono);font-size:26px;color:var(--current);letter-spacing:-.5px}
+.overall-label{font-size:10px;color:var(--mist-dim);text-transform:uppercase;letter-spacing:.08em;font-family:var(--mono)}
+.crit{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-top:1px solid var(--line);font-size:13px}
+.crit:first-of-type{border-top:none;padding-top:0}
+.crit-label{color:var(--mist)}
+.crit-target{color:var(--mist-dim);font-size:11px;font-family:var(--mono)}
+.crit-val{font-family:var(--mono);font-size:13px;display:flex;align-items:center;gap:7px;font-weight:500}
+.crit-val.pass{color:var(--current)}
+.crit-val.fail{color:var(--coral)}
+.crit-icon{width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px}
+.crit-icon.pass{background:#5fb3a81f;color:var(--current)}
+.crit-icon.fail{background:#d98b7a1f;color:var(--coral)}
+
+/* Watchlist */
+.inv-wl-tick{font-family:var(--mono);color:var(--sand);font-size:13px;font-weight:600;letter-spacing:.3px}
+.inv-wl-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:12px;overflow:hidden;z-index:5;box-shadow:0 8px 24px #00000040}
+.inv-wl-dd-item{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;font-size:12.5px;
+  color:var(--mist);cursor:pointer;transition:background .12s}
+.inv-wl-dd-item:hover{background:#ffffff08}
+.inv-wl-dd-item span:last-child{color:var(--mist-dim);font-size:11.5px}
+.inv-note-head{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--mist-dim);font-family:var(--mono)}
+.inv-lot-group{background:var(--deep-2);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.inv-lot-head{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--text);font-weight:500;margin-bottom:8px}
+.inv-lot-group .inv-tbl{background:none;font-size:11.5px}
+.inv-lot-group .inv-tbl th{padding:6px 8px;background:none}
+.inv-lot-group .inv-tbl td{padding:6px 8px}
+
+/* Rules */
+.inv-rules-grid{display:grid;gap:14px}
+.inv-rules-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.inv-rules-title{font-family:var(--display);font-size:15px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.inv-rules-card ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.inv-rules-card li{font-size:13px;color:var(--mist);line-height:1.5;padding-left:18px;position:relative}
+.inv-rules-card li::before{content:'';position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%;background:var(--current-soft)}
+.vix{background:#e0a4580f;border:1px solid #e0a45830;border-radius:14px;padding:14px 17px;margin-top:6px}
+.vix-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:13px}
+.vix-row+.vix-row{border-top:1px solid #e0a45820}
+.vix-range{font-family:var(--mono);color:var(--amber);font-weight:500}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
@@ -714,6 +921,7 @@ body{
       <button data-go="fuel"><span class="ic">◆</span> Fuel <span class="badge" id="b-fuel">0</span></button>
       <button data-go="goals"><span class="ic">⬡</span> Goals <span class="badge" id="b-goals">0</span></button>
       <button data-go="deadlines"><span class="ic">◷</span> Deadlines <span class="badge" id="b-dl">0</span></button>
+      <button data-go="invest"><span class="ic">◈</span> Investment</button>
       <button data-go="capture"><span class="ic">✎</span> Capture <span class="badge" id="b-cap">0</span></button>
       <button data-go="quotes"><span class="ic">❝</span> Quotes</button>
       <button id="open-sync" class="nav-util nav-section-break"><span class="ic">⤓</span> Backup &amp; sync</button>
@@ -969,7 +1177,6 @@ body{
       <p class="sub">Your whole board lives here. Star up to five to make them today's focus — that's the only decision that matters right now.</p>
       <div class="cat-bar" id="cat-bar"></div>
       <div class="term-bar" id="term-bar"></div>
-      <div class="term-bar" id="focused-bar" style="margin-top:-14px"></div>
       <div id="goals-body"></div>
     </section>
 
@@ -978,12 +1185,47 @@ body{
       <div class="eyebrow">Time, made visible</div>
       <h2 class="h2">Deadlines</h2>
       <p class="sub">No deadline is an emergency until it's the nearest one. Here they are, sorted so you only ever worry about the top of the list.</p>
-      <div class="add-row" style="margin:22px 0 26px">
+      <div class="add-row" style="margin:22px 0 18px">
         <input id="dl-name" placeholder="What's the commitment?">
         <input id="dl-date" type="date" style="flex:none">
         <button class="btn" id="dl-add">Add</button>
       </div>
+      <div class="dl-view-toggle" id="dl-view-toggle">
+        <button class="dl-view-btn on" data-dlview="list">List</button>
+        <button class="dl-view-btn" data-dlview="timeline">Timeline</button>
+      </div>
       <div id="dl-list"></div>
+      <div id="dl-timeline-wrap" style="display:none">
+        <div id="dl-roadmap-gantt"></div>
+        <div id="dl-timeline"></div>
+        <p class="fuel-tip" style="margin-top:14px">Goal deadlines show automatically, colored by urgency. Add your own reminders below — a single day, or a window if it spans a range.</p>
+        <div class="add-row" style="margin-top:16px">
+          <input id="rem-title" placeholder="What's the reminder?">
+          <input id="rem-start" type="date" style="flex:none">
+          <label class="rem-range-label"><input id="rem-range" type="checkbox"> window</label>
+        </div>
+        <div id="rem-end-row" class="add-row" style="display:none;margin-top:8px">
+          <input id="rem-end" type="date" placeholder="Ends">
+        </div>
+        <div id="rem-error" class="rem-error"></div>
+        <button class="btn" id="rem-add" style="margin-top:10px">Add reminder</button>
+        <div id="rem-chips" class="rem-chips"></div>
+      </div>
+    </section>
+
+    <!-- INVESTMENT -->
+    <section class="panel" id="p-invest">
+      <div class="eyebrow">Where the cash actually goes</div>
+      <h2 class="h2">Investment</h2>
+      <div class="inv-nav" id="inv-nav">
+        <button data-invtab="portfolio" class="on"><span class="ic">▣</span> Portfolio</button>
+        <button data-invtab="allocation"><span class="ic">◐</span> Allocation</button>
+        <button data-invtab="screener"><span class="ic">⌕</span> Screener <span class="inv-nav-ct">660</span></button>
+        <button data-invtab="research"><span class="ic">▤</span> Research</button>
+        <button data-invtab="watchlist"><span class="ic">◉</span> Watchlist</button>
+        <button data-invtab="rules"><span class="ic">▦</span> Rules</button>
+      </div>
+      <div id="inv-body"></div>
     </section>
 
     <!-- CAPTURE -->
@@ -1170,10 +1412,737 @@ const SEED=[
   ['Social / Fun','Try new experiences / restaurants in Singapore'],['Social / Fun','Go out with friends every 2\u20133 weeks'],['Social / Fun','Watch 365 movies in a year'],['Social / Fun','Buy new wants'],['Social / Fun','Build a new PC'],['Social / Fun','Keep a balanced downtime schedule'],['Social / Fun','Plan trips with the boys (JB, Thailand, Australia, Europe, 2030 WC)']
 ];
 const HABIT_SEED=[
-  {name:'Coding Course'},{name:'Driving Course'},{name:'Dental Care'},{name:'Gym'},
+  {name:'Coding Course'},{name:'Certification Study'},{name:'NTU Module Study'},{name:'Software Project'},{name:'DSA / Leetcode'},
+  {name:'Driving Theory'},{name:'Dental Care'},{name:'Gym'},
   {name:'Physiotherapy'},{name:'Push-ups'},{name:'Vitamins & Water'}
 ];
 function seedHabits(){return HABIT_SEED.map((h,i)=>({id:i+1,name:h.name,type:h.type||'check',log:{}}));}
+
+// Aug 2026 → Jun 2027 cert/module/project roadmap, added as its own Goals category so it
+// gets checklists, deadlines (shows on the Deadlines timeline), and focus-star for free.
+const WK_SPLIT_NO_DSA=[
+  '📆 Weekdays — 1.5h Certification Study OR NTU Module (alternate by day)',
+  '💻 Weekdays — 1.5h Software Project',
+  '🚗 Weekdays — 30–45min Driving Theory'
+];
+const WK_SPLIT=[
+  '📆 Weekdays — 1.5h Certification Study OR NTU Module (alternate by day)',
+  '💻 Weekdays — 1.5h Software Project',
+  '🚗 Weekdays — 30–45min Driving Theory',
+  '🧮 Weekdays — 30min DSA/Leetcode'
+];
+const WE_SPLIT_HW=[
+  '🔧 Sat — 3–3.5h Hardware + PCB/CAD',
+  '🚗 Sat — 1–1.5h Driving Theory (mock test)',
+  '🎓 Sat — 1–1.5h Cert/Module catch-up',
+  '💻 Sun — 2–2.5h Software Project',
+  '🎓 Sun — 1–1.5h Cert/Module',
+  '🚗 Sun — 45min Driving Theory'
+];
+const WE_SPLIT_CAPSTONE=[
+  '💻 Weekends — full days on the capstone project + buffer for slippage',
+  '🚗 Weekends — keep Driving Theory daily until the practical is booked'
+];
+const INVESTMENT_UNIVERSE=[
+{t:'AAPL',n:'Apple',s:'Technology',u:'Magnificent 7',k:'S'},
+{t:'MSFT',n:'Microsoft',s:'Technology',u:'Magnificent 7',k:'S'},
+{t:'GOOGL',n:'Alphabet – Class C',s:'Technology',u:'Magnificent 7',k:'S'},
+{t:'AMZN',n:'Amazon',s:'Technology',u:'Magnificent 7',k:'S'},
+{t:'NVDA',n:'NVIDIA',s:'Technology',u:'Magnificent 7',k:'S'},
+{t:'META',n:'Meta Platforms',s:'Technology',u:'Magnificent 7',k:'S'},
+{t:'TSLA',n:'Tesla',s:'Technology',u:'Magnificent 7',k:'S'},
+{t:'ORCL',n:'Oracle',s:'Technology',u:'Big Tech',k:'S'},
+{t:'NFLX',n:'Netflix',s:'Technology',u:'Big Tech',k:'S'},
+{t:'CRM',n:'Salesforce',s:'Technology',u:'Big Tech',k:'S'},
+{t:'IBM',n:'IBM',s:'Technology',u:'Big Tech',k:'S'},
+{t:'ADBE',n:'Adobe',s:'Technology',u:'Big Tech',k:'S'},
+{t:'AMD',n:'Advanced Micro Devices',s:'Technology',u:'Big Tech',k:'S'},
+{t:'INTC',n:'Intel',s:'Technology',u:'Big Tech',k:'S'},
+{t:'MU',n:'Micron Technology',s:'Technology',u:'Big Tech',k:'S'},
+{t:'AVGO',n:'Broadcom',s:'Technology',u:'Big Tech',k:'S'},
+{t:'CSCO',n:'Cisco Systems',s:'Technology',u:'Big Tech',k:'S'},
+{t:'UBER',n:'Uber Technologies',s:'Technology',u:'Big Tech',k:'S'},
+{t:'ACN',n:'Accenture Plc',s:'Technology',u:'Big Tech',k:'S'},
+{t:'SPCX',n:'SpaceX',s:'Technology',u:'Big Tech',k:'S'},
+{t:'TSM',n:'Taiwan Semiconductor',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'ASML',n:'ASML Holding',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'ARM',n:'Arm Holdings',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'AMAT',n:'Applied Materials Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'FORM',n:'FormFactor Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'GFS',n:'Globalfoundries Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'SNPS',n:'Synopsys Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'CDNS',n:'Cadence Design Systems Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'AEHR',n:'Aehr Test Systems',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'INDI',n:'indie Semiconductor Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'QCOM',n:'Qualcomm',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'ADI',n:'Analog Devices Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'TXN',n:'Texas Instruments Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'SLAB',n:'Silicon Laboratories Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'ALAB',n:'Astera Labs Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'TSEM',n:'Tower Semiconductor',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'LRCX',n:'Lam Research Corp',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'KLAC',n:'KLA Corp',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'NXPI',n:'NXP Semiconductors NV',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'TRT',n:'Trio-Tech International',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'MRAM',n:'Everspin Technologies Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'CBRM',n:'Cerebras Systems Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'STM',n:'STMicroelectronics NV',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'TER',n:'Teradyne Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'8035',n:'Tokyo Electron Ltd',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'00593KS',n:'Samsung',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'000660',n:'SK Hynix Inc',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'IFX',n:'Infineon Technologies AG',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'MKSI',n:'MKS Incorporated',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'SIVE',n:'Sivers Semiconductors AB',s:'Technology',u:'Semiconductor Manufacturing',k:'S'},
+{t:'ANET',n:'Arista Networks',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'TDY',n:'Teledyne Technologies Inc',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'FRSH',n:'Freshworks Inc',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'CORZ',n:'Core Scientific',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'APLD',n:'Applied Digital',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'CIFR',n:'Cipher Mining',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'MRVL',n:'Marvell Technology Inc',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'LITE',n:'Lumentum Holdings',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'COHR',n:'Coherent Corp',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'CIEN',n:'Ciena Corporation',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'AAOI',n:'Applied Optoelectronics',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'2317.TW',n:'Foxconn',s:'Technology',u:'Data Center Infrastructure',k:'S'},
+{t:'P',n:'Everpure Inc',s:'Technology',u:'Data Storage',k:'S'},
+{t:'SNDK',n:'SanDisk',s:'Technology',u:'Data Storage',k:'S'},
+{t:'STX',n:'Seagate',s:'Technology',u:'Data Storage',k:'S'},
+{t:'WDC',n:'Western Digital Corp',s:'Technology',u:'Data Storage',k:'S'},
+{t:'285A',n:'Kioxia Holdings Corporation',s:'Technology',u:'Data Storage',k:'S'},
+{t:'SNOW',n:'Snowflake Inc',s:'Technology',u:'AI Infrastructure',k:'S'},
+{t:'DDOG',n:'Datadog Inc',s:'Technology',u:'AI Infrastructure',k:'S'},
+{t:'FROG',n:'JFrog Ltd',s:'Technology',u:'AI Infrastructure',k:'S'},
+{t:'INOD',n:'Innodata Inc',s:'Technology',u:'AI Infrastructure',k:'S'},
+{t:'NBIS',n:'Nebius Group',s:'Technology',u:'AI Infrastructure',k:'S'},
+{t:'CRWV',n:'CoreWeave Inc',s:'Technology',u:'AI Infrastructure',k:'S'},
+{t:'WYFI',n:'WhiteFiber Inc',s:'Technology',u:'AI Infrastructure',k:'S'},
+{t:'GLW',n:'Corning Inc',s:'Technology',u:'AI Infrastructure',k:'S'},
+{t:'CRDO',n:'Credo Technology Group Holding Ltd',s:'Technology',u:'AI Infrastructure',k:'S'},
+{t:'PANW',n:'Palo Alto Networks',s:'Technology',u:'Cyber Security',k:'S'},
+{t:'CRWD',n:'Crowdstrike Holdings Inc',s:'Technology',u:'Cyber Security',k:'S'},
+{t:'ZS',n:'Zscaler Inc',s:'Technology',u:'Cyber Security',k:'S'},
+{t:'CHKP',n:'Check Point Software Technologies Ltd',s:'Technology',u:'Cyber Security',k:'S'},
+{t:'S',n:'SentinelOne Inc',s:'Technology',u:'Cyber Security',k:'S'},
+{t:'NTSK',n:'Netskope Inc',s:'Technology',u:'Cyber Security',k:'S'},
+{t:'RBRK',n:'Rubrik',s:'Technology',u:'Cyber Security',k:'S'},
+{t:'SAIL',n:'Sailpoint Inc',s:'Technology',u:'Cyber Security',k:'S'},
+{t:'OKTA',n:'Okta Inc',s:'Technology',u:'Cyber Security',k:'S'},
+{t:'PENG',n:'Penguin Solutions Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'ZETA',n:'Zeta Global Holdings',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'TEM',n:'Tempus AI',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'VEEV',n:'Veeva Systems Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'GWRE',n:'Guidewire Software Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'CSGP',n:'CoStar Group Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'TYL',n:'Tyler Technologies Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'QTWO',n:'Q2 Holdings Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'TWLO',n:'Twilio Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'NOW',n:'ServiceNow Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'EPAM',n:'EPAM Systems Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'ZBRA',n:'Zebra Technologies Corp',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'WDAY',n:'Workday Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'APP',n:'Applovin Corp',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'OPEN',n:'Opendoor Technologies Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'SNAP',n:'Snap Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'SOUN',n:'SoundHound AI Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'NOK',n:'Nokia Oyj',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'FIG',n:'Figma Inc',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'MNDY',n:'Monday.Com Ltd',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'6758',n:'Sony Group Corp',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'003550',n:'LG Corp',s:'Technology',u:'Enterprise & Consumer Applications',k:'S'},
+{t:'INFQ',n:'Infleqtion',s:'Technology',u:'Quantum',k:'S'},
+{t:'IONQ',n:'IonQ',s:'Technology',u:'Quantum',k:'S'},
+{t:'RGTI',n:'Rigetti Computing Inc',s:'Technology',u:'Quantum',k:'S'},
+{t:'QBTS',n:'D-Wave Quantum Inc',s:'Technology',u:'Quantum',k:'S'},
+{t:'QUBT',n:'Quantum Computing Inc',s:'Technology',u:'Quantum',k:'S'},
+{t:'QNT',n:'Quantinuum Inc',s:'Technology',u:'Quantum',k:'S'},
+{t:'ARQQ',n:'Arqit Quantum',s:'Technology',u:'Quantum',k:'S'},
+{t:'QNC',n:'Quantum eMotion Corp',s:'Technology',u:'Quantum',k:'S'},
+{t:'LAES',n:'SEALSQ',s:'Technology',u:'Quantum',k:'S'},
+{t:'KEYS',n:'Keysight Technologies',s:'Technology',u:'Quantum',k:'S'},
+{t:'QCLS',n:'Q/C Technologies Inc',s:'Technology',u:'Quantum',k:'S'},
+{t:'XNDU',n:'Xanadu Quantum Technologies Ord Shs',s:'Technology',u:'Quantum',k:'S'},
+{t:'OXIGF',n:'Oxford Instruments',s:'Technology',u:'Quantum',k:'S'},
+{t:'SERV',n:'Serve Robotics',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'ARBE',n:'Arbe Robotics',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'ONDS',n:'Ondas',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'RR',n:'Richtech Robotics',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'ABG',n:'Asbury Automotive Group',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'ISRG',n:'Intuitive Surgical Inc',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'HON',n:'Honeywell International Inc',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'EMR',n:'Emerson Electric Co',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'ROK',n:'Rockwell Automation Inc',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'OUST',n:'Ouster Inc',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'SYM',n:'Symbotic Inc',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'AEVA',n:'Aeva Technologies Inc',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'9880',n:'Ubtech Robotics Corp Ltd',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'6954',n:'Fanuc Corp',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'6861',n:'Keyence Corp',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'PNG.V / KRKN',n:'Kraken Robotics',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'KU2G',n:'Kuka AG',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'ABBN',n:'ABB Ltd',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'EXA',n:'Exail Technologies SA',s:'Technology',u:'Automation & Robotics',k:'S'},
+{t:'TMUS',n:'T-Mobile Us Inc',s:'Communication Services',u:'',k:'S'},
+{t:'VZ',n:'Verizon Communications Inc',s:'Communication Services',u:'',k:'S'},
+{t:'T',n:'AT&T Inc',s:'Communication Services',u:'',k:'S'},
+{t:'CMCSA',n:'Comcast Corporation',s:'Communication Services',u:'',k:'S'},
+{t:'LUMN',n:'Lumen Technologies',s:'Communication Services',u:'',k:'S'},
+{t:'HLIT',n:'Harmonic Inc',s:'Communication Services',u:'',k:'S'},
+{t:'SIRI',n:'Sirius XM Holdings Inc.',s:'Communication Services',u:'',k:'S'},
+{t:'IMAX',n:'Imax Corp',s:'Communication Services',u:'',k:'S'},
+{t:'LON:STC',n:'Filtronic plc',s:'Communication Services',u:'',k:'S'},
+{t:'MA',n:'Mastercard',s:'Finance',u:'Payment Networks',k:'S'},
+{t:'V',n:'Visa',s:'Finance',u:'Payment Networks',k:'S'},
+{t:'AXP',n:'American Express',s:'Finance',u:'Payment Networks',k:'S'},
+{t:'ICE',n:'Intercontinental Exchange Inc',s:'Finance',u:'Payment Networks',k:'S'},
+{t:'VYX',n:'NCR Voyix Corporation',s:'Finance',u:'Payment Networks',k:'S'},
+{t:'JPM',n:'JPMorgan Chase',s:'Finance',u:'Investment Banks',k:'S'},
+{t:'GS',n:'Goldman Sachs',s:'Finance',u:'Investment Banks',k:'S'},
+{t:'MS',n:'Morgan Stanley',s:'Finance',u:'Investment Banks',k:'S'},
+{t:'BAC',n:'Bank of America',s:'Finance',u:'Investment Banks',k:'S'},
+{t:'UBS',n:'UBS Group',s:'Finance',u:'Investment Banks',k:'S'},
+{t:'DB',n:'Deutsche Bank',s:'Finance',u:'Investment Banks',k:'S'},
+{t:'C',n:'Citigroup',s:'Finance',u:'Investment Banks',k:'S'},
+{t:'SCHW',n:'Charles Schwab',s:'Finance',u:'Investment Banks',k:'S'},
+{t:'BLK',n:'BlackRock',s:'Finance',u:'Asset Managers & Private Equity',k:'S'},
+{t:'BX',n:'Blackstone',s:'Finance',u:'Asset Managers & Private Equity',k:'S'},
+{t:'OWL',n:'Blue Owl Capital Inc',s:'Finance',u:'Asset Managers & Private Equity',k:'S'},
+{t:'STT',n:'State Street Global Advisors',s:'Finance',u:'Asset Managers & Private Equity',k:'S'},
+{t:'APO',n:'Apollo Global Management',s:'Finance',u:'Asset Managers & Private Equity',k:'S'},
+{t:'KKR',n:'KKR & Co Inc',s:'Finance',u:'Asset Managers & Private Equity',k:'S'},
+{t:'BRK',n:'Berkshire Hathaway – Class B',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'PS',n:'Pershing Square',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'PSUS',n:'Pershing Square USA Ltd',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'BAM',n:'Brookfield Asset Management Ltd.',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'L',n:'Loews Corporation',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'MKL',n:'Markel Group Inc',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'IEP',n:'Icahn Enterprises LP Common Stock',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'EQH',n:'Equitable Holdings Inc',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'AB',n:'AllianceBernstein',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'TYO: 9984',n:'SoftBank Group Corp',s:'Finance',u:'Investment Holding Company',k:'S'},
+{t:'SOFI',n:'SoFi Technologies',s:'Finance',u:'FinTech',k:'S'},
+{t:'PGY',n:'Pagaya Technologies',s:'Finance',u:'FinTech',k:'S'},
+{t:'HOOD',n:'Robinhood Markets INC',s:'Finance',u:'FinTech',k:'S'},
+{t:'XYZ',n:'Block Inc',s:'Finance',u:'FinTech',k:'S'},
+{t:'BR',n:'Broadridge Financial Solutions',s:'Finance',u:'FinTech',k:'S'},
+{t:'FICO',n:'Fair Isaac Corp',s:'Finance',u:'Financial Benchmarking',k:'S'},
+{t:'SPGI',n:'S&P Global Inc',s:'Finance',u:'Financial Benchmarking',k:'S'},
+{t:'NDAQ',n:'Nasdaq',s:'Finance',u:'Financial Benchmarking',k:'S'},
+{t:'CME',n:'CME Group Inc',s:'Finance',u:'Financial Benchmarking',k:'S'},
+{t:'MCO',n:'Moody\'s Corp',s:'Finance',u:'Financial Benchmarking',k:'S'},
+{t:'MSCI',n:'MSCI Inc',s:'Finance',u:'Financial Benchmarking',k:'S'},
+{t:'CB',n:'Chubb Limited',s:'Finance',u:'Insurance',k:'S'},
+{t:'CRBG',n:'Corebridge Financial Inc',s:'Finance',u:'Insurance',k:'S'},
+{t:'AIG',n:'American International Group Inc',s:'Finance',u:'Insurance',k:'S'},
+{t:'ALL',n:'Allstate Corp',s:'Finance',u:'Insurance',k:'S'},
+{t:'PGR',n:'Progressive Corp',s:'Finance',u:'Insurance',k:'S'},
+{t:'MFC',n:'Manulife',s:'Finance',u:'Insurance',k:'S'},
+{t:'PRU',n:'Prudential',s:'Finance',u:'Insurance',k:'S'},
+{t:'1299',n:'AIA',s:'Finance',u:'Insurance',k:'S'},
+{t:'EFX',n:'Equifax Inc',s:'Finance',u:'Lending',k:'S'},
+{t:'TRU',n:'TransUnion',s:'Finance',u:'Lending',k:'S'},
+{t:'SLM',n:'SLM Corporation',s:'Finance',u:'Lending',k:'S'},
+{t:'TSLX',n:'Sixth Street Specialty Lending',s:'Finance',u:'Lending',k:'S'},
+{t:'OBDC',n:'Blue Owl Capital Corp',s:'Finance',u:'Lending',k:'S'},
+{t:'EXPN',n:'Experian plc',s:'Finance',u:'Lending',k:'S'},
+{t:'XOM',n:'Exxon Mobil',s:'Energy',u:'Oil & Gas',k:'S'},
+{t:'CVX',n:'Chevron',s:'Energy',u:'Oil & Gas',k:'S'},
+{t:'OXY',n:'Occidental Petroleum',s:'Energy',u:'Oil & Gas',k:'S'},
+{t:'HAL',n:'Halliburton Co',s:'Energy',u:'Oil & Gas',k:'S'},
+{t:'EOG',n:'EOG Resources Inc',s:'Energy',u:'Oil & Gas',k:'S'},
+{t:'SLB',n:'Schlumberger',s:'Energy',u:'Oil & Gas',k:'S'},
+{t:'CCJ',n:'Cameco',s:'Energy',u:'Nuclear',k:'S'},
+{t:'DNN',n:'Denison Mines',s:'Energy',u:'Nuclear',k:'S'},
+{t:'UUUU',n:'Energy Fuels Inc',s:'Energy',u:'Nuclear',k:'S'},
+{t:'UEC',n:'Uranium Energy Corp.',s:'Energy',u:'Nuclear',k:'S'},
+{t:'OKLO',n:'Oklo',s:'Energy',u:'Nuclear',k:'S'},
+{t:'SMR',n:'Nuscale Power Corp',s:'Energy',u:'Nuclear',k:'S'},
+{t:'NNE',n:'Nano Nuclear Energy Inc',s:'Energy',u:'Nuclear',k:'S'},
+{t:'BWXT',n:'BWX Technologies Inc',s:'Energy',u:'Nuclear',k:'S'},
+{t:'EOSE',n:'Eos Energy Enterprises',s:'Energy',u:'Renewable',k:'S'},
+{t:'ENPH',n:'Enphase Energy',s:'Energy',u:'Renewable',k:'S'},
+{t:'LEU',n:'Centrus Energy Corp',s:'Energy',u:'Renewable',k:'S'},
+{t:'FSLR',n:'First Solar',s:'Energy',u:'Renewable',k:'S'},
+{t:'SHLS',n:'Shoals Technologies Group Inc',s:'Energy',u:'Renewable',k:'S'},
+{t:'ARRY',n:'Array Technologies Inc',s:'Energy',u:'Renewable',k:'S'},
+{t:'BE',n:'Bloom Energy Corp',s:'Energy',u:'Renewable',k:'S'},
+{t:'MVST',n:'Microvast',s:'Energy',u:'Renewable',k:'S'},
+{t:'TE',n:'T1 Energy Inc',s:'Energy',u:'Renewable',k:'S'},
+{t:'VST',n:'Vistra Corp',s:'Utilities',u:'Grid Infrastructure',k:'S'},
+{t:'CEG',n:'Constellation Energy Corp',s:'Utilities',u:'Grid Infrastructure',k:'S'},
+{t:'TAC',n:'TransAlta Corp',s:'Utilities',u:'Grid Infrastructure',k:'S'},
+{t:'IREN',n:'Iren Ltd',s:'Utilities',u:'Grid Infrastructure',k:'S'},
+{t:'GEV',n:'GE Vernova',s:'Utilities',u:'Grid Infrastructure',k:'S'},
+{t:'NEE',n:'NextEra Energy',s:'Utilities',u:'Grid Infrastructure',k:'S'},
+{t:'WBI',n:'WaterBridge Infrastructure LLC',s:'Utilities',u:'Utilities Management',k:'S'},
+{t:'AWK',n:'American Water Works Company',s:'Utilities',u:'Utilities Management',k:'S'},
+{t:'XYL',n:'Xylem Inc.',s:'Utilities',u:'Utilities Management',k:'S'},
+{t:'WM',n:'Waste Management',s:'Utilities',u:'Utilities Management',k:'S'},
+{t:'RSG',n:'Republic Services Inc',s:'Utilities',u:'Utilities Management',k:'S'},
+{t:'B',n:'Barrick Mining',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'AU',n:'Anglogold Ashanti',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'GFI',n:'Gold Fields',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'IAG',n:'Iamgold',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'CDE',n:'Coeur Mining',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'KGC',n:'Kinross',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'EQX',n:'Equinox Gold Corp',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'NEM',n:'Newmont Mining',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'PAAS',n:'Pan American Silver',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'HAR',n:'Harmony Gold Mining',s:'Materials',u:'Precious Metals',k:'S'},
+{t:'TMC',n:'The Metals Company',s:'Materials',u:'Diversified Mining',k:'S'},
+{t:'USAR',n:'USA Rare Earth',s:'Materials',u:'Diversified Mining',k:'S'},
+{t:'RIO',n:'Rio Tinto Ltd',s:'Materials',u:'Diversified Mining',k:'S'},
+{t:'NUE',n:'Nucor',s:'Materials',u:'Diversified Mining',k:'S'},
+{t:'MTRN',n:'Materion Corp',s:'Materials',u:'Diversified Mining',k:'S'},
+{t:'ATI',n:'ATI inc',s:'Materials',u:'Diversified Mining',k:'S'},
+{t:'CRS',n:'Carpenter Technologies',s:'Materials',u:'Diversified Mining',k:'S'},
+{t:'MP',n:'Mp Materials Corp',s:'Materials',u:'Diversified Mining',k:'S'},
+{t:'ALOY',n:'REalloys Inc',s:'Materials',u:'Diversified Mining',k:'S'},
+{t:'LIN',n:'Linde plc',s:'Materials',u:'Chemicals',k:'S'},
+{t:'APD',n:'Air Products and Chemicals',s:'Materials',u:'Chemicals',k:'S'},
+{t:'SHW',n:'Sherwin-Williams Company',s:'Materials',u:'Chemicals',k:'S'},
+{t:'AI',n:'L\'Air Liquide S.A.',s:'Materials',u:'Chemicals',k:'S'},
+{t:'ATLKY',n:'Atlas Copco',s:'Materials',u:'Chemicals',k:'S'},
+{t:'ACT',n:'Aduro Clean Technologies Inc',s:'Materials',u:'Chemicals',k:'S'},
+{t:'RKLB',n:'Rocket Lab USA',s:'Industrial',u:'Aerospace',k:'S'},
+{t:'RDW',n:'Redwire Corp',s:'Industrial',u:'Aerospace',k:'S'},
+{t:'PL',n:'Planet Labs',s:'Industrial',u:'Aerospace',k:'S'},
+{t:'LUNR',n:'Intuitive Machines',s:'Industrial',u:'Aerospace',k:'S'},
+{t:'SATS',n:'EchoStar',s:'Industrial',u:'Aerospace',k:'S'},
+{t:'ASTS',n:'AST SpaceMobile',s:'Industrial',u:'Aerospace',k:'S'},
+{t:'SPCE',n:'Virgin Galactic Holdings Inc',s:'Industrial',u:'Aerospace',k:'S'},
+{t:'JOBY',n:'Joby Aviation Inc',s:'Industrial',u:'Aerospace',k:'S'},
+{t:'ACHR',n:'Archer Aviation Inc',s:'Industrial',u:'Aerospace',k:'S'},
+{t:'BA',n:'Boeing',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'LMT',n:'Lockheed Martin',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'RTX',n:'Rtx Corp',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'GD',n:'General Dynamics',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'NOC',n:'Northrop Grumman',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'LHX',n:'L3Harris Technologies',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'HEI',n:'Heico',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'TDG',n:'TransDigm Group Inc',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'GHM',n:'Graham Corporation',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'SARO',n:'Standard Aero',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'OSK',n:'Oshkosh Corp',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'SRFM',n:'Surf Air Mobility',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'PSN',n:'Parsons Corporation',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'KTOS',n:'Kratos Defense & Security Solutions Inc',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'KRMN',n:'Karman Holdings',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'ESLT',n:'Elbit Systems Ltd',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'HWM',n:'Howmet Aerospace Inc',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'GE',n:'GE Aerospace',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'WWD',n:'Woodward',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'HII',n:'Huntington Ingalls',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'SAF',n:'Safran SA',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'RENK',n:'Renk Group AG',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'BCKIY',n:'Babcock International Group ADR',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'RNMBY',n:'Rheinmetall ADR',s:'Industrial',u:'Defence Contractors',k:'S'},
+{t:'PLTR',n:'Palantir',s:'Industrial',u:'Defence Tech',k:'S'},
+{t:'DPRO',n:'Dragonfly',s:'Industrial',u:'Defence Tech',k:'S'},
+{t:'UMAC',n:'Unusual Machines Inc',s:'Industrial',u:'Defence Tech',k:'S'},
+{t:'AVAV',n:'AeroVironment',s:'Industrial',u:'Defence Tech',k:'S'},
+{t:'LDOS',n:'Leidos Holdings Inc',s:'Industrial',u:'Defence Tech',k:'S'},
+{t:'BAH',n:'Booz Allen Hamilton Holding Corporation',s:'Industrial',u:'Defence Tech',k:'S'},
+{t:'SAIC',n:'Science Applications International Corp',s:'Industrial',u:'Defence Tech',k:'S'},
+{t:'MOG',n:'Moog Inc',s:'Industrial',u:'Defence Tech',k:'S'},
+{t:'DAL',n:'Delta Air Lines Inc',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'AAL',n:'American Airlines Group Inc',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'UAL',n:'United Airlines',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'RYAAY',n:'Ryanair Holdings',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'LUV',n:'Southwest Airlines',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'LTM',n:'Latam Airlines Group',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'UNP',n:'Union Pacific Corp',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'NSC',n:'Norfolk Southern Corp',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'CSX',n:'CSX Corp',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'CHRW',n:'CH Robinson Worldwide Inc',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'DHT',n:'DHT Holdings',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'INSW',n:'INTl Seaways',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'FRO',n:'Frontline',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'UPS',n:'United Parcel Service',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'CP',n:'Canadian Pacific Kansas City Ltd',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'CNI',n:'Canadian National Railway Co',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'FER',n:'Ferrovial NV',s:'Industrial',u:'Transportation & Shipping',k:'S'},
+{t:'CAT',n:'Caterpillar Inc.',s:'Industrial',u:'Construction',k:'S'},
+{t:'PWR',n:'Quanta Services, Inc.',s:'Industrial',u:'Construction',k:'S'},
+{t:'VMC',n:'Vulcan Materials Company',s:'Industrial',u:'Construction',k:'S'},
+{t:'MLM',n:'Martin Marietta Materials, Inc',s:'Industrial',u:'Construction',k:'S'},
+{t:'FLR',n:'Fluor Corp',s:'Industrial',u:'Industrial Equipment',k:'S'},
+{t:'J',n:'Jacobs Solutions Inc',s:'Industrial',u:'Industrial Equipment',k:'S'},
+{t:'KBR',n:'KBR Inc',s:'Industrial',u:'Industrial Equipment',k:'S'},
+{t:'FPS',n:'Forgent Power Solutions',s:'Industrial',u:'Industrial Equipment',k:'S'},
+{t:'TKR',n:'Timken Co',s:'Industrial',u:'Industrial Equipment',k:'S'},
+{t:'NOVT',n:'Novanta Inc.',s:'Industrial',u:'Industrial Equipment',k:'S'},
+{t:'OTIS',n:'Otis Worldwide Corp',s:'Industrial',u:'Industrial Equipment',k:'S'},
+{t:'TE',n:'Technip Energies NV',s:'Industrial',u:'Industrial Equipment',k:'S'},
+{t:'BRKR',n:'Bruker Corp',s:'Industrial',u:'Precision Equipment',k:'S'},
+{t:'LEA',n:'Lear Corp',s:'Industrial',u:'Precision Equipment',k:'S'},
+{t:'TMO',n:'Thermo Fisher Scientific Inc.',s:'Industrial',u:'Precision Equipment',k:'S'},
+{t:'DHR',n:'Danaher Corporation',s:'Industrial',u:'Precision Equipment',k:'S'},
+{t:'A',n:'Agilent Technologies, Inc.',s:'Industrial',u:'Precision Equipment',k:'S'},
+{t:'WAT',n:'Waters Corporation',s:'Industrial',u:'Precision Equipment',k:'S'},
+{t:'AFX',n:'Carl Zeiss Meditec AG',s:'Industrial',u:'Precision Equipment',k:'S'},
+{t:'NKE',n:'Nike',s:'Consumer Discretionary',u:'Retail',k:'S'},
+{t:'CROX',n:'Crocs',s:'Consumer Discretionary',u:'Retail',k:'S'},
+{t:'LULU',n:'Lululemon Athletica',s:'Consumer Discretionary',u:'Retail',k:'S'},
+{t:'BROS',n:'Dutch Bros',s:'Consumer Discretionary',u:'Retail',k:'S'},
+{t:'TGT',n:'Target Corp',s:'Consumer Discretionary',u:'Retail',k:'S'},
+{t:'LOW',n:'Lowe\'s Companies Inc',s:'Consumer Discretionary',u:'Retail',k:'S'},
+{t:'HD',n:'The Home Depot Inc',s:'Consumer Discretionary',u:'Retail',k:'S'},
+{t:'MC',n:'LVMH Moet Hennessy Louis Vuitton SE',s:'Consumer Discretionary',u:'Retail',k:'S'},
+{t:'TTWO',n:'Take-Two Interactive Software',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'DUOL',n:'Duolingo',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'COUR',n:'Coursera Inc',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'RDDT',n:'Reddit',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'DIS',n:'Walt Disney Company',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'WBD',n:'Warner Bros Discovery Inc',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'SPOT',n:'Spotify Technology SA',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'TDD',n:'Trade Desk Inc',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'WPP',n:'WPP PLC',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'NTDOY',n:'Nintendo',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'7WH',n:'Udemy Inc',s:'Consumer Discretionary',u:'Entertainment & Advertising',k:'S'},
+{t:'GM',n:'General Motors',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'F',n:'Ford Motor Company',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'AUR',n:'Aurora Innovation Inc',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'7269',n:'Suzuki Motor Corp',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'7203',n:'Toyota Motor Corp',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'7261',n:'Mazda Motor Corp',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'7201',n:'Nissan Motor Co., Ltd',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'8058',n:'Mitsubishi Corp',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'000270',n:'Kia Corp',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'BMW',n:'Bayerische Motoren Werke',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'RACE',n:'Ferrari NV',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'CPRT',n:'Copart Inc',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'RBA',n:'RB Global Inc',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'STLAM',n:'Stellantis NV',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'RNO',n:'Renault SA',s:'Consumer Discretionary',u:'Automobiles',k:'S'},
+{t:'KO',n:'Coca-Cola',s:'Consumer Staples',u:'Retail',k:'S'},
+{t:'PG',n:'Procter & Gamble Co',s:'Consumer Staples',u:'Retail',k:'S'},
+{t:'COST',n:'Costco Wholesale',s:'Consumer Staples',u:'Retail',k:'S'},
+{t:'WMT',n:'Walmart Inc',s:'Consumer Staples',u:'Retail',k:'S'},
+{t:'3382.T',n:'Seven & i Holdings / 7-Eleven',s:'Consumer Staples',u:'Retail',k:'S'},
+{t:'NESN',n:'Nestle SA',s:'Consumer Staples',u:'Retail',k:'S'},
+{t:'CTVA',n:'Corteva',s:'Consumer Staples',u:'Agriculture',k:'S'},
+{t:'ADM',n:'Archer-Daniels-Midland',s:'Consumer Staples',u:'Agriculture',k:'S'},
+{t:'DE',n:'Deere & Co',s:'Consumer Staples',u:'Agriculture',k:'S'},
+{t:'NTR',n:'Nutrien',s:'Consumer Staples',u:'Agriculture',k:'S'},
+{t:'TSN',n:'Tyson Foods',s:'Consumer Staples',u:'Agriculture',k:'S'},
+{t:'O',n:'Realty Income',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'HHH',n:'Howard Hughes Holdings Inc',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'AHR',n:'American Healthcare REIT Inc',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'WELL',n:'Welltower Inc',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'EQIX',n:'Equinix Inc',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'CSGP',n:'CoStar Group, Inc.',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'PLD',n:'Prologis Inc',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'AMT',n:'American Tower Corporation',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'DHI',n:'D.R. Horton Inc',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'LEN',n:'Lennar Corporation',s:'Real Estate / REIT',u:'',k:'S'},
+{t:'LLY',n:'Eli Lilly And Co',s:'Healthcare',u:'',k:'S'},
+{t:'PFE',n:'Pfizer Inc',s:'Healthcare',u:'',k:'S'},
+{t:'NVO',n:'Novo Nordisk A/S',s:'Healthcare',u:'',k:'S'},
+{t:'CLOV',n:'Clover Health Investments Corp',s:'Healthcare',u:'',k:'S'},
+{t:'BFLY',n:'Butterfly Network Inc',s:'Healthcare',u:'',k:'S'},
+{t:'MOH',n:'Molina Healthcare Inc',s:'Healthcare',u:'',k:'S'},
+{t:'PCSA',n:'Processa Pharmaceuticals',s:'Healthcare',u:'',k:'S'},
+{t:'SYK',n:'Stryker Corp',s:'Healthcare',u:'',k:'S'},
+{t:'ABT',n:'Abbott Laboratories',s:'Healthcare',u:'',k:'S'},
+{t:'AMGN',n:'Amgen',s:'Healthcare',u:'',k:'S'},
+{t:'REGN',n:'Regeneron Pharmaceuticals',s:'Healthcare',u:'',k:'S'},
+{t:'ILMN',n:'Illumina Inc',s:'Healthcare',u:'',k:'S'},
+{t:'GTBP',n:'GT Biopharma Inc',s:'Healthcare',u:'',k:'S'},
+{t:'HIMS',n:'Hims & Hers Health Inc',s:'Healthcare',u:'',k:'S'},
+{t:'GILD',n:'Gilead Sciences, Inc',s:'Healthcare',u:'',k:'S'},
+{t:'CRSP',n:'Crispr Therapeutics AG',s:'Healthcare',u:'',k:'S'},
+{t:'KRYS',n:'Krystal Biotech Inc',s:'Healthcare',u:'',k:'S'},
+{t:'ARAY',n:'Accuray Inc',s:'Healthcare',u:'',k:'S'},
+{t:'TLX',n:'Telix Pharmaceuticals Ltd',s:'Healthcare',u:'',k:'S'},
+{t:'WST',n:'West Pharmaceutical Services Inc',s:'Healthcare',u:'',k:'S'},
+{t:'BSX',n:'Boston Scientific Corporation',s:'Healthcare',u:'',k:'S'},
+{t:'SMCI',n:'Super Micro Computer Inc',s:'Failing / Fraud',u:'',k:'S'},
+{t:'MSTR',n:'Strategy Inc Class A',s:'Failing / Fraud',u:'',k:'S'},
+{t:'BMNR',n:'Bitmine Immersion Technologies Inc',s:'Failing / Fraud',u:'',k:'S'},
+{t:'CVNA',n:'Carvana Co',s:'Failing / Fraud',u:'',k:'S'},
+{t:'BBBY',n:'Bed Bath & Beyond Inc',s:'Failing / Fraud',u:'',k:'S'},
+{t:'GME',n:'GameStop Corp',s:'Failing / Fraud',u:'',k:'S'},
+{t:'AMC',n:'AMC Entertainment Holdings Inc',s:'Failing / Fraud',u:'',k:'S'},
+{t:'COIN',n:'Coinbase Global Inc',s:'Failing / Fraud',u:'',k:'S'},
+{t:'BYND',n:'Beyond Meat Inc',s:'Failing / Fraud',u:'',k:'S'},
+{t:'FLUT',n:'Flutter Entertainment',s:'Failing / Fraud',u:'',k:'S'},
+{t:'CMG',n:'Chipotle Mexican Grill Inc',s:'Failing / Fraud',u:'',k:'S'},
+{t:'CAVA',n:'Cava Group INC',s:'Failing / Fraud',u:'',k:'S'},
+{t:'SG',n:'Sweetgreen Inc',s:'Failing / Fraud',u:'',k:'S'},
+{t:'DKNG',n:'DraftKings Inc',s:'Failing / Fraud',u:'',k:'S'},
+{t:'D05',n:'DBS Group Holdings Ltd',s:'Singapore',u:'Finance',k:'S'},
+{t:'U11',n:'United Overseas Bank Ltd',s:'Singapore',u:'Finance',k:'S'},
+{t:'O39',n:'Overseas-Chinese Banking Corporation Limited',s:'Singapore',u:'Finance',k:'S'},
+{t:'S41',n:'Hong Leong Finance',s:'Singapore',u:'Finance',k:'S'},
+{t:'U10',n:'UOB-Kay Hian',s:'Singapore',u:'Finance',k:'S'},
+{t:'S68',n:'Singapore Exchange',s:'Singapore',u:'Finance',k:'S'},
+{t:'G07',n:'Great Eastern Holdings',s:'Singapore',u:'Finance',k:'S'},
+{t:'YF8',n:'Yangzijiang Financial Holding',s:'Singapore',u:'Finance',k:'S'},
+{t:'TRIRF',n:'Triterras',s:'Singapore',u:'Finance',k:'S'},
+{t:'ANTA',n:'Antalpha Platform',s:'Singapore',u:'Finance',k:'S'},
+{t:'AIY',n:'iFAST Corporation',s:'Singapore',u:'Finance',k:'S'},
+{t:'MNY',n:'MoneyHero',s:'Singapore',u:'Finance',k:'S'},
+{t:'EGG',n:'Enigmatig',s:'Singapore',u:'Finance',k:'S'},
+{t:'558',n:'UMS Holdings',s:'Singapore',u:'Technology',k:'S'},
+{t:'KLIC',n:'Kulicke and Soffa Industries',s:'Singapore',u:'Technology',k:'S'},
+{t:'AWX',n:'AEM Holdings',s:'Singapore',u:'Technology',k:'S'},
+{t:'E28',n:'Frencken Group',s:'Singapore',u:'Technology',k:'S'},
+{t:'MZH',n:'Nanofilm Technologies International',s:'Singapore',u:'Technology',k:'S'},
+{t:'BN2',n:'Valuetronics Holdings',s:'Singapore',u:'Technology',k:'S'},
+{t:'8AZ',n:'Aztech Global',s:'Singapore',u:'Technology',k:'S'},
+{t:'FLEX',n:'Flex Ltd',s:'Singapore',u:'Technology',k:'S'},
+{t:'V03',n:'Venture Corporation',s:'Singapore',u:'Technology',k:'S'},
+{t:'SE',n:'Sea Limited',s:'Singapore',u:'Technology',k:'S'},
+{t:'GRAB',n:'Grab Holdings',s:'Singapore',u:'Technology',k:'S'},
+{t:'RYDE',n:'Ryde',s:'Singapore',u:'Technology',k:'S'},
+{t:'TCGL',n:'TechCreate Group',s:'Singapore',u:'Technology',k:'S'},
+{t:'KARO',n:'Karooooo',s:'Singapore',u:'Technology',k:'S'},
+{t:'GNS',n:'Genius Group',s:'Singapore',u:'Technology',k:'S'},
+{t:'ORKT',n:'Orangekloud Technology',s:'Singapore',u:'Technology',k:'S'},
+{t:'POAS',n:'Phaos Technology Holdings',s:'Singapore',u:'Technology',k:'S'},
+{t:'SPPL',n:'SIMPPLE',s:'Singapore',u:'Technology',k:'S'},
+{t:'GFAI',n:'Guardforce AI',s:'Singapore',u:'Technology',k:'S'},
+{t:'544',n:'CSE Global',s:'Singapore',u:'Technology',k:'S'},
+{t:'BLIV',n:'BeLive Holdings',s:'Singapore',u:'Technology',k:'S'},
+{t:'BTDR',n:'Bitdeer Technologies Group',s:'Singapore',u:'Technology',k:'S'},
+{t:'FUFU',n:'BitFuFu',s:'Singapore',u:'Technology',k:'S'},
+{t:'BGIN',n:'Bgin Blockchain',s:'Singapore',u:'Technology',k:'S'},
+{t:'Z74',n:'Singapore Telecommunications Ltd',s:'Singapore',u:'Communication Services',k:'S'},
+{t:'CC3',n:'StarHub Ltd',s:'Singapore',u:'Communication Services',k:'S'},
+{t:'CJLU',n:'NetLink Trust',s:'Singapore',u:'Communication Services',k:'S'},
+{t:'A31',n:'Addvalue Technologies',s:'Singapore',u:'Communication Services',k:'S'},
+{t:'P15',n:'Pacific Century Regional Developments',s:'Singapore',u:'Communication Services',k:'S'},
+{t:'N2IU',n:'Mapletree Pan Asia Commercial Trust',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'C38U',n:'CapitaLand Integrated Commercial Trust',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'J69U',n:'Frasers Centrepoint Trust',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'T82U',n:'Suntec REIT',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'K71U',n:'Keppel REIT',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'M44U',n:'Mapletree Logistics Trust',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'ME8U',n:'Mapletree Industrial Trust',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'A17U',n:'CapitaLand Ascendas REIT',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'BUOU',n:'Frasers Logistics & Industrial Trust',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'Q5T',n:'Far East Hospitality Trust',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'HMN',n:'CapitaLand Ascott Trust',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'9CI',n:'CapitaLand Investment Ltd',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'C09',n:'City Developments Ltd',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'U14',n:'UOL Group Ltd',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'F17',n:'GuocoLand',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'B61',n:'Bukit Sembawang Estates',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'H78',n:'Hongkong Land Holdings Limited',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'H15',n:'Hotel Properties Limited',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'OMH',n:'Ohmyhome',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'U06',n:'Singapore Land',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'Z25',n:'Yanlord',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'W05',n:'Wing Tai Holdings',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'SMJF',n:'SMJ International',s:'Singapore',u:'Real Estate / REIT',k:'S'},
+{t:'S63',n:'Singapore Technologies Engineering Ltd',s:'Singapore',u:'Industrial',k:'S'},
+{t:'S59',n:'SIA Engineering Company',s:'Singapore',u:'Industrial',k:'S'},
+{t:'BN4',n:'Keppel Ltd',s:'Singapore',u:'Industrial',k:'S'},
+{t:'5E2',n:'Seatrium Limited',s:'Singapore',u:'Industrial',k:'S'},
+{t:'BS6',n:'Yangzijiang Shipbuilding (Holdings) Ltd.',s:'Singapore',u:'Industrial',k:'S'},
+{t:'S58',n:'SATS',s:'Singapore',u:'Industrial',k:'S'},
+{t:'PMEC',n:'Primech Holdings',s:'Singapore',u:'Industrial',k:'S'},
+{t:'GCL',n:'GCL Global Holdings Ltd',s:'Singapore',u:'Industrial',k:'S'},
+{t:'CHZ',n:'HRnetGroup',s:'Singapore',u:'Industrial',k:'S'},
+{t:'C6L',n:'Singapore Airlines Ltd',s:'Singapore',u:'Industrial',k:'S'},
+{t:'S56',n:'Samudera Shipping Line',s:'Singapore',u:'Industrial',k:'S'},
+{t:'NS8U',n:'HPH Trust',s:'Singapore',u:'Industrial',k:'S'},
+{t:'KEN',n:'Kenon Holdings',s:'Singapore',u:'Industrial',k:'S'},
+{t:'C52',n:'ComfortDelGro',s:'Singapore',u:'Industrial',k:'S'},
+{t:'S08',n:'Singapore Post',s:'Singapore',u:'Industrial',k:'S'},
+{t:'C07',n:'Jardine Cycle & Carriage Ltd',s:'Singapore',u:'Industrial',k:'S'},
+{t:'U96',n:'Sembcorp Industries Ltd',s:'Singapore',u:'Energy',k:'S'},
+{t:'MAXN',n:'Maxeon Solar Technologies',s:'Singapore',u:'Energy',k:'S'},
+{t:'1F2',n:'Union Gas Holdings',s:'Singapore',u:'Energy',k:'S'},
+{t:'BWM',n:'Zheneng Jinjiang Environment',s:'Singapore',u:'Energy',k:'S'},
+{t:'A7RU',n:'Keppel Infrastructure Trust',s:'Singapore',u:'Utilities',k:'S'},
+{t:'U9E',n:'China Everbright Water',s:'Singapore',u:'Utilities',k:'S'},
+{t:'BHK',n:'SIIC Environment Holdings',s:'Singapore',u:'Utilities',k:'S'},
+{t:'S20',n:'Straits Trading Company Ltd',s:'Singapore',u:'Materials',k:'S'},
+{t:'PANU',n:'Pan United Corporation Ltd',s:'Singapore',u:'Materials',k:'S'},
+{t:'H22',n:'Hong Leong Asia Ltd',s:'Singapore',u:'Materials',k:'S'},
+{t:'KUO',n:'International Cement Group',s:'Singapore',u:'Materials',k:'S'},
+{t:'1J4',n:'JEP Holdings',s:'Singapore',u:'Materials',k:'S'},
+{t:'G13',n:'Genting Singapore Ltd',s:'Singapore',u:'Consumer Discretionary',k:'S'},
+{t:'1792',n:'CMON',s:'Singapore',u:'Consumer Discretionary',k:'S'},
+{t:'0799',n:'IGG Inc',s:'Singapore',u:'Consumer Discretionary',k:'S'},
+{t:'9658',n:'Super Hi International',s:'Singapore',u:'Consumer Discretionary',k:'S'},
+{t:'LITB',n:'LightInTheBox Holding',s:'Singapore',u:'Consumer Discretionary',k:'S'},
+{t:'WBUY',n:'Webuy Global',s:'Singapore',u:'Consumer Discretionary',k:'S'},
+{t:'SOPAQ',n:'Society Pass',s:'Singapore',u:'Consumer Discretionary',k:'S'},
+{t:'F34',n:'Wilmar International Ltd',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'Y92',n:'Thai Beverage Public Company Ltd',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'E5H',n:'Golden Agri-Resources',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'VC2',n:'Olam',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'P8Z',n:'Bumitama Agri',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'EB5',n:'First Resources',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'DTCK',n:'Davis Commodities',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'OV8',n:'Sheng Siong Group Ltd',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'D01',n:'DFI Retail Group Holdings Limited',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'P34',n:'Delfi Limited',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'1D0',n:'Kimly Limited',s:'Singapore',u:'Consumer Staples',k:'S'},
+{t:'BSL',n:'Raffles Medical Group Ltd',s:'Singapore',u:'Healthcare',k:'S'},
+{t:'EUDA',n:'EUDA Health',s:'Singapore',u:'Healthcare',k:'S'},
+{t:'MNDR',n:'Mobile-health Network Solutions',s:'Singapore',u:'Healthcare',k:'S'},
+{t:'AP4',n:'Riverstone Holdings',s:'Singapore',u:'Healthcare',k:'S'},
+{t:'BVA',n:'Top Glove Corporation',s:'Singapore',u:'Healthcare',k:'S'},
+{t:'H02',n:'Haw Par',s:'Singapore',u:'Healthcare',k:'S'},
+{t:'WVE',n:'Wave Life Sciences',s:'Singapore',u:'Healthcare',k:'S'},
+{t:'GDTC',n:'CytoMed Therapeutics',s:'Singapore',u:'Healthcare',k:'S'},
+{t:'VT',n:'Vanguard Total World Stock ETF',s:'Global',u:'All-World',k:'E'},
+{t:'ACWI',n:'iShares MSCI ACWI ETF',s:'Global',u:'All-World',k:'E'},
+{t:'VWRA',n:'Vanguard FTSE All-World UCITS ETF',s:'Global',u:'All-World',k:'E'},
+{t:'VXUS',n:'Vanguard Total International Stock ETF',s:'Global',u:'International (Developed + Emerging)',k:'E'},
+{t:'IXUS',n:'iShares Core MSCI Total International Stock ETF',s:'Global',u:'International (Developed + Emerging)',k:'E'},
+{t:'VEA',n:'Vanguard FTSE Developed Markets ETF',s:'Global',u:'Developed Markets',k:'E'},
+{t:'XEF',n:'iShares Core MSCI EAFE ETF',s:'Global',u:'Developed Markets',k:'E'},
+{t:'VIU',n:'Vanguard FTSE Developed All Cap ex US Index ETF',s:'Global',u:'Developed Markets',k:'E'},
+{t:'VWO',n:'Vanguard FTSE Emerging Markets ETF',s:'Global',u:'Emerging Markets',k:'E'},
+{t:'IEMG',n:'iShares Core MSCI Emerging Markets ETF',s:'Global',u:'Emerging Markets',k:'E'},
+{t:'EEM',n:'iShares MSCI Emerging Markets ETF',s:'Global',u:'Emerging Markets',k:'E'},
+{t:'XEC',n:'iShares Core MSCI Emerging Markets IMI Index ETF',s:'Global',u:'Emerging Markets',k:'E'},
+{t:'ZEM',n:'BMO MSCI Emerging Markets Index ETF',s:'Global',u:'Emerging Markets',k:'E'},
+{t:'XEQT',n:'iShares Core Equity ETF Portfolio',s:'Global',u:'Asset Allocation',k:'E'},
+{t:'VEQT',n:'Vanguard All-Equity ETF Portfolio',s:'Global',u:'Asset Allocation',k:'E'},
+{t:'XGRO',n:'iShares Core Growth ETF Portfolio',s:'Global',u:'Asset Allocation',k:'E'},
+{t:'VOO',n:'Vanguard S&P 500 ETF',s:'US',u:'Broad Market',k:'E'},
+{t:'SPY',n:'SPDR S&P 500 ETF Trust',s:'US',u:'Broad Market',k:'E'},
+{t:'VTI',n:'Vanguard Total Stock Market ETF',s:'US',u:'Broad Market',k:'E'},
+{t:'IVV',n:'iShares Core S&P 500 ETF',s:'US',u:'Broad Market',k:'E'},
+{t:'VUG',n:'Vanguard Growth ETF',s:'US',u:'Large Cap',k:'E'},
+{t:'VOOG',n:'Vanguard S&P 500 Growth ETF',s:'US',u:'Large Cap',k:'E'},
+{t:'SCHG',n:'Schwab U.S. Large-Cap Growth ETF',s:'US',u:'Large Cap',k:'E'},
+{t:'MGK',n:'Vanguard Mega Cap Growth ETF',s:'US',u:'Large Cap',k:'E'},
+{t:'IWM',n:'iShares Russell 2000 ETF',s:'US',u:'Small Cap',k:'E'},
+{t:'SCHD',n:'Schwab U.S. Dividend Equity ETF',s:'US',u:'Dividend',k:'E'},
+{t:'VIG',n:'Vanguard Dividend Appreciation ETF',s:'US',u:'Dividend',k:'E'},
+{t:'DGRO',n:'iShares Core Dividend Growth ETF',s:'US',u:'Dividend',k:'E'},
+{t:'VYM',n:'Vanguard High Dividend Yield ETF',s:'US',u:'Dividend',k:'E'},
+{t:'SPYD',n:'SPDR Portfolio S&P 500 High Dividend ETF',s:'US',u:'Dividend',k:'E'},
+{t:'HDV',n:'iShares Core High Dividend ETF',s:'US',u:'Dividend',k:'E'},
+{t:'DGRW',n:'WisdomTree U.S. Quality Dividend Growth Fund',s:'US',u:'Dividend',k:'E'},
+{t:'JEPI',n:'JPMorgan Equity Premium Income ETF',s:'US',u:'Covered Call',k:'E'},
+{t:'JEPQ',n:'JPMorgan Nasdaq Equity Premium Income ETF',s:'US',u:'Covered Call',k:'E'},
+{t:'SPYI',n:'NEOS S&P 500 High Income ETF',s:'US',u:'Covered Call',k:'E'},
+{t:'QQQI',n:'NEOS Nasdaq-100 High Income ETF',s:'US',u:'Covered Call',k:'E'},
+{t:'GPIX',n:'Goldman Sachs S&P 500 Premium Income ETF',s:'US',u:'Covered Call',k:'E'},
+{t:'GPIQ',n:'Goldman Sachs Nasdaq-100 Premium Income ETF',s:'US',u:'Covered Call',k:'E'},
+{t:'VTV',n:'Vanguard Value ETF',s:'US',u:'Value',k:'E'},
+{t:'SCHV',n:'Schwab U.S. Large-Cap Value ETF',s:'US',u:'Value',k:'E'},
+{t:'IVE',n:'iShares S&P 500 Value ETF',s:'US',u:'Value',k:'E'},
+{t:'VOOV',n:'Vanguard S&P 500 Value ETF',s:'US',u:'Value',k:'E'},
+{t:'USMV',n:'iShares MSCI USA Min Vol Factor ETF',s:'US',u:'Minimum Volatility',k:'E'},
+{t:'SPLV',n:'Invesco S&P 500 Low Volatility ETF',s:'US',u:'Minimum Volatility',k:'E'},
+{t:'QQQ',n:'Invesco QQQ Trust',s:'Technology',u:'NASDAQ',k:'E'},
+{t:'QQQM',n:'Invesco NASDAQ-100 ETF',s:'Technology',u:'NASDAQ',k:'E'},
+{t:'QQQJ',n:'Invesco NASDAQ Next Gen 100 ETF',s:'Technology',u:'NASDAQ',k:'E'},
+{t:'NDQ',n:'BetaShares NASDAQ 100 ETF',s:'Technology',u:'NASDAQ',k:'E'},
+{t:'SMH',n:'VanEck Semiconductor ETF',s:'Technology',u:'Semiconductor',k:'E'},
+{t:'SOXX',n:'iShares Semiconductor ETF',s:'Technology',u:'Semiconductor',k:'E'},
+{t:'XSD',n:'SPDR S&P Semiconductor ETF',s:'Technology',u:'Semiconductor',k:'E'},
+{t:'AIQ',n:'Global X Artificial Intelligence & Technology ETF',s:'Technology',u:'Artificial Intelligence & Robotics',k:'E'},
+{t:'BOTZ',n:'Global X Robotics & Artificial Intelligence ETF',s:'Technology',u:'Artificial Intelligence & Robotics',k:'E'},
+{t:'HUMN',n:'Roundhill Humanoid Robotics ETF',s:'Technology',u:'Artificial Intelligence & Robotics',k:'E'},
+{t:'RBOT',n:'iShares Automation & Robotics UCITS ETF',s:'Technology',u:'Artificial Intelligence & Robotics',k:'E'},
+{t:'ARKQ',n:'ARK Autonomous Technology & Robotics ETF',s:'Technology',u:'Artificial Intelligence & Robotics',k:'E'},
+{t:'UFO',n:'Procure Space ETF',s:'Technology',u:'Space',k:'E'},
+{t:'ARKX',n:'ARK Space Exploration & Innovation ETF',s:'Technology',u:'Space',k:'E'},
+{t:'ARKK',n:'ARK Innovation ETF',s:'Technology',u:'Disruptive Innovation',k:'E'},
+{t:'QTUM',n:'Defiance Quantum ETF',s:'Technology',u:'Quantum Computing',k:'E'},
+{t:'XLV',n:'Health Care Select Sector SPDR Fund',s:'Sector ETFs',u:'Healthcare',k:'E'},
+{t:'VHT',n:'Vanguard Health Care ETF',s:'Sector ETFs',u:'Healthcare',k:'E'},
+{t:'IBB',n:'iShares Biotechnology ETF',s:'Sector ETFs',u:'Healthcare',k:'E'},
+{t:'XBI',n:'SPDR S&P Biotech ETF',s:'Sector ETFs',u:'Healthcare',k:'E'},
+{t:'XLF',n:'Financial Select Sector SPDR Fund',s:'Sector ETFs',u:'Financials',k:'E'},
+{t:'VFH',n:'Vanguard Financials ETF',s:'Sector ETFs',u:'Financials',k:'E'},
+{t:'XLI',n:'Industrial Select Sector SPDR Fund',s:'Sector ETFs',u:'Industrials',k:'E'},
+{t:'ITA',n:'iShares U.S. Aerospace & Defense ETF',s:'Sector ETFs',u:'Industrials',k:'E'},
+{t:'SHLD',n:'Global X Defense Tech ETF',s:'Sector ETFs',u:'Industrials',k:'E'},
+{t:'XLP',n:'Consumer Staples Select Sector SPDR Fund',s:'Sector ETFs',u:'Consumer Staples',k:'E'},
+{t:'XLU',n:'Utilities Select Sector SPDR Fund',s:'Sector ETFs',u:'Utilities',k:'E'},
+{t:'XLC',n:'Communication Services Select Sector SPDR Fund',s:'Sector ETFs',u:'Communication Services',k:'E'},
+{t:'XLB',n:'Materials Select Sector SPDR Fund',s:'Sector ETFs',u:'Materials',k:'E'},
+{t:'XLE',n:'Energy Select Sector SPDR Fund',s:'Sector ETFs',u:'Energy',k:'E'},
+{t:'IXC',n:'iShares Global Energy ETF',s:'Sector ETFs',u:'Energy',k:'E'},
+{t:'OIH',n:'VanEck Oil Services ETF',s:'Sector ETFs',u:'Energy',k:'E'},
+{t:'VNQ',n:'Vanguard Real Estate ETF',s:'Real Estate',u:'REIT',k:'E'},
+{t:'SCHH',n:'Schwab U.S. REIT ETF',s:'Real Estate',u:'REIT',k:'E'},
+{t:'XLRE',n:'Real Estate Select Sector SPDR Fund',s:'Real Estate',u:'REIT',k:'E'},
+{t:'IAU',n:'iShares Gold Trust',s:'Commodities',u:'Precious Metals',k:'E'},
+{t:'SLV',n:'iShares Silver Trust',s:'Commodities',u:'Precious Metals',k:'E'},
+{t:'PALL',n:'abrdn Physical Palladium Shares ETF',s:'Commodities',u:'Precious Metals',k:'E'},
+{t:'PPLT',n:'abrdn Physical Platinum Shares ETF',s:'Commodities',u:'Precious Metals',k:'E'},
+{t:'ICOP',n:'iShares Copper and Metals Mining ETF',s:'Commodities',u:'Precious Metals',k:'E'},
+{t:'COPX',n:'Global X Copper Miners ETF',s:'Commodities',u:'Precious Metals',k:'E'},
+{t:'GLTR',n:'abrdn Physical Precious Metals Basket Shares ETF',s:'Commodities',u:'Precious Metals',k:'E'},
+{t:'REMX',n:'VanEck Rare Earth and Strategic Metals ETF',s:'Commodities',u:'Precious Metals',k:'E'},
+{t:'URA',n:'Global X Uranium ETF',s:'Commodities',u:'Uranium',k:'E'},
+{t:'AQWA',n:'Global X Clean Water ETF',s:'Commodities',u:'Water',k:'E'},
+{t:'FIW',n:'First Trust Water ETF',s:'Commodities',u:'Water',k:'E'},
+{t:'INRG',n:'iShares Global Clean Energy UCITS ETF',s:'Commodities',u:'Clean Energy',k:'E'},
+{t:'HYDR',n:'Global X Hydrogen ETF',s:'Commodities',u:'Clean Energy',k:'E'},
+{t:'BND',n:'Vanguard Total Bond Market ETF',s:'Bonds',u:'',k:'E'},
+{t:'AGG',n:'iShares Core US Aggregate Bond ETF',s:'Bonds',u:'',k:'E'},
+{t:'UPRO',n:'ProShares UltraPro S&P 500',s:'Trading ETFs',u:'Leveraged ETFs',k:'E'},
+{t:'TQQQ',n:'ProShares UltraPro QQQ',s:'Trading ETFs',u:'Leveraged ETFs',k:'E'},
+{t:'SOXL',n:'Direxion Daily Semiconductor Bull 3X Shares',s:'Trading ETFs',u:'Leveraged ETFs',k:'E'},
+{t:'TMF',n:'Direxion Daily 20+ Year Treasury Bull 3X Shares',s:'Trading ETFs',u:'Leveraged ETFs',k:'E'},
+{t:'SH',n:'ProShares Short S&P 500',s:'Trading ETFs',u:'Inverse ETFs',k:'E'},
+{t:'PSQ',n:'ProShares Short QQQ',s:'Trading ETFs',u:'Inverse ETFs',k:'E'},
+{t:'SQQQ',n:'ProShares UltraPro Short QQQ',s:'Trading ETFs',u:'Inverse ETFs',k:'E'},
+{t:'ES3',n:'SPDR Straits Times Index ETF',s:'Singapore',u:'Broad Market',k:'E'},
+{t:'G3B',n:'Amova Singapore STI ETF',s:'Singapore',u:'Broad Market',k:'E'},
+{t:'CLR',n:'Lion-Phillip S-REIT ETF',s:'Singapore',u:'REIT',k:'E'},
+{t:'SRT',n:'CSOP iEdge S-REIT Leaders ETF',s:'Singapore',u:'REIT',k:'E'},
+{t:'CFA',n:'Amova-Straits Trading Asia ex Japan REIT ETF',s:'Singapore',u:'REIT',k:'E'},
+{t:'ESG',n:'Lion-OCBC Securities Singapore Low Carbon ETF',s:'Singapore',u:'ESG',k:'E'},
+{t:'A35',n:'ABF Singapore Bond Index Fund',s:'Singapore',u:'Bonds',k:'E'},
+{t:'MBH',n:'Amova SGD Investment Grade Corporate Bond ETF',s:'Singapore',u:'Bonds',k:'E'},
+{t:'O9P',n:'iShares USD Asia High Yield Bond ETF',s:'Singapore',u:'Bonds',k:'E'},
+{t:'YLD',n:'Lion-OCBC Securities APAC Financials Dividend Plus ETF',s:'Singapore',u:'Dividend',k:'E'},
+{t:'OVQ',n:'Phillip Singapore Income ETF',s:'Singapore',u:'Dividend',k:'E'},
+{t:'HST',n:'Lion-OCBC Securities Hang Seng TECH ETF',s:'Singapore',u:'China / Hong Kong',k:'E'}
+];
+
+const ROADMAP_SPRINTS=[
+  {title:'Sprint 1 — Foundations (18 Aug – 30 Sep 2026)',start:'2026-08-18',deadline:'2026-09-30',
+   note:[...WK_SPLIT_NO_DSA,...WE_SPLIT_HW],subs:[
+    '🎓 Cert: AWS Cloud Practitioner — start','📘 Module: SC1003 Computational Thinking (Python)','📘 Learn: Python Refresher',
+    '💻 Project: CV / Automation project — MVP','🔧 Hardware: Gait Correction — research + PCB basics (weekends)'
+  ]},
+  {title:'Sprint 2 — Momentum (1 Oct – 15 Nov 2026)',start:'2026-10-01',deadline:'2026-11-15',
+   note:[...WK_SPLIT,...WE_SPLIT_HW],subs:[
+    '🎓 Cert: AWS Cloud Practitioner — finish','🎓 Cert: ML/AI Specialisation — start','📘 Module: SC1004 Linear Algebra',
+    '🧮 DSA: DSA + Leetcode — standing weekly slot begins','💻 Project: CV / Automation project — ship to GitHub',
+    '🔧 Hardware: Gait Correction — build phase + CAD basics (weekends)'
+  ]},
+  {title:'Sprint 3 — Cert Deadline Checkpoint (16 Nov – 31 Dec 2026)',start:'2026-11-16',deadline:'2026-12-31',
+   note:[...WK_SPLIT,...WE_SPLIT_HW],subs:[
+    '🎓 Cert: ML/AI Specialisation — continue (~70–85% is fine)','📘 Module: SC2000 Probability & Statistics','🧮 DSA: DSA + Leetcode — continue',
+    '💻 Project: F1 / Football AI project — start','🔧 Hardware: Gait Correction — finish (weekends)',
+    '⚠ Decide: CCNA in H1 2027? Confirm Security+ is cut'
+  ]},
+  {title:'Sprint 4 — Reset (1 Jan – 15 Feb 2027)',start:'2027-01-01',deadline:'2027-02-15',
+   note:[...WK_SPLIT,...WE_SPLIT_HW],subs:[
+    '🎓 Cert: ML/AI Specialisation — finish','🎓 Cert: CCNA — start','📘 Module: SC1008 C & C++ Programming','📘 Learn: C++ learn track',
+    '💻 Project: F1 / Football AI project — finish','🔧 Hardware: Inverse Kinematics — start (weekends)'
+  ]},
+  {title:'Sprint 5 — Deep Work (16 Feb – 1 Apr 2027)',start:'2027-02-16',deadline:'2027-04-01',
+   note:[...WK_SPLIT,...WE_SPLIT_HW],subs:[
+    '🎓 Cert: CCNA — continue','📘 Learn: C++ learn track — continue','💻 Project: Blackholes with C++ project',
+    '🔧 Hardware: Inverse Kinematics — continue (weekends)'
+  ]},
+  {title:'Sprint 6 — Home Stretch (2 Apr – 15 May 2027)',start:'2027-04-02',deadline:'2027-05-15',
+   note:[...WK_SPLIT,...WE_SPLIT_HW],subs:[
+    '🎓 Cert: CCNA — push to finish','💻 Project: Physics Engine with C++ project','🔧 Hardware: Inverse Kinematics — finish (weekends)'
+  ]},
+  {title:'Sprint 7 — Capstone + Buffer (16 May – 30 Jun 2027)',start:'2027-05-16',deadline:'2027-06-30',
+   note:[...WK_SPLIT,...WE_SPLIT_CAPSTONE],subs:[
+    '💻 Project: Full-Stack Cloud project (capstone)','🧮 Buffer: for slippage from earlier sprints'
+  ]}
+];
 
 function freshState(){
   let id=1;
@@ -1183,13 +2152,17 @@ function freshState(){
     goals:SEED.map(s=>({id:id++,cat:s[0],title:s[1],done:false,star:false,deadline:s[2]||null,pinned:s[3]||false})),
     habits:seedHabits(),habitSeed:2,nsCountdownV1:true,nsCountdownV2:true,nsCountdownV3:true,nusDeadlineV1:true,driveDeadlineV1:true,goalCheckpointsCleanupV1:true,movieGoalV1:true,csDomainsTitleV1:true,flywheelLinksV1:true,weightLinksV1:true,focusResetV1:true,
     meals:[],workouts:[],body:{weight:85,startWeight:85,goalWeight:75,height:180,age:19},bodyStatsV1:true,offDays:{},
-    dumps:[],reviews:[],activeCat:'all',activeTerm:'all',quotes:[]
+    dumps:[],reviews:[],activeCat:'all',activeTerm:'all',quotes:[],reminders:[]
   };
 }
 
 /* ---------------- State ---------------- */
 let S=null, view='today', habView='all', fuelDate=null, historyOffset=0, fwTermFilter='all';
 const openGoals=new Set();
+const openNotes=new Set(); // which sprints' "Daily time budget" note is expanded, keyed by goal id
+const openInvHoldings=new Set(); // which portfolio holding cards are expanded, keyed by index
+const openInvLots=new Set(); // which holdings' transaction history is expanded, keyed by index
+const openWatchlist=new Set(); // which watchlist ticker's note is expanded, keyed by index
 const editingSubs=new Set();
 const editingGoals=new Set();
 const STAGES=[
@@ -1277,6 +2250,7 @@ function render(){
   if(view==='fuel')renderFuel();
   if(view==='goals')renderGoals();
   if(view==='deadlines')renderDeadlines();
+  if(view==='invest')renderInvest();
   if(view==='capture')renderCapture();
   save();
 }
@@ -1490,6 +2464,7 @@ function renderFlywheel(){
           <button class="fw-remove" data-act="unfocus" title="Remove from focus">✕</button>
         </div>
         ${workRow}
+        ${g.cat==='Roadmap'?renderSprintNote(g,'margin:9px 0 0'):''}
         ${dayPicker}
         ${buildSubsPanel(g)}
       </div>`;
@@ -1610,19 +2585,23 @@ function renderGoals(){
 
   if(!S.activeTerm)S.activeTerm='all';
   const tbar=$('#term-bar');
-  const termOpts=[['all','All'],['short','Short term'],['long','Long term'],['fixed','Fixed']];
-  tbar.innerHTML=termOpts.map(([key,label])=>{
-    const cnt=key==='all'?S.goals.filter(g=>!g.done).length:S.goals.filter(g=>!g.done&&g.term===key).length;
-    return `<button class="term-chip ${key} ${S.activeTerm===key?'on':''}" data-term="${key}">${label} <span class="ct">${cnt}</span></button>`;
-  }).join('');
+  const termOpts=[['all','All'],['short','Short term'],['long','Long term'],['fixed','Fixed'],['roadmap','🛣 Roadmap']];
   const focusedCnt=S.goals.filter(g=>g.star&&!g.done).length;
-  const fbar=$('#focused-bar');
-  if(fbar)fbar.innerHTML=`<button class="term-chip fixed ${S.focusedOnly?'on':''}" data-focusedtoggle="1">★ Focused in Flywheel <span class="ct">${focusedCnt}</span></button>`;
+  tbar.innerHTML=termOpts.map(([key,label])=>{
+    const cnt=key==='all'?S.goals.filter(g=>!g.done).length
+      :key==='roadmap'?S.goals.filter(g=>!g.done&&g.cat==='Roadmap').length
+      :S.goals.filter(g=>!g.done&&g.term===key).length;
+    return `<button class="term-chip ${key} ${S.activeTerm===key?'on':''}" data-term="${key}">${label} <span class="ct">${cnt}</span></button>`;
+  }).join('')+`<button class="term-chip fixed ${S.focusedOnly?'on':''}" data-focusedtoggle="1">★ Focused in Flywheel <span class="ct">${focusedCnt}</span></button>`;
 
   const body=$('#goals-body');
   const cats=S.activeCat==='all'?S.cats.map(c=>c.name):[S.activeCat];
   body.innerHTML=cats.map(cn=>{
-    const items=S.goals.filter(g=>g.cat===cn&&(S.activeTerm==='all'||g.term===S.activeTerm)&&(!S.focusedOnly||g.star));
+    // 'roadmap' is a shortcut into the Roadmap category, not a real term — it filters by
+    // category instead of by g.term, same as clicking the Roadmap chip up in the cat-bar.
+    const items=S.goals.filter(g=>g.cat===cn
+      &&(S.activeTerm==='all'||(S.activeTerm==='roadmap'?g.cat==='Roadmap':g.term===S.activeTerm))
+      &&(!S.focusedOnly||g.star));
     if(!items.length)return'';
     const done=items.filter(g=>g.done).length;
     const pct=items.length?Math.round(done/items.length*100):0;
@@ -1689,38 +2668,485 @@ function goalRow(g){
 /* DEADLINES */
 function renderDeadlines(){
   const list=$('#dl-list');
-  const items=S.goals.filter(g=>g.deadline).sort((a,b)=>daysTo(a.deadline)-daysTo(b.deadline));
-  if(!items.length){list.innerHTML=`<div class="empty">No deadlines yet. Add one above, or set a date on any goal.</div>`;return;}
-  const now=Date.now();
-  list.innerHTML=items.map(g=>{
-    const ws=windowStatus(g);
-    if(ws.cls==='upcoming'){
-      const opD=daysTo(g.opensOn);
-      return `<div class="dl-row upcoming" data-id="${g.id}">
-        <div class="big" style="color:var(--mist-dim)">${opD}<small>d til opens</small></div>
-        <div class="info"><div class="t">${esc(g.title)}</div><div class="when">Window: ${fmtDate(g.opensOn)} → ${fmtDate(g.deadline)} · ${esc(g.cat)}</div></div>
-        <div class="barwrap"><div class="bar"><i style="width:4%;background:var(--mist-dim)"></i></div></div>
-        <button class="x" data-act="cleardate" title="Remove date">✕</button>
-      </div>`;
-    }
-    const d=daysTo(g.deadline);const cls=d<0?'over':d<=14?'near':'calm';
-    const lbl=d<0?'over':d===0?'today':d===1?'day':'days';const n=d<0?Math.abs(d):d;
-    const windowLabel=g.opensOn?`${fmtDate(g.opensOn)} → ${fmtDate(g.deadline)}`:fmtDate(g.deadline);
-    const spanStart=g.opensOn?new Date(g.opensOn+'T00:00:00').getTime():S.settings.started;
-    const span=Math.max(1,Math.round((new Date(g.deadline)-spanStart)/864e5));
-    const elapsed=Math.round((now-spanStart)/864e5);
-    const pct=Math.min(100,Math.max(4,Math.round(elapsed/span*100)));
-    const col=d<0?'var(--coral)':d<=14?'var(--amber)':'var(--current)';
-    return `<div class="dl-row ${cls}" data-id="${g.id}">
-      <div class="big" style="color:${col}">${n}<small>${lbl}${d>=0&&d!==0?' left':''}</small></div>
-      <div class="info"><div class="t">${esc(g.title)}</div><div class="when">${windowLabel} · ${esc(g.cat)}</div></div>
-      <div class="barwrap"><div class="bar"><i style="width:${pct}%;background:${col}"></i></div></div>
+  const roadmap=S.goals.filter(g=>g.cat==='Roadmap'&&g.deadline).sort((a,b)=>daysTo(a.deadline)-daysTo(b.deadline));
+  const others=S.goals.filter(g=>g.cat!=='Roadmap'&&g.deadline).sort((a,b)=>daysTo(a.deadline)-daysTo(b.deadline));
+  if(typeof S.dlRoadmapOpen==='undefined')S.dlRoadmapOpen=false;
+  let html='';
+  if(roadmap.length){
+    const doneCt=roadmap.filter(g=>g.done).length;
+    const next=roadmap.find(g=>!g.done);
+    const nd=next?daysTo(next.deadline):null;
+    html+=`<div class="dl-section">
+      <button class="dl-section-head" data-act="toggledlroadmap">
+        <span class="dl-caret">${S.dlRoadmapOpen?'▾':'▸'}</span>
+        <span class="dl-section-title">🛣 Roadmap <span class="dl-section-ct">${doneCt}/${roadmap.length} sprints</span></span>
+        ${!S.dlRoadmapOpen&&next?`<span class="dl-section-next">Next up: ${esc(next.title.split(' — ')[0].split(' (')[0])} · ${nd<0?Math.abs(nd)+'d over':nd+'d left'}</span>`:''}
+      </button>
+      ${S.dlRoadmapOpen?`<div class="dl-roadmap-list">${roadmap.map(g=>dlSprintRow(g)).join('')}</div>`:''}
+    </div>`;
+  }
+  if(others.length){
+    html+=`<div class="dl-section"><div class="dl-section-title plain">Other deadlines</div>${others.map(g=>dlOtherRow(g)).join('')}</div>`;
+  }
+  if(!html){list.innerHTML=`<div class="empty">No deadlines yet. Add one above, or set a date on any goal.</div>`;return;}
+  list.innerHTML=html;
+  renderRoadmapGantt();
+  renderDeadlineTimeline();
+}
+/* Compact checklist row for a Roadmap sprint — reuses the same .goal delegation (expand,
+   subtoggle, done) as the Goals panel via the .goal class + data-id, so no new handlers needed. */
+function dlSprintRow(g){
+  const subs=g.subs||[];
+  const dc=subs.filter(s=>s.done).length;
+  const pct=subs.length?Math.round(dc/subs.length*100):0;
+  const ws=windowStatus(g);
+  const d=daysTo(g.deadline);
+  const col=ws.cls==='upcoming'?'var(--mist-dim)':d<0?'var(--coral)':d<=14?'var(--amber)':'var(--current)';
+  const open=openGoals.has(String(g.id));
+  const windowLabel=g.opensOn?`${fmtDate(g.opensOn)} → ${fmtDate(g.deadline)}`:fmtDate(g.deadline);
+  return `<div class="dl-sprint goal dl-goal-wrap ${g.done?'is-done':''}" data-id="${g.id}">
+    <div class="dl-sprint-top">
+      <button class="g-caret" data-act="expand" title="Show checklist">${open?'▾':'▸'}</button>
+      <div class="chk ${g.done?'done':''}" data-act="done" title="Mark sprint done"></div>
+      <div class="dl-sprint-title">${esc(g.title)}</div>
+      <div class="dl-sprint-count" style="color:${col}">${ws.txt}</div>
+    </div>
+    <div class="dl-sprint-bar"><i style="width:${pct}%;background:${col}"></i></div>
+    <div class="dl-sprint-meta">${windowLabel} · ${dc}/${subs.length} done</div>
+    ${open?renderSprintNote(g):''}
+    ${open?buildSubsPanel(g):''}
+  </div>`;
+}
+/* Original single-line row, unchanged behaviour, for every non-Roadmap dated goal. */
+function dlOtherRow(g){
+  const ws=windowStatus(g);
+  if(ws.cls==='upcoming'){
+    const opD=daysTo(g.opensOn);
+    return `<div class="dl-row upcoming" data-id="${g.id}">
+      <div class="big" style="color:var(--mist-dim)">${opD}<small>d til opens</small></div>
+      <div class="info"><div class="t">${esc(g.title)}</div><div class="when">Window: ${fmtDate(g.opensOn)} → ${fmtDate(g.deadline)} · ${esc(g.cat)}</div></div>
+      <div class="barwrap"><div class="bar"><i style="width:4%;background:var(--mist-dim)"></i></div></div>
       <button class="x" data-act="cleardate" title="Remove date">✕</button>
     </div>`;
-  }).join('');
+  }
+  const now=Date.now();
+  const d=daysTo(g.deadline);const cls=d<0?'over':d<=14?'near':'calm';
+  const lbl=d<0?'over':d===0?'today':d===1?'day':'days';const n=d<0?Math.abs(d):d;
+  const windowLabel=g.opensOn?`${fmtDate(g.opensOn)} → ${fmtDate(g.deadline)}`:fmtDate(g.deadline);
+  const spanStart=g.opensOn?new Date(g.opensOn+'T00:00:00').getTime():S.settings.started;
+  const span=Math.max(1,Math.round((new Date(g.deadline)-spanStart)/864e5));
+  const elapsed=Math.round((now-spanStart)/864e5);
+  const pct=Math.min(100,Math.max(4,Math.round(elapsed/span*100)));
+  const col=d<0?'var(--coral)':d<=14?'var(--amber)':'var(--current)';
+  return `<div class="dl-row ${cls}" data-id="${g.id}">
+    <div class="big" style="color:${col}">${n}<small>${lbl}${d>=0&&d!==0?' left':''}</small></div>
+    <div class="info"><div class="t">${esc(g.title)}</div><div class="when">${windowLabel} · ${esc(g.cat)}</div></div>
+    <div class="barwrap"><div class="bar"><i style="width:${pct}%;background:${col}"></i></div></div>
+    <button class="x" data-act="cleardate" title="Remove date">✕</button>
+  </div>`;
+}
+/* Clean sequential Gantt strip just for the 7 sprints — far more readable than plotting
+   7 close-together dots on the general dot-timeline below, which is what was overlapping. */
+// Sprint 5 and 6 have no " — subtitle" part in their title, only a trailing date range —
+// the old regex left a dangling "S5 ·" with nothing after it for those. This strips the
+// trailing "(...)" date range first, then only adds the "· subtitle" part if one exists.
+// Renders a sprint's daily time-budget note as its own collapsible block — separate from
+// the checklist expand/collapse, since the note is chunky and often not needed once you
+// already know the split. Collapsed by default; state persists per-sprint via openNotes.
+function renderSprintNote(g,extraStyle){
+  if(!g.note||!g.note.length)return '';
+  const open=openNotes.has(String(g.id));
+  return `<div class="dl-sprint-note" style="${extraStyle||''}">
+    <button class="dl-note-head" data-act="togglenote" title="${open?'Collapse':'Expand'} daily time budget">
+      <span class="dl-note-caret">${open?'▾':'▸'}</span>⏱ Daily time budget${!open?` <span class="dl-note-ct">${g.note.length}</span>`:''}
+    </button>
+    ${open?g.note.map(l=>`<div class="dl-note-line">${esc(l)}</div>`).join(''):''}
+  </div>`;
+}
+function sprintShortLabel(title){
+  const noDate=title.replace(/\s*\([^)]*\)\s*$/,'');
+  const m=noDate.match(/^Sprint (\d+)(?:\s+—\s+(.*))?$/);
+  if(!m)return noDate;
+  return m[2]?`S${m[1]} · ${m[2]}`:`Sprint ${m[1]}`;
+}
+function renderRoadmapGantt(){
+  const wrap=$('#dl-roadmap-gantt');if(!wrap)return;
+  const roadmap=S.goals.filter(g=>g.cat==='Roadmap'&&g.deadline).sort((a,b)=>daysTo(a.deadline)-daysTo(b.deadline));
+  if(!roadmap.length){wrap.innerHTML='';return;}
+  if(typeof S.dlRoadmapOpen==='undefined')S.dlRoadmapOpen=false;
+  const doneCt=roadmap.filter(g=>g.done).length;
+  const next=roadmap.find(g=>!g.done);
+  const nd=next?daysTo(next.deadline):null;
+  let html=`<button class="dl-section-head" data-act="toggledlroadmap">
+    <span class="dl-caret">${S.dlRoadmapOpen?'▾':'▸'}</span>
+    <span class="dl-section-title">🛣 Roadmap <span class="dl-section-ct">${doneCt}/${roadmap.length} sprints</span></span>
+    ${!S.dlRoadmapOpen&&next?`<span class="dl-section-next">Next up: ${esc(next.title.split(' — ')[0].split(' (')[0])} · ${nd<0?Math.abs(nd)+'d over':nd+'d left'}</span>`:''}
+  </button>`;
+  if(S.dlRoadmapOpen){
+    html+=`<div class="dl-gantt">${roadmap.map(g=>{
+      const subs=g.subs||[];const dc=subs.filter(s=>s.done).length;
+      const pct=subs.length?Math.round(dc/subs.length*100):0;
+      const d=daysTo(g.deadline);const isOpen=daysTo(g.opensOn)<=0;
+      const isCurrent=!g.done&&isOpen&&d>=0&&roadmap.filter(x=>!x.done&&daysTo(x.opensOn)<=0).indexOf(g)===0;
+      const isExpanded=openGoals.has(String(g.id));
+      const col=g.done?'var(--current)':d<0?'var(--coral)':isCurrent?'var(--amber)':'var(--mist-dim)';
+      const shortTitle=sprintShortLabel(g.title);
+      const days=g.done?'Done':d<0?Math.abs(d)+'d overdue':!isOpen?'Not started':d+'d left';
+      const dateRange=`${fmtDate(g.opensOn).replace(/ \d{4}$/,'')} – ${fmtDate(g.deadline)}`;
+      return `<div class="dl-gantt-block ${g.done?'done':''} ${isCurrent?'current':''} ${isExpanded?'expanded':''} goal" data-id="${g.id}" data-act="expand" title="Click to show/hide checklist below">
+        <div class="dl-gantt-num">${g.done?'✓ complete':isCurrent?'current':!isOpen?'upcoming':'in progress'}</div>
+        <div class="dl-gantt-label">${esc(shortTitle)}</div>
+        <div class="dl-gantt-dates">${dateRange}</div>
+        <div class="dl-gantt-bar"><i style="width:${pct}%;background:${col}"></i></div>
+        <div class="dl-gantt-days" style="color:${col}">${days} · ${dc}/${subs.length}</div>
+      </div>`;
+    }).join('')}</div>
+    <div class="dl-roadmap-list" style="margin-top:12px">${roadmap.filter(g=>openGoals.has(String(g.id))).map(g=>{
+      const dateRange=`${fmtDate(g.opensOn)} – ${fmtDate(g.deadline)}`;
+      return `<div class="goal dl-goal-wrap" data-id="${g.id}">
+        <div class="dl-panel-head"><span class="dl-panel-dot"></span>${esc(g.title.split(' (')[0])} <span class="dl-panel-dates">${dateRange}</span></div>
+        ${renderSprintNote(g)}
+        ${buildSubsPanel(g)}
+      </div>`;
+    }).join('')}</div>`;
+  }
+  wrap.innerHTML=html;
+}
+
+/* Horizontal scale timeline of every dated goal — dots for a single deadline, bars for
+   a goal with a real opensOn->deadline window. Pulled live from S.goals, nothing manual.
+   Roadmap sprints are excluded here (they get the dedicated Gantt strip above instead) so
+   this stays readable for the rest of your dated goals. */
+function renderDeadlineTimeline(){
+  const canvas=$('#dl-timeline');if(!canvas)return;
+  S.reminders=S.reminders||[];
+  const goalEvents=S.goals.filter(g=>g.deadline&&!g.done&&g.cat!=='Roadmap').map(g=>({
+    id:'g'+g.id,title:g.title,start:g.opensOn||g.deadline,end:g.opensOn?g.deadline:null,
+    sortDate:g.deadline,removable:false,
+    col:(()=>{const d=daysTo(g.deadline);return d<0?'var(--coral)':d<=14?'var(--amber)':'var(--current)';})()
+  }));
+  const remEvents=S.reminders.map(r=>({
+    id:'r'+r.id,title:r.title,start:r.start,end:r.end||null,sortDate:r.start,removable:true,col:'var(--sand)'
+  }));
+  const items=[...goalEvents,...remEvents];
+  renderReminderChips();
+  // A selected (expanded) Roadmap sprint gets reflected on this timeline as a highlighted
+  // band, even though sprint dots/bars themselves stay off it (they live on the Gantt strip).
+  const selectedSprints=S.goals.filter(g=>g.cat==='Roadmap'&&g.deadline&&g.opensOn&&openGoals.has(String(g.id)));
+  if(!items.length&&!selectedSprints.length){canvas.innerHTML=`<div class="empty">Nothing dated yet — add a reminder below, or set a date on a goal.</div>`;return;}
+  const allDates=items.flatMap(it=>it.end?[it.start,it.end]:[it.start])
+    .concat(selectedSprints.flatMap(g=>[g.opensOn,g.deadline]))
+    .map(d=>new Date(d+'T00:00:00').getTime());
+  const todayMs=new Date().setHours(0,0,0,0);
+  allDates.push(todayMs);
+  let min=Math.min(...allDates), max=Math.max(...allDates);
+  const pad=Math.max((max-min)*0.1,864e5*7);
+  min-=pad;max+=pad;
+  const span=max-min;
+  const pctOf=ms=>((ms-min)/span)*100;
+  const sorted=[...items].sort((a,b)=>a.sortDate.localeCompare(b.sortDate));
+  const todayPct=pctOf(todayMs);
+
+  // Week ticks (small dash, every Monday) + month ticks (big dash + label) along the axis —
+  // same idea as a normal calendar/planner ruler, so you can read the scale at a glance.
+  let rulerHtml='';
+  let wk=new Date(min);wk.setHours(0,0,0,0);
+  wk.setDate(wk.getDate()-((wk.getDay()+6)%7)); // snap back to the preceding Monday
+  for(;wk.getTime()<=max;wk.setDate(wk.getDate()+7)){
+    if(wk.getTime()<min)continue;
+    rulerHtml+=`<div class="dl-tl-tick week" style="left:${pctOf(wk.getTime())}%"></div>`;
+  }
+  let mo=new Date(min);mo=new Date(mo.getFullYear(),mo.getMonth(),1);
+  if(mo.getTime()<min)mo=new Date(mo.getFullYear(),mo.getMonth()+1,1);
+  for(;mo.getTime()<=max;mo=new Date(mo.getFullYear(),mo.getMonth()+1,1)){
+    const pct=pctOf(mo.getTime());
+    rulerHtml+=`<div class="dl-tl-tick month" style="left:${pct}%"></div>
+      <div class="dl-tl-month-label" style="left:${pct}%">${mo.toLocaleDateString('en-GB',{month:'short',year:'2-digit'})}</div>`;
+  }
+
+  // Selected sprint highlight band(s)
+  let highlightHtml='';
+  selectedSprints.forEach(g=>{
+    const sPct=pctOf(new Date(g.opensOn+'T00:00:00').getTime());
+    const ePct=pctOf(new Date(g.deadline+'T00:00:00').getTime());
+    highlightHtml+=`<div class="dl-tl-highlight" style="left:${sPct}%;width:${Math.max(ePct-sPct,0.3)}%"></div>
+      <div class="dl-tl-highlight-label" style="left:${sPct}%">${esc(sprintShortLabel(g.title))}</div>`;
+  });
+
+  let html=highlightHtml+rulerHtml+`<div class="dl-tl-line"></div><div class="dl-tl-today" style="left:${todayPct}%"><span>Today</span></div>`;
+  sorted.forEach((it,i)=>{
+    const startPct=pctOf(new Date(it.start+'T00:00:00').getTime());
+    const above=i%2===0;
+    const tier=Math.floor(i/2)%2;
+    // Above labels anchor with `bottom` (grow upward, away from the line) and below labels
+    // anchor with `top` (grow downward, away from the line) — this is what was clipping
+    // into the bar before: a 2-line date range under a top-anchored label just grows
+    // straight down onto the line/bar it's meant to sit above.
+    const gap=14+tier*54;
+    const posStyle=above?`bottom:${140+gap}px`:`top:${140+gap}px`;
+    if(it.end){
+      const endPct=pctOf(new Date(it.end+'T00:00:00').getTime());
+      html+=`<div class="dl-tl-bar" style="left:${startPct}%;width:${endPct-startPct}%;background:${it.col}"></div>`;
+    }else{
+      html+=`<div class="dl-tl-dot" style="left:${startPct}%;background:${it.col}"></div>`;
+    }
+    html+=`<div class="dl-tl-label" style="left:${startPct}%;${posStyle}">
+      <div class="tt">${esc(it.title)}</div>
+      <div class="td" style="color:${it.col}">${fmtDate(it.start)}${it.end?' – '+fmtDate(it.end):''}</div>
+    </div>`;
+  });
+  canvas.innerHTML=html;
+}
+function renderReminderChips(){
+  const el=$('#rem-chips');if(!el)return;
+  S.reminders=S.reminders||[];
+  if(!S.reminders.length){el.innerHTML='';return;}
+  el.innerHTML=[...S.reminders].sort((a,b)=>a.start.localeCompare(b.start)).map(r=>`
+    <span class="rem-chip">${esc(r.title)}<button data-act="remdel" data-id="${r.id}" aria-label="Remove ${esc(r.title)}">✕</button></span>
+  `).join('');
+}
+function addReminder(){
+  const titleEl=$('#rem-title'),startEl=$('#rem-start'),endEl=$('#rem-end'),isRange=$('#rem-range').checked,errEl=$('#rem-error');
+  const title=(titleEl.value||'').trim(), start=startEl.value;
+  errEl.textContent='';
+  if(!title||!start){errEl.textContent=isRange?'Enter a title, start date, and end date.':'Enter a title and a date.';return;}
+  if(isRange&&!endEl.value){errEl.textContent='Add an end date, or uncheck window.';return;}
+  if(isRange&&endEl.value<start){errEl.textContent='End date needs to be after the start date.';return;}
+  S.reminders=S.reminders||[];
+  const entry={id:Date.now(),title,start};
+  if(isRange)entry.end=endEl.value;
+  S.reminders.push(entry);
+  titleEl.value='';startEl.value='';endEl.value='';
+  render();
 }
 
 /* CAPTURE */
+/* ============ INVESTMENT ============ */
+// Thresholds pulled directly from your Notion "For Individual Stock Picks" rules. Grading
+// checks whichever fields are actually present on a stock's fundamentals row — a ticker
+// with no data yet just shows "not tracked", nothing fails silently.
+const INV_RUBRIC=[
+  {key:'pe',label:'P/E ratio',op:'<',target:15,fmt:v=>v.toFixed(1)},
+  {key:'peg',label:'PEG ratio',op:'<',target:1.5,fmt:v=>v.toFixed(2)},
+  {key:'roe',label:'ROE',op:'>',target:15,fmt:v=>v.toFixed(1)+'%'},
+  {key:'roa',label:'ROA',op:'>',target:7,fmt:v=>v.toFixed(1)+'%'},
+  {key:'debt_equity',label:'Debt to equity',op:'<',target:1,fmt:v=>v.toFixed(2)},
+  {key:'current_ratio',label:'Current ratio',op:'>',target:1.5,fmt:v=>v.toFixed(2)},
+  {key:'net_margin',label:'Net margin',op:'>',target:10,fmt:v=>v.toFixed(1)+'%'},
+  {key:'fcf_yield',label:'FCF yield',op:'>',target:6,fmt:v=>v.toFixed(1)+'%'},
+  {key:'div_yield',label:'Dividend yield',op:'>',target:4,fmt:v=>v.toFixed(1)+'%'},
+  {key:'payout_ratio',label:'Payout ratio',op:'<',target:70,fmt:v=>v.toFixed(0)+'%'}
+];
+function gradeFundamentals(f){
+  if(!f)return null;
+  const rows=INV_RUBIC.map(r=>{
+    const v=f[r.key];
+    if(v===null||v===undefined||v==='')return null;
+    const pass=r.op==='<'?v<r.target:v>r.target;
+    return{label:r.label,value:r.fmt(v),pass,target:(r.op==='<'?'< ':'> ')+r.target+(r.label.includes('%')||r.key.includes('yield')||r.key==='roe'||r.key==='roa'||r.key==='net_margin'||r.key==='payout_ratio'?'%':'')};
+  }).filter(Boolean);
+  if(!rows.length)return{rows:[],overall:null};
+  const passCt=rows.filter(r=>r.pass).length;
+  return{rows,overall:Math.round(passCt/rows.length*10*10)/10};
+}
+async function fetchInvFundamentals(tickers){
+  if(!sb||!tickers.length)return{};
+  try{
+    const{data,error}=await sb.from('investment_fundamentals').select('*').in('ticker',tickers);
+    if(error||!data)return{};
+    const out={};data.forEach(row=>out[row.ticker]=row);return out;
+  }catch(e){return{};}
+}
+function renderInvest(){
+  const tab=S.investment.invTab||'portfolio';
+  $$('#inv-nav button').forEach(b=>b.classList.toggle('on',b.dataset.invtab===tab));
+  const body=$('#inv-body');
+  if(tab==='portfolio')return renderInvPortfolio(body);
+  if(tab==='allocation')return renderInvAllocation(body);
+  if(tab==='screener')return renderInvScreener(body);
+  if(tab==='research')return renderInvResearch(body);
+  if(tab==='watchlist')return renderInvWatchlist(body);
+  if(tab==='rules')return renderInvRules(body);
+}
+function fmtMoney(v){return v==null?'—':'$'+v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+function renderInvPortfolio(body){
+  const hs=S.investment.holdings;
+  const totalStart=hs.reduce((s,h)=>s+(h.startValue||0),0);
+  const totalCurrent=hs.reduce((s,h)=>s+(h.currentValue||0),0);
+  const totalFees=hs.reduce((s,h)=>s+(h.fees||0),0);
+  const totalChangeAmt=totalCurrent-totalStart-totalFees;
+  const totalChangePct=totalStart?(totalChangeAmt/totalStart*100):0;
+  const chCol=v=>v>=0?'var(--current)':'var(--coral)';
+  body.innerHTML=`<div class="inv-total">
+    <span class="inv-total-label">Total portfolio</span>
+    <span class="inv-total-amt">${fmtMoney(totalCurrent)}</span>
+  </div>
+  <div class="inv-tbl-wrap" style="margin-bottom:18px">
+    <table class="inv-tbl">
+      <tr><th>Portfolio</th><th>Start</th><th>Current</th><th>Fees</th><th>Change ($)</th><th>Change (%)</th></tr>
+      ${hs.map(h=>{
+        const chAmt=(h.currentValue||0)-(h.startValue||0)-(h.fees||0);
+        const chPct=h.startValue?(chAmt/h.startValue*100):0;
+        return `<tr><td>${esc(h.name)}</td><td class="crit-target" style="font-family:var(--mono)">${fmtMoney(h.startValue)}</td>
+        <td style="font-family:var(--mono)">${fmtMoney(h.currentValue)}</td>
+        <td class="crit-target" style="font-family:var(--mono)">${h.fees!=null?fmtMoney(h.fees):'—'}</td>
+        <td style="font-family:var(--mono);color:${chCol(chAmt)}">${chAmt>=0?'+':''}${chAmt.toFixed(2)}</td>
+        <td style="font-family:var(--mono);color:${chCol(chAmt)}">${chPct>=0?'+':''}${chPct.toFixed(2)}%</td></tr>`;
+      }).join('')}
+      <tr style="font-weight:600"><td>Total</td><td style="font-family:var(--mono)">${fmtMoney(totalStart)}</td>
+      <td style="font-family:var(--mono)">${fmtMoney(totalCurrent)}</td><td></td>
+      <td style="font-family:var(--mono);color:${chCol(totalChangeAmt)}">${totalChangeAmt>=0?'+':''}${totalChangeAmt.toFixed(2)}</td>
+      <td style="font-family:var(--mono);color:${chCol(totalChangeAmt)}">${totalChangePct>=0?'+':''}${totalChangePct.toFixed(2)}%</td></tr>
+    </table>
+  </div>
+  <div class="inv-grid" style="grid-template-columns:1fr">${hs.map((h,i)=>invHoldingCard(h,i)).join('')}</div>`;
+}
+function invHoldingCard(h,i){
+  const open=openInvHoldings.has(String(i));
+  const hasDetail=h.assets&&h.assets.length;
+  return `<div class="inv-card" style="cursor:${hasDetail?'pointer':'default'}" ${hasDetail?`data-act="invholdexpand" data-i="${i}"`:''}>
+    <div class="inv-sprint-top" style="display:flex;align-items:center;gap:10px">
+      ${hasDetail?`<span class="dl-caret">${open?'▾':'▸'}</span>`:''}
+      <div class="inv-card-name" style="margin-bottom:0;flex:1">${esc(h.name)}</div>
+      <div class="inv-card-amt" style="margin-bottom:0">${fmtMoney(h.currentValue)}</div>
+    </div>
+    ${open&&hasDetail?`
+      <div class="inv-note-head" style="margin-top:16px">Current composition</div>
+      <table class="inv-tbl" style="margin-top:8px"><tr><th>Asset</th><th>Units</th><th>Price (USD)</th><th>Price (SGD)</th><th>Value</th></tr>
+      ${h.assets.map(a=>`<tr><td>${a.ticker!=='Cash'?`<span class="inv-tick">${esc(a.ticker)}</span> `:''}${esc(a.name||a.ticker)}</td>
+        <td style="font-family:var(--mono)">${a.units!=null?a.units.toFixed(4):'—'}</td>
+        <td style="font-family:var(--mono)">${a.priceUSD!=null?a.priceUSD.toFixed(2):'—'}</td>
+        <td style="font-family:var(--mono)">${a.priceSGD!=null?a.priceSGD.toFixed(2):'—'}</td>
+        <td style="font-family:var(--mono);color:var(--current)">${fmtMoney(a.value)}</td></tr>`).join('')}
+      </table>
+      ${h.lots&&h.lots.length?`
+      <button class="inv-note-head" style="margin-top:14px;background:none;border:none;cursor:pointer;padding:0" data-act="invlotstoggle" data-i="${i}">
+        ${openInvLots.has(String(i))?'▾':'▸'} Transaction history (${h.lots.length})
+      </button>
+      ${openInvLots.has(String(i))?`<div style="margin-top:8px;display:flex;flex-direction:column;gap:10px">${h.lots.map(l=>`
+        <div class="inv-lot-group">
+          <div class="inv-lot-head"><span>${esc(l.group)}</span><span class="crit-target">${l.date?fmtDate(l.date):''}</span>${l.total!=null?`<span style="margin-left:auto;font-family:var(--mono);color:var(--current)">${fmtMoney(l.total)}</span>`:''}</div>
+          <table class="inv-tbl"><tr><th>Asset</th><th>Units</th><th>Price (USD)</th><th>Value (SGD)</th></tr>
+          ${l.rows.map(r=>`<tr><td><span class="inv-tick">${esc(r.ticker)}</span></td>
+            <td style="font-family:var(--mono)">${r.units.toFixed(4)}</td>
+            <td style="font-family:var(--mono)">${r.priceUSD!=null?r.priceUSD.toFixed(2):'—'}</td>
+            <td style="font-family:var(--mono)">${fmtMoney(r.valueSGD)}</td></tr>`).join('')}
+          </table>
+        </div>`).join('')}</div>`:''}`:''}
+    `:''}
+  </div>`;
+}
+function renderInvAllocation(body){
+  const buckets=[
+    {name:'Core index',pct:25,col:'#5fb3a8'},{name:'Compounding',pct:20,col:'#8fd0c2'},
+    {name:'Growth',pct:20,col:'#e0a458'},{name:'Value',pct:15,col:'#d98b7a'},
+    {name:'Income',pct:10,col:'#a8c5c0'},{name:'Defensive',pct:10,col:'#7a9590'}
+  ];
+  body.innerHTML=`<div class="inv-alloc">
+    <div class="inv-alloc-bar">${buckets.map(b=>`<div class="inv-alloc-seg" style="width:${b.pct}%;background:${b.col}">${b.pct}%</div>`).join('')}</div>
+    <div class="inv-alloc-legend">${buckets.map(b=>`<span><i class="inv-dot" style="background:${b.col}"></i>${esc(b.name)}</span>`).join('')}</div>
+  </div>
+  <p class="fuel-tip" style="margin-top:16px">Rebalance when any bucket drifts more than 5% from its target.</p>`;
+}
+function renderInvScreener(body){
+  S.investment.screenQuery=S.investment.screenQuery||'';
+  S.investment.screenSector=S.investment.screenSector||'All';
+  const sectors=['All',...new Set(INVESTMENT_UNIVERSE.map(r=>r.s))];
+  const q=S.investment.screenQuery.toLowerCase();
+  let matches=INVESTMENT_UNIVERSE.filter(r=>
+    (S.investment.screenSector==='All'||r.s===S.investment.screenSector)&&
+    (!q||r.t.toLowerCase().includes(q)||r.n.toLowerCase().includes(q))
+  );
+  const shown=matches.slice(0,80);
+  body.innerHTML=`<input id="inv-screen-q" placeholder="Search ticker or name…" value="${esc(S.investment.screenQuery)}">
+  <div class="filters">${sectors.map(s=>`<div class="chip ${S.investment.screenSector===s?'on':''}" data-act="invsector" data-sector="${esc(s)}">${esc(s)}</div>`).join('')}</div>
+  <div class="inv-tbl-wrap"><table class="inv-tbl"><tr><th>Ticker</th><th>Name</th><th>Sector</th><th>Type</th><th></th></tr>
+  ${shown.map(r=>{
+    const tracked=S.investment.tracked.includes(r.t);
+    return `<tr><td class="inv-tick">${esc(r.t)}</td><td>${esc(r.n)}</td>
+    <td><span class="inv-sector-badge">${esc(r.s)}${r.u?' · '+esc(r.u):''}</span></td><td>${r.k==='E'?'ETF':'Stock'}</td>
+    <td><button class="inv-track-btn ${tracked?'on':''}" data-act="invtrack" data-t="${esc(r.t)}">${tracked?'✓ Tracking':'Track'}</button></td></tr>`;
+  }).join('')}
+  </table></div>
+  <p class="fuel-tip" style="margin-top:10px">${matches.length} match${matches.length===1?'':'es'}${matches.length>80?' — showing first 80, refine your search to narrow further':''}. "Track" adds it to auto-refresh once the Supabase edge function is set up.</p>`;
+}
+function renderInvResearch(body){
+  const tracked=S.investment.tracked;
+  if(!tracked.length){
+    body.innerHTML=`<div class="empty">Nothing tracked yet. Go to Screener and hit "Track" on a stock you're actually considering.</div>`;
+    return;
+  }
+  body.innerHTML=`<div class="inv-ticker-picker">${tracked.map(t=>`<div class="inv-ticker-chip ${S.investment.researchTicker===t?'on':''}" data-act="invresearchpick" data-t="${esc(t)}">${esc(t)}</div>`).join('')}</div><div id="inv-research-detail">Loading…</div>`;
+  const active=S.investment.researchTicker||tracked[0];
+  S.investment.researchTicker=active;
+  fetchInvFundamentals([active]).then(map=>{
+    const f=map[active];
+    const g=gradeFundamentals(f);
+    const detail=$('#inv-research-detail');if(!detail)return;
+    if(!f){
+      detail.innerHTML=`<div class="research"><div class="research-head"><span class="name">${esc(active)}</span></div>
+        <p class="fuel-tip">No data yet. This ticker is tracked but the Supabase edge function hasn't refreshed it — once that's deployed and runs, its numbers will show up here automatically.</p></div>`;
+      return;
+    }
+    detail.innerHTML=`<div class="research"><div class="research-head"><span class="name">${esc(active)}</span>
+      ${g.overall!==null?`<div class="overall-ring"><div><div class="overall">${g.overall}<span style="font-size:15px;color:var(--mist-dim)">/10</span></div><div class="overall-label">Rubric score</div></div></div>`:''}</div>
+      ${g.rows.map(r=>`<div class="crit"><span class="crit-label">${esc(r.label)} <span class="crit-target">(target ${esc(r.target)})</span></span>
+        <span class="crit-val ${r.pass?'pass':'fail'}">${esc(r.value)}<span class="crit-icon ${r.pass?'pass':'fail'}">${r.pass?'✓':'✕'}</span></span></div>`).join('')}
+      <p class="fuel-tip" style="margin-top:14px">Last updated: ${f.updated_at?fmtDate(f.updated_at.slice(0,10)):'unknown'}</p>
+    </div>`;
+  });
+}
+function renderInvWatchlist(body){
+  const items=S.investment.watchlist;
+  S.investment.wlAddQuery=S.investment.wlAddQuery||'';
+  const q=S.investment.wlAddQuery.trim().toLowerCase();
+  const matches=q?INVESTMENT_UNIVERSE.filter(r=>r.t.toLowerCase().includes(q)||r.n.toLowerCase().includes(q)).slice(0,8):[];
+  body.innerHTML=`<div style="position:relative;margin-bottom:16px">
+    <input id="inv-wl-q" placeholder="Add a ticker — search or type a basket like ASML/TSMC/ARM…" value="${esc(S.investment.wlAddQuery)}">
+    ${matches.length?`<div class="inv-wl-dropdown">${matches.map(m=>
+      `<div class="inv-wl-dd-item" data-act="invwladd" data-t="${esc(m.t)}" data-n="${esc(m.n)}">
+        <span class="inv-tick">${esc(m.t)}</span><span>${esc(m.n)}</span></div>`).join('')}
+      ${q&&!items.find(w=>w.ticker.toLowerCase()===q)?`<div class="inv-wl-dd-item" data-act="invwladdfree" data-t="${esc(S.investment.wlAddQuery.trim())}">
+        <span class="inv-tick">+ Add "${esc(S.investment.wlAddQuery.trim())}"</span><span class="crit-target">as typed</span></div>`:''}
+    </div>`:''}
+  </div>
+  <div class="inv-grid">${items.map((w,i)=>{
+    const open=openWatchlist.has(String(i));
+    return `<div class="inv-card" style="cursor:pointer" data-act="invwltoggle" data-i="${i}">
+      <button class="inv-card-del" data-act="invwldel" data-i="${i}" title="Remove">✕</button>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="dl-caret">${open?'▾':'▸'}</span>
+        <span class="inv-wl-tick">${esc(w.ticker)}</span>
+      </div>
+      ${open?`<div class="inv-card-meta" style="margin-top:10px">${esc(w.note||'No note yet.')}</div>`:''}
+    </div>`;
+  }).join('')}</div>
+  ${!items.length?`<div class="empty">Nothing on the watchlist yet. Search above to add a ticker.</div>`:''}`;
+}
+function renderInvRules(body){
+  body.innerHTML=`<div class="inv-rules-grid">
+    <div class="inv-rules-card">
+      <div class="inv-rules-title">▦ Portfolio rules</div>
+      <ul><li>No options trading</li><li>No biotech / pharma firms</li><li>No more than 5% of the portfolio in any one stock</li>
+      <li>No more than 20% of the portfolio in any sector</li><li>No more than 40% in any single country</li>
+      <li>Rebalance when a bucket drifts more than 5% from its target</li></ul>
+    </div>
+    <div class="inv-rules-card">
+      <div class="inv-rules-title">◑ Exit strategy</div>
+      <ul><li>Thesis broken — sell immediately if the core reason you bought changes</li>
+      <li>Valuation stretched — trim when price exceeds 2× your entry fair-value target</li>
+      <li>Stop-loss — mandatory thesis review if a position drops more than 25% with no new fundamental reason</li>
+      <li>Better opportunity — sell the weakest position in a sub-portfolio to fund a higher-conviction pick in the same sub-portfolio</li></ul>
+    </div>
+    <div class="inv-rules-card">
+      <div class="inv-rules-title">◈ VIX cash deployment</div>
+      <div class="vix"><div class="vix-row"><span>VIX 25–29</span><span class="vix-range">Deploy 25% of cash reserves</span></div>
+      <div class="vix-row"><span>VIX 30–34</span><span class="vix-range">Deploy 25% of cash reserves</span></div>
+      <div class="vix-row"><span>VIX &gt; 35</span><span class="vix-range">Deploy 50% of cash reserves</span></div></div>
+    </div>
+  </div>`;
+}
+
 function renderCapture(){
   const list=$('#dump-list');
   if(!S.dumps.length){list.innerHTML=`<div class="empty" style="margin-top:20px">Nothing parked. When a thought won't leave you alone, send it here.</div>`;return;}
@@ -2230,6 +3656,7 @@ document.addEventListener('click',e=>{
         const ni=document.querySelector(`.goal[data-id="${g.id}"] [data-goaledit]`);if(ni){ni.focus();ni.select();}return;}
       if(act.dataset.act==='goaltitlesave'){saveGoalTitleEdit(g);return;}
       if(act.dataset.act==='expand'){const k=String(g.id);openGoals.has(k)?openGoals.delete(k):openGoals.add(k);render();return;}
+      if(act.dataset.act==='togglenote'){const k=String(g.id);openNotes.has(k)?openNotes.delete(k):openNotes.add(k);render();return;}
       // -- checklist item actions: toggle done / delete / edit / save an edit --
       if(act.dataset.act==='subtoggle'){const se=e.target.closest('[data-subid]');const s=(g.subs||[]).find(x=>x.id==se.dataset.subid);if(s){s.done=!s.done;render();}return;}
       if(act.dataset.act==='subdel'){const se=e.target.closest('[data-subid]');g.subs=(g.subs||[]).filter(x=>x.id!=se.dataset.subid);editingSubs.delete(se.dataset.subid);render();return;}
@@ -2281,6 +3708,90 @@ document.addEventListener('click',e=>{
   const dlrow=e.target.closest('.dl-row');
   if(dlrow&&e.target.closest('[data-act="cleardate"]')){
     const g=findGoal(dlrow.dataset.id);if(g){g.deadline=null;render();}return;
+  }
+
+  // deadlines: Roadmap section collapse/expand (shared by both List and Timeline views)
+  const dlRoadmapToggle=e.target.closest('[data-act="toggledlroadmap"]');
+  if(dlRoadmapToggle){S.dlRoadmapOpen=!S.dlRoadmapOpen;renderDeadlines();return;}
+
+  // investment: sub-tab nav
+  const invTab=e.target.closest('[data-invtab]');
+  if(invTab){S.investment.invTab=invTab.dataset.invtab;render();return;}
+
+  // investment: sector filter chip
+  const invSector=e.target.closest('[data-act="invsector"]');
+  if(invSector){S.investment.screenSector=invSector.dataset.sector;render();return;}
+
+  // investment: track/untrack a ticker — also writes through to the shared Supabase table
+  // so the Edge Function (which runs independently of your browser) knows what to refresh
+  const invTrack=e.target.closest('[data-act="invtrack"]');
+  if(invTrack){
+    const t=invTrack.dataset.t;
+    const idx=S.investment.tracked.indexOf(t);
+    if(idx>=0){
+      S.investment.tracked.splice(idx,1);
+      if(sb)sb.from('investment_tracked_tickers').delete().eq('ticker',t).then(()=>{},()=>{});
+    }else{
+      S.investment.tracked.push(t);
+      if(sb)sb.from('investment_tracked_tickers').insert({ticker:t}).then(()=>{},()=>{});
+    }
+    render();return;
+  }
+
+  // investment: pick a ticker in Research
+  const invPick=e.target.closest('[data-act="invresearchpick"]');
+  if(invPick){S.investment.researchTicker=invPick.dataset.t;render();return;}
+
+  // investment: expand/collapse a portfolio holding's asset breakdown
+  const invHoldExpand=e.target.closest('[data-act="invholdexpand"]');
+  if(invHoldExpand){const k=invHoldExpand.dataset.i;openInvHoldings.has(k)?openInvHoldings.delete(k):openInvHoldings.add(k);render();return;}
+
+  // investment: expand/collapse a holding's transaction history (nested inside the card above)
+  const invLotsToggle=e.target.closest('[data-act="invlotstoggle"]');
+  if(invLotsToggle){const k=invLotsToggle.dataset.i;openInvLots.has(k)?openInvLots.delete(k):openInvLots.add(k);render();return;}
+
+  // investment: watchlist — expand/collapse a ticker's note
+  const invWlToggle=e.target.closest('[data-act="invwltoggle"]');
+  if(invWlToggle&&!e.target.closest('[data-act="invwldel"]')){
+    const k=invWlToggle.dataset.i;openWatchlist.has(k)?openWatchlist.delete(k):openWatchlist.add(k);render();return;
+  }
+
+  // investment: watchlist — remove a ticker
+  const invWlDel=e.target.closest('[data-act="invwldel"]');
+  if(invWlDel){S.investment.watchlist.splice(+invWlDel.dataset.i,1);render();return;}
+
+  // investment: watchlist — add a ticker picked from the search dropdown
+  const invWlAdd=e.target.closest('[data-act="invwladd"]');
+  if(invWlAdd){
+    const t=invWlAdd.dataset.t;
+    if(!S.investment.watchlist.find(w=>w.ticker===t))S.investment.watchlist.push({ticker:t,note:invWlAdd.dataset.n||''});
+    S.investment.wlAddQuery='';render();return;
+  }
+  // investment: watchlist — add whatever was typed as a free-text ticker/basket
+  const invWlAddFree=e.target.closest('[data-act="invwladdfree"]');
+  if(invWlAddFree){
+    const t=invWlAddFree.dataset.t;
+    if(t&&!S.investment.watchlist.find(w=>w.ticker===t))S.investment.watchlist.push({ticker:t,note:''});
+    S.investment.wlAddQuery='';render();return;
+  }
+
+  // deadlines: List / Timeline view toggle
+  const dlViewBtn=e.target.closest('[data-dlview]');
+  if(dlViewBtn){
+    const mode=dlViewBtn.dataset.dlview;
+    $$('.dl-view-btn').forEach(b=>b.classList.toggle('on',b.dataset.dlview===mode));
+    $('#dl-list').style.display=mode==='list'?'':'none';
+    $('#dl-timeline-wrap').style.display=mode==='timeline'?'':'none';
+    if(mode==='timeline')renderDeadlineTimeline();
+    return;
+  }
+
+  // reminders: add / remove
+  if(e.target.id==='rem-add'){addReminder();return;}
+  const remDel=e.target.closest('[data-act="remdel"]');
+  if(remDel){
+    S.reminders=(S.reminders||[]).filter(r=>String(r.id)!==remDel.dataset.id);
+    render();return;
   }
 
   // capture item tools
@@ -2630,6 +4141,7 @@ function addSport(){
   hideSportSuggest();render();
 }
 bindEnter('#sport-name',addSport);bindEnter('#sport-min',addSport);bindEnter('#sport-sec',addSport);
+bindEnter('#rem-title',addReminder);bindEnter('#rem-start',addReminder);bindEnter('#rem-end',addReminder);
 $('#sport-add').addEventListener('click',addSport);
 const sportNameEl=$('#sport-name');
 if(sportNameEl){
@@ -2657,13 +4169,23 @@ document.addEventListener('input',e=>{
     const v=parseFloat(e.target.value);S.body[k]=isNaN(v)?null:v;
     render();
   }
-});
-
-document.addEventListener('change',e=>{
+  if(e.target.id==='inv-screen-q'){
+    S.investment.screenQuery=e.target.value;
+    const pos=e.target.selectionStart;
+    render();
+    const ni=$('#inv-screen-q');if(ni){ni.focus();ni.setSelectionRange(pos,pos);}
+  }
+  if(e.target.id==='inv-wl-q'){
+    S.investment.wlAddQuery=e.target.value;
+    const pos=e.target.selectionStart;
+    render();
+    const ni=$('#inv-wl-q');if(ni){ni.focus();ni.setSelectionRange(pos,pos);}
+  }
   if(e.target.matches&&e.target.matches('[data-mealkcal]')){const m=S.meals.find(x=>x.id==e.target.dataset.mealkcal);if(m){const v=parseInt(e.target.value,10);m.kcal=isNaN(v)?null:v;render();}}
   if(e.target.matches&&e.target.matches('[data-wokcal]')){const w=S.workouts.find(x=>x.id==e.target.dataset.wokcal);if(w){const v=parseInt(e.target.value,10);w.kcal=isNaN(v)?null:v;render();}}
   if(e.target.matches&&e.target.matches('[data-mealmac]')){const[id,key]=e.target.dataset.mealmac.split(':');const m=S.meals.find(x=>x.id==id);if(m){const v=parseInt(e.target.value,10);m[key]=isNaN(v)?null:v;render();}}
   if(e.target.id==='pf-sex'){S.body=S.body||{};S.body.sex=e.target.value;render();}
+  if(e.target.id==='rem-range'){const row=$('#rem-end-row');if(row)row.style.display=e.target.checked?'':'none';}
 });
 
 document.addEventListener('keydown',e=>{
@@ -2795,6 +4317,68 @@ async function bootApp(){
     S.habitSeed=2;
   }
   S.habits.forEach(h=>{if(h.type==='counter'){h.type='check';if(/push-?up/i.test(h.name))h.name='Push-ups';}});
+  if(!S.habitRenameDrivingV1){
+    // "Driving Course" → "Driving Theory": renamed in place (not re-seeded) so any days
+    // you've already checked off stay checked — you're studying theory daily until the
+    // practical booking opens in December, so the habit name should say that.
+    const dh=S.habits.find(h=>h.name==='Driving Course');
+    if(dh)dh.name='Driving Theory';
+    S.habitRenameDrivingV1=true;
+  }
+  if(!S.habitRoadmapBlocksV1){
+    // Splits the daily schedule into independently-checkable habits — so a day where you
+    // only did Cert + DSA and skipped the project isn't "incomplete", it's just two ticks
+    // instead of three. The Roadmap sprint checklist is separate and only gets ticked once
+    // a deliverable is actually finished, whichever day that lands on.
+    const toAdd=['Cert Study','NTU Module Study','Software Project','DSA / Leetcode'];
+    const maxId=S.habits.reduce((m,h)=>Math.max(m,h.id||0),0);
+    toAdd.forEach((name,i)=>{
+      if(!S.habits.find(h=>h.name===name))S.habits.push({id:maxId+i+1,name,type:'check',log:{}});
+    });
+    S.habitRoadmapBlocksV1=true;
+  }
+  if(!S.habitSplitCertModuleV1){
+    // "Cert / Module Study" combined the two into one checkbox — which quietly let one slip
+    // while the other kept the streak alive. Splitting makes cert-vs-module balance visible,
+    // which is the whole point of tracking them "side by side" in the first place. Existing
+    // check-off history moves to Cert Study; NTU Module Study starts fresh alongside it.
+    const old=S.habits.find(h=>h.name==='Cert / Module Study');
+    if(old){
+      old.name='Cert Study';
+      if(!S.habits.find(h=>h.name==='NTU Module Study')){
+        const maxId=S.habits.reduce((m,h)=>Math.max(m,h.id||0),0);
+        S.habits.push({id:maxId+1,name:'NTU Module Study',type:'check',log:{}});
+      }
+    }
+    S.habitSplitCertModuleV1=true;
+  }
+  if(!S.habitRenameCertV1){
+    // "Cert Study" → "Certification Study" — renamed in place, log history preserved.
+    const ch=S.habits.find(h=>h.name==='Cert Study');
+    if(ch)ch.name='Certification Study';
+    S.habitRenameCertV1=true;
+  }
+  // Defensive repair, runs every load (not one-shot): fixes any habit that ended up with a
+  // missing/broken id or log object — e.g. from an in-between version while these Roadmap
+  // habits were being iterated on — which would silently break its checkbox/dot clicks
+  // without affecting any other, already-sound habit.
+  S.habits.forEach((h,i)=>{
+    if(h.id===undefined||h.id===null||Number.isNaN(h.id))h.id=Date.now()+i;
+    if(!h.log||typeof h.log!=='object')h.log={};
+  });
+  // De-duplicate by name (keep the one with more logged history), in case an earlier
+  // migration pass ever created a second copy of the same habit.
+  {
+    const seen=new Map();
+    S.habits.forEach(h=>{
+      const key=h.name;
+      const prev=seen.get(key);
+      if(!prev){seen.set(key,h);return;}
+      const keep=Object.keys(h.log).length>=Object.keys(prev.log).length?h:prev;
+      seen.set(key,keep);
+    });
+    S.habits=Array.from(seen.values());
+  }
   if(!S.nsCountdownV1){
     const ns=S.goals.find(g=>/NS Disruption/i.test(g.title));
     if(ns){if(!ns.deadline)ns.deadline='2027-08-02';ns.pinned=true;}
@@ -2943,6 +4527,151 @@ async function bootApp(){
   if(!S.quotesClearV1){
     S.quotes=[];
     S.quotesClearV1=true;
+  }
+  if(!S.roadmapSeedV1){
+    // Adds the Aug 2026 → Jun 2027 cert/module/project roadmap as its own Goals category.
+    // Runs once, same as the other one-shot migrations above — won't re-add or duplicate
+    // on later loads, and won't touch anything you've already customised elsewhere.
+    if(!S.cats.find(c=>c.name==='Roadmap'))S.cats.push({name:'Roadmap',color:'#5fb3a8'});
+    const maxId=S.goals.reduce((m,g)=>Math.max(m,g.id||0),0);
+    const base=Date.now();
+    ROADMAP_SPRINTS.forEach((sp,i)=>{
+      const subs=sp.subs.map((t,j)=>({id:base+i*100+j,text:t,done:false}));
+      S.goals.push({id:maxId+i+1,cat:'Roadmap',title:sp.title,done:false,star:false,term:'fixed',opensOn:sp.start,deadline:sp.deadline,note:sp.note,subs});
+    });
+    const starredCount=S.goals.filter(x=>x.star&&!x.done).length;
+    const firstSprint=S.goals.find(g=>g.cat==='Roadmap'&&/Sprint 1/.test(g.title));
+    if(firstSprint&&starredCount<5)firstSprint.star=true;
+    S.roadmapSeedV1=true;
+  }
+  if(!S.roadmapOpensOnV1){
+    // Patch for anyone who got the Roadmap seed before sprint start dates (opensOn) were
+    // added — backfills them onto the existing Sprint goals by matching title, no duplicates.
+    ROADMAP_SPRINTS.forEach(sp=>{
+      const g=S.goals.find(x=>x.cat==='Roadmap'&&x.title===sp.title);
+      if(g&&!g.opensOn)g.opensOn=sp.start;
+    });
+    S.roadmapOpensOnV1=true;
+  }
+  if(!S.roadmapTitleSyncV2){
+    // Sprint 5 & 6 originally had no name, just a date range — gave them names (Deep Work,
+    // Home Stretch) to match the others. Match by sprint NUMBER (not exact title, since the
+    // title text itself is what changed) so this updates existing goals instead of duplicating.
+    S.goals.forEach(g=>{
+      if(g.cat!=='Roadmap')return;
+      const num=(g.title.match(/^Sprint (\d+)/)||[])[1];
+      if(!num)return;
+      const sp=ROADMAP_SPRINTS.find(s=>s.title.startsWith('Sprint '+num+' '));
+      if(sp){g.title=sp.title;if(!g.opensOn)g.opensOn=sp.start;}
+    });
+    S.roadmapTitleSyncV2=true;
+  }
+  if(!S.investSeedV1){
+    S.investment=S.investment||{};
+    if(!S.investment.tracked)S.investment.tracked=[]; // tickers the Supabase edge function auto-refreshes
+    S.investSeedV1=true;
+  }
+  if(!S.investWatchlistV2){
+    // Watchlist used to live as Goals (cat 'Investment') — pulled out into its own state
+    // since a watchlist ticker isn't a goal. Migrates anyone who already had the old
+    // goal-based entries across (dedup'd by ticker), deletes those goals, and drops the
+    // 'Investment' category so it stops showing up in Goals at all.
+    S.investment.watchlist=S.investment.watchlist||[];
+    const oldGoals=S.goals.filter(g=>g.cat==='Investment');
+    oldGoals.forEach(g=>{
+      if(!S.investment.watchlist.find(w=>w.ticker===g.title)){
+        S.investment.watchlist.push({ticker:g.title,note:(g.note&&g.note[0])||''});
+      }
+    });
+    S.goals=S.goals.filter(g=>g.cat!=='Investment');
+    S.cats=S.cats.filter(c=>c.name!=='Investment');
+    if(!oldGoals.length&&!S.investment.watchlist.length){
+      // brand new install, never had the old goal-based entries — seed fresh
+      S.investment.watchlist=[
+        {ticker:'GOOG',note:'Alphabet — waiting for a pullback'},
+        {ticker:'ASML/TSMC/ARM',note:'Semicap + foundry + IP moat basket'},
+        {ticker:'SNPS/CDNS',note:'EDA duopoly'},
+        {ticker:'V/MA',note:'Payment network duopoly'},
+        {ticker:'MSCI/SPGI/MCO/CME',note:'Financial benchmarking toll-roads'},
+        {ticker:'BRK',note:'Core holding company candidate'},
+        {ticker:'VST',note:'Grid infrastructure / power demand play'},
+        {ticker:'MP/USAR',note:'Rare earth supply chain'}
+      ];
+    }
+    S.investWatchlistV2=true;
+  }
+  if(!S.investPortfolioDetailV1){
+    // Full portfolio snapshot: start/current value, fees, current asset breakdown per
+    // holding, and transaction lot history. The last two "Rebalance" lot groups you sent
+    // weren't clearly attributed to an account in the pasted data — I attached them to
+    // RoboInvest since that's where every other Rebalance entry lives; flag if that's wrong.
+    S.investment.holdings=[
+      {name:'OCBC (Precious Metals Roboinvest)',startValue:6000.00,currentValue:5701.58,fees:0.74,
+        assets:[
+          {ticker:'IAU',name:'iShares Gold Trust',units:26.6933,priceUSD:87.82,priceSGD:111.57,value:2978.13},
+          {ticker:'SLV',name:'iShares Silver Trust',units:8.1858,priceUSD:62.43,priceSGD:79.31,value:649.23},
+          {ticker:'PPLT',name:'Abrdn Physical Platinum',units:23.6103,priceUSD:17.17,priceSGD:21.81,value:515.01},
+          {ticker:'PALL',name:'Abrdn Physical Palladium',units:13.1767,priceUSD:24.97,priceSGD:31.72,value:418.00},
+          {ticker:'COPX',name:'Global X Copper Miners ETF',units:8.9705,priceUSD:94.25,priceSGD:119.74,value:1074.10},
+          {ticker:'Cash',name:'Cash',units:null,priceUSD:null,priceSGD:null,value:67.11}
+        ],
+        lots:[
+          {group:'RoboInvest #1',date:'2025-11-17',total:1470.21,rows:[
+            {ticker:'IAU',units:9.9458,priceUSD:76.11,valueSGD:999.43},{ticker:'SLV',units:3.4177,priceUSD:45.47,valueSGD:206.60},
+            {ticker:'PPLT',units:12.8090,priceUSD:13.95,valueSGD:235.07},{ticker:'PALL',units:0.8825,priceUSD:25.26,valueSGD:29.11}]},
+          {group:'RoboInvest #2',date:'2025-12-15',total:489.59,rows:[
+            {ticker:'IAU',units:3.5391,priceUSD:81.08,valueSGD:373.10},{ticker:'SLV',units:0.4973,priceUSD:58.11,valueSGD:36.99},
+            {ticker:'PPLT',units:3.0240,priceUSD:16.29,valueSGD:63.99},{ticker:'PALL',units:0.4190,priceUSD:28.68,valueSGD:15.51}]},
+          {group:'Rebalance #1',date:'2026-01-14',total:202.25,rows:[
+            {ticker:'PALL',units:4.5435,priceUSD:34.03,valueSGD:202.25}]},
+          {group:'RoboInvest #3',date:'2026-01-21',total:1032.50,rows:[
+            {ticker:'IAU',units:4.7364,priceUSD:90.87,valueSGD:557.99},{ticker:'SLV',units:1.5082,priceUSD:83.96,valueSGD:165.24},
+            {ticker:'PPLT',units:6.7250,priceUSD:22.63,valueSGD:190.79},{ticker:'PALL',units:2.7145,priceUSD:33.75,valueSGD:118.48}]},
+          {group:'RoboInvest #4',date:'2026-01-27',total:1409.36,rows:[
+            {ticker:'IAU',units:7.1718,priceUSD:97.48,valueSGD:871.17},{ticker:'SLV',units:1.6074,priceUSD:101.59,valueSGD:201.11},
+            {ticker:'PPLT',units:6.1130,priceUSD:23.78,valueSGD:201.18},{ticker:'PALL',units:2.7325,priceUSD:35.00,valueSGD:135.90}]},
+          {group:'RoboInvest #5',date:'2026-02-20',total:782.71,rows:[
+            {ticker:'IAU',units:1.0036,priceUSD:95.95,valueSGD:120.47},{ticker:'SLV',units:3.0192,priceUSD:76.62,valueSGD:272.36},
+            {ticker:'PPLT',units:10.5060,priceUSD:19.65,valueSGD:252.62},{ticker:'PALL',units:3.5105,priceUSD:31.92,valueSGD:137.26}]},
+          {group:'RoboInvest #6',date:'2026-03-11',total:685.92,rows:[
+            {ticker:'IAU',units:3.0971,priceUSD:97.55,valueSGD:385.79},{ticker:'SLV',units:0.7258,priceUSD:77.91,valueSGD:71.62},
+            {ticker:'PPLT',units:4.4690,priceUSD:19.76,valueSGD:113.44},{ticker:'PALL',units:3.0295,priceUSD:29.85,valueSGD:115.07}]},
+          {group:'Rebalance #1 (Copper)',date:'2026-07-09',total:836.37,rows:[
+            {ticker:'COPX',units:8.9705,priceUSD:75.40,valueSGD:836.37}]},
+          {group:'Rebalance (unattributed #1)',date:'2026-01-13',total:198.07,rows:[
+            {ticker:'IAU',units:1.5126,priceUSD:86.36,valueSGD:168.68},{ticker:'SLV',units:0.0098,priceUSD:78.60,valueSGD:1.01},
+            {ticker:'PPLT',units:1.0290,priceUSD:21.17,valueSGD:28.38}]},
+          {group:'Rebalance (unattributed #2)',date:'2026-07-08',total:null,rows:[
+            {ticker:'IAU',units:1.2879,priceUSD:76.74,valueSGD:125.61},{ticker:'SLV',units:2.5800,priceUSD:52.83,valueSGD:172.40},
+            {ticker:'PPLT',units:19.0067,priceUSD:14.41,valueSGD:348.38},{ticker:'PALL',units:4.6553,priceUSD:22.16,valueSGD:348.38}]}
+        ]},
+      {name:'OCBC (Precious Metals Account)',startValue:799.49,currentValue:771.54,fees:null,
+        assets:[{ticker:'XAU',name:'Gold (XAU)',units:0.13,priceUSD:4671.30,priceSGD:5934.89,value:771.54}],
+        lots:[{group:'Account opened',date:'2026-04-14',total:799.49,rows:[{ticker:'XAU',units:0.13,priceUSD:4838.46,valueSGD:799.49}]}]},
+      {name:'SPDR Straits Times Index ETF (ES3.SI)',startValue:495.20,currentValue:570.24,fees:2.38,
+        assets:[{ticker:'ES3',name:'SPDR STI ETF',units:99,priceUSD:null,priceSGD:5.76,value:570.24}],
+        lots:[{group:'Purchase',date:'2026-02-19',total:495.20,rows:[{ticker:'ES3',units:99,priceUSD:null,valueSGD:495.20}]}]}
+    ];
+    S.investPortfolioDetailV1=true;
+  }
+  if(!S.roadmapTagsNoteSyncV2){
+    // Checklist items got 🎓/📘/💻/🧮/🔧 tags matching the Certification Study / NTU Module
+    // Study / Software Project / DSA split, plus each sprint got a `note` — now an array of
+    // separate lines (weekday/weekend, one per row) instead of one run-on paragraph. Item
+    // count/order per sprint is unchanged, so this maps old subs to new text by position —
+    // done/id are preserved, only the label text and note update.
+    S.goals.forEach(g=>{
+      if(g.cat!=='Roadmap')return;
+      const num=(g.title.match(/^Sprint (\d+)/)||[])[1];
+      if(!num)return;
+      const sp=ROADMAP_SPRINTS.find(s=>s.title.startsWith('Sprint '+num+' '));
+      if(!sp)return;
+      if(Array.isArray(g.subs)&&g.subs.length===sp.subs.length){
+        g.subs.forEach((sub,i)=>{sub.text=sp.subs[i];});
+      }
+      g.note=sp.note;
+    });
+    S.roadmapTagsNoteSyncV2=true;
   }
   if(!S.activeCat)S.activeCat='all';
   render();
