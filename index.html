@@ -778,6 +778,9 @@ body{
 .inv-nav button.on{background:var(--surface-2);color:var(--text)}
 .inv-nav .ic{width:16px;text-align:center;flex:none}
 .inv-nav button.on .ic{filter:saturate(1.4)}
+.inv-nav-ref{margin-left:auto;position:relative;flex:none}
+.inv-nav-ref::before{content:'';position:absolute;left:-8px;top:20%;bottom:20%;width:1px;background:var(--line)}
+@media(max-width:759px){.inv-nav-ref{margin-left:0;flex:1}.inv-nav-ref::before{display:none}}
 .inv-nav-ct{margin-left:auto;font-size:10px;font-family:var(--mono);color:var(--mist-dim);background:#ffffff0a;padding:1px 7px;border-radius:20px}
 
 /* Portfolio */
@@ -876,7 +879,8 @@ body{
 .inv-lot-group .inv-tbl td{padding:6px 8px}
 
 /* Rules */
-.inv-rules-grid{display:grid;gap:14px}
+.inv-rules-grid{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:760px){.inv-rules-grid{grid-template-columns:1fr 1fr}}
 .inv-rules-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
 .inv-rules-title{font-family:var(--display);font-size:15px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .inv-rules-card ul{list-style:none;display:flex;flex-direction:column;gap:9px}
@@ -1219,11 +1223,10 @@ body{
       <h2 class="h2">Investment</h2>
       <div class="inv-nav" id="inv-nav">
         <button data-invtab="portfolio" class="on"><span class="ic">▣</span> Portfolio</button>
-        <button data-invtab="allocation"><span class="ic">◐</span> Allocation</button>
         <button data-invtab="screener"><span class="ic">⌕</span> Screener <span class="inv-nav-ct">660</span></button>
         <button data-invtab="research"><span class="ic">▤</span> Research</button>
         <button data-invtab="watchlist"><span class="ic">◉</span> Watchlist</button>
-        <button data-invtab="rules"><span class="ic">▦</span> Rules</button>
+        <button data-invtab="strategy" class="inv-nav-ref"><span class="ic">▦</span> Strategy</button>
       </div>
       <div id="inv-body"></div>
     </section>
@@ -2958,15 +2961,15 @@ async function fetchInvFundamentals(tickers){
   }catch(e){return{};}
 }
 function renderInvest(){
-  const tab=S.investment.invTab||'portfolio';
+  let tab=S.investment.invTab||'portfolio';
+  if(tab==='allocation'||tab==='rules')tab=S.investment.invTab='strategy'; // old tab names, merged
   $$('#inv-nav button').forEach(b=>b.classList.toggle('on',b.dataset.invtab===tab));
   const body=$('#inv-body');
   if(tab==='portfolio')return renderInvPortfolio(body);
-  if(tab==='allocation')return renderInvAllocation(body);
   if(tab==='screener')return renderInvScreener(body);
   if(tab==='research')return renderInvResearch(body);
   if(tab==='watchlist')return renderInvWatchlist(body);
-  if(tab==='rules')return renderInvRules(body);
+  if(tab==='strategy')return renderInvStrategy(body);
 }
 function fmtMoney(v){return v==null?'—':'$'+v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
 function renderInvPortfolio(body){
@@ -3035,18 +3038,6 @@ function invHoldingCard(h,i){
         </div>`).join('')}</div>`:''}`:''}
     `:''}
   </div>`;
-}
-function renderInvAllocation(body){
-  const buckets=[
-    {name:'Core index',pct:25,col:'#5fb3a8'},{name:'Compounding',pct:20,col:'#8fd0c2'},
-    {name:'Growth',pct:20,col:'#e0a458'},{name:'Value',pct:15,col:'#d98b7a'},
-    {name:'Income',pct:10,col:'#a8c5c0'},{name:'Defensive',pct:10,col:'#7a9590'}
-  ];
-  body.innerHTML=`<div class="inv-alloc">
-    <div class="inv-alloc-bar">${buckets.map(b=>`<div class="inv-alloc-seg" style="width:${b.pct}%;background:${b.col}">${b.pct}%</div>`).join('')}</div>
-    <div class="inv-alloc-legend">${buckets.map(b=>`<span><i class="inv-dot" style="background:${b.col}"></i>${esc(b.name)}</span>`).join('')}</div>
-  </div>
-  <p class="fuel-tip" style="margin-top:16px">Rebalance when any bucket drifts more than 5% from its target.</p>`;
 }
 function renderInvScreener(body){
   S.investment.screenQuery=S.investment.screenQuery||'';
@@ -3123,8 +3114,19 @@ function renderInvWatchlist(body){
   }).join('')}</div>
   ${!items.length?`<div class="empty">Nothing on the watchlist yet. Search above to add a ticker.</div>`:''}`;
 }
-function renderInvRules(body){
+function renderInvStrategy(body){
+  const buckets=[
+    {name:'Core index',pct:25,col:'#5fb3a8'},{name:'Compounding',pct:20,col:'#8fd0c2'},
+    {name:'Growth',pct:20,col:'#e0a458'},{name:'Value',pct:15,col:'#d98b7a'},
+    {name:'Income',pct:10,col:'#a8c5c0'},{name:'Defensive',pct:10,col:'#7a9590'}
+  ];
   body.innerHTML=`<div class="inv-rules-grid">
+    <div class="inv-rules-card">
+      <div class="inv-rules-title">◐ Allocation targets</div>
+      <div class="inv-alloc-bar" style="height:26px;margin-bottom:14px">${buckets.map(b=>`<div class="inv-alloc-seg" style="width:${b.pct}%;background:${b.col}">${b.pct}%</div>`).join('')}</div>
+      <div class="inv-alloc-legend">${buckets.map(b=>`<span><i class="inv-dot" style="background:${b.col}"></i>${esc(b.name)}</span>`).join('')}</div>
+      <p class="fuel-tip" style="margin-top:12px">Rebalance when any bucket drifts more than 5% from its target.</p>
+    </div>
     <div class="inv-rules-card">
       <div class="inv-rules-title">▦ Portfolio rules</div>
       <ul><li>No options trading</li><li>No biotech / pharma firms</li><li>No more than 5% of the portfolio in any one stock</li>
@@ -3742,13 +3744,16 @@ document.addEventListener('click',e=>{
   const invPick=e.target.closest('[data-act="invresearchpick"]');
   if(invPick){S.investment.researchTicker=invPick.dataset.t;render();return;}
 
+  // investment: expand/collapse a holding's transaction history (nested inside the card
+  // below — this MUST be checked before invholdexpand, since that button lives inside a
+  // card that also has data-act="invholdexpand", and closest() would otherwise match the
+  // outer card first and just collapse the whole thing instead of toggling the lot list)
+  const invLotsToggle=e.target.closest('[data-act="invlotstoggle"]');
+  if(invLotsToggle){const k=invLotsToggle.dataset.i;openInvLots.has(k)?openInvLots.delete(k):openInvLots.add(k);render();return;}
+
   // investment: expand/collapse a portfolio holding's asset breakdown
   const invHoldExpand=e.target.closest('[data-act="invholdexpand"]');
   if(invHoldExpand){const k=invHoldExpand.dataset.i;openInvHoldings.has(k)?openInvHoldings.delete(k):openInvHoldings.add(k);render();return;}
-
-  // investment: expand/collapse a holding's transaction history (nested inside the card above)
-  const invLotsToggle=e.target.closest('[data-act="invlotstoggle"]');
-  if(invLotsToggle){const k=invLotsToggle.dataset.i;openInvLots.has(k)?openInvLots.delete(k):openInvLots.add(k);render();return;}
 
   // investment: watchlist — expand/collapse a ticker's note
   const invWlToggle=e.target.closest('[data-act="invwltoggle"]');
