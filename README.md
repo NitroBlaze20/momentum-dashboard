@@ -1,4 +1,4 @@
-
+[README.md](https://github.com/user-attachments/files/31717244/README.md)
 # Momentum
 
 A single-file personal dashboard — goals, habits, calorie/fitness tracking, deadlines, quick capture, and daily motivation — built as one self-contained HTML file with real cross-device sync via Supabase.
@@ -129,11 +129,7 @@ Rough internal layout, top to bottom:
 2. `<body>` — auth gate, then the full app markup (sidebar nav + one `<section class="panel">` per tab)
 3. `<script>` — persistence layer → state/seed data → render functions (one per tab) → event handlers → migrations → boot sequence
 
-<<<<<<< HEAD
 The whole app re-renders through a single central `render()` function every time state changes, rather than patching individual DOM nodes. Sections with inline-editable numbers (meal/workout kcal, protein/carbs/fat, body-metric fields) check whether the field being edited currently has focus and, if so, skip rebuilding that piece of markup until the user moves on — otherwise the input would get destroyed and recreated on every keystroke, which loses focus and (for `type="number"` fields specifically, since they don't support scripted cursor control) reverses the digits as you type.
-=======
-The whole app re-renders through a single central `render()` function every time state changes, rather than patching individual DOM nodes. `render()` preserves whatever input field currently has focus (and its cursor position/scroll offset) across the rebuild, so editing inline numbers — calories, macros, body-metric fields — doesn't kick you out of the field mid-keystroke.
->>>>>>> 4c735c2a28b299f3112743a9ae5fdf27b5b5a52d
 
 ---
 
