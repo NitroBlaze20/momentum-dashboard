@@ -1,4 +1,4 @@
-[README.md](https://github.com/user-attachments/files/30642741/README.md)
+[Uploading README.md…]()
 # Momentum
 
 A single-file personal dashboard — goals, habits, calorie/fitness tracking, deadlines, quick capture, and daily motivation — built as one self-contained HTML file with real cross-device sync via Supabase.
@@ -28,16 +28,17 @@ Every goal, organized by category, each with:
 Calorie and fitness tracking, entirely offline (no external API needed):
 - **Meal logging** with a local food database (including Singapore hawker staples) that estimates kcal/protein/carbs/fat automatically — matched by keyword, with quantity and portion-size ("large", "half") recognition
 - **Meal autocomplete** — surfaces meals you've logged before, ranked by frequency and recency, reusing your last-corrected macros
-- **Exercise tracking** with a deterministic MET-based calorie formula (same inputs always produce the same result — no AI guessing) covering weighted lifts, timed cardio, and a dedicated sport-logging widget
+- **Exercise tracking** with a deterministic MET-based calorie formula (same inputs always produce the same result — no AI guessing) covering weighted lifts, timed cardio, and a dedicated sport-logging widget; exercise autocomplete also surfaces today's split from your own hardcoded weekly workout plan, so you can tap an exercise instead of typing it
 - **BMI and body fat %** (US Navy method) calculated live from your profile stats
 - A **calorie deficit calculator** (Mifflin–St Jeor) with a 14-day history strip, paginated to view older weeks, color-coded (green = deficit, red = surplus, yellow = marked "off day")
+- Every logged number (calories, protein/carbs/fat, exercise kcal) is manually editable inline — tap the field, tap the value, type over it
 - Day navigation — log for today, or go back and fill in a past day
 
 ### 🔁 Habits
 Daily check-off habits with streaks and an 18-week GitHub-style consistency heatmap. Includes one auto-tracked habit ("Calorie Deficit") that syncs itself from your real Fuel data — no manual checking required.
 
 ### ⏰ Deadlines
-Every dated goal in one place, with a real countdown — including support for goals that aren't due yet but also can't be started before a certain date.
+Every dated goal in one place, with a real countdown — including support for goals that aren't due yet but also can't be started before a certain date — plus standalone reminders you add yourself (a single day, or a window if it spans a range) for anything that isn't tied to a goal.
 
 ### 📥 Capture
 A brain-dump space for anything on your mind. Park a worry, promote a thought into a real goal, or just clear your head.
@@ -127,6 +128,8 @@ Rough internal layout, top to bottom:
 1. `<head>` — styles, Supabase SDK
 2. `<body>` — auth gate, then the full app markup (sidebar nav + one `<section class="panel">` per tab)
 3. `<script>` — persistence layer → state/seed data → render functions (one per tab) → event handlers → migrations → boot sequence
+
+The whole app re-renders through a single central `render()` function every time state changes, rather than patching individual DOM nodes. `render()` preserves whatever input field currently has focus (and its cursor position/scroll offset) across the rebuild, so editing inline numbers — calories, macros, body-metric fields — doesn't kick you out of the field mid-keystroke.
 
 ---
 
