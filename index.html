@@ -1439,7 +1439,32 @@ function ymd(toStr){let a=new Date();a.setHours(0,0,0,0);const b=new Date(toStr+
   if(m<0){y--;m+=12;}return{y,m,d};}
 
 /* ---------------- Render ---------------- */
+/* Builds a selector that can re-find the currently focused field after a
+   render() rebuilds its container's innerHTML. Falls back to id, then to
+   the data-* attribute used to bind these inline log-editing inputs. */
+function focusSelector(el){
+  if(!el)return null;
+  if(el.id)return '#'+CSS.escape(el.id);
+  for(const attr of ['data-mealkcal','data-wokcal','data-mealmac']){
+    if(el.hasAttribute(attr))return `[${attr}="${CSS.escape(el.getAttribute(attr))}"]`;
+  }
+  return null;
+}
 function render(){
+  // Several inline inputs (calorie overrides, macro fields, body-metric
+  // fields) trigger render() on every keystroke, and render() rebuilds
+  // their container via innerHTML — which destroys and recreates the very
+  // input being typed in. Without this, that steals focus mid-keystroke
+  // and the page falls back to default scroll behavior. So: remember what
+  // was focused (and cursor position) before rebuilding, restore after.
+  const active=document.activeElement;
+  let restore=null;
+  if(active&&(active.tagName==='INPUT'||active.tagName==='TEXTAREA')){
+    const sel=focusSelector(active);
+    if(sel){
+      restore={sel,start:active.selectionStart,end:active.selectionEnd,x:window.scrollX,y:window.scrollY};
+    }
+  }
   syncDeficitHabit();
   renderBadges();
   if(view==='today')renderToday();
@@ -1451,6 +1476,16 @@ function render(){
   if(view==='deadlines')renderDeadlines();
   if(view==='capture')renderCapture();
   save();
+  if(restore){
+    const el=document.querySelector(restore.sel);
+    if(el){
+      el.focus({preventScroll:true});
+      if(typeof restore.start==='number'&&el.setSelectionRange){
+        try{el.setSelectionRange(restore.start,restore.end);}catch(e){}
+      }
+    }
+    window.scrollTo(restore.x,restore.y);
+  }
 }
 /* Keeps a "Calorie Deficit" habit in sync with Fuel — only an actual logged deficit day
    marks it done. Surplus days AND off days both break the streak — an off day means you
