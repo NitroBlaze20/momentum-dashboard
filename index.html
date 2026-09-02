@@ -1257,7 +1257,7 @@ function save(){
   },300);
 }
 
-/* ---------------- Seed data (from your board) ---------------- */
+/* ---------------- Seed data (generic starter template — edit freely) ---------------- */
 const CATS=[
   {name:'Life',color:'#c9776f'},
   {name:'Health',color:'#c089a8'},
@@ -1268,92 +1268,53 @@ const CATS=[
   {name:'Social / Fun',color:'#d99a6a'}
 ];
 const SEED=[
-  ['Life','Apply for NUS (2027)','2026-12-01'],['Life','Apply for NS Disruption','2027-02-01'],['Life','Obtain Citizenship'],['Life','Obtain Driver\u2019s license','2027-05-09'],
-  ['Health','Reduce weight to 75kg'],['Health','Practice Good Dental Hygiene'],['Health','Do Physiotherapy Daily'],['Health','Obtain Clear Skin'],['Health','Get a V-shape Body'],['Health','No white hair'],
-  ['Academic','Research NTU (Modules, Clubs, housing, Exchange, Scholarships)'],['Academic','Learn DSA, Linear Algebra, Discrete Mathematics'],['Academic','Join and Host Hackathons'],['Academic','Graduate First Class Honours NTU'],['Academic','Secure an Internship / Full Time Job at a Startup / High Value Company'],
-  ['Career','Explore different CS domains and Identify Ideal Path (Software Engineering, Cybersecurity, DSAI, Robotics, Cloud, Network)'],['Career','Complete career-relevant coursework / certifications (Coursera, Udemy, AWS)'],['Career','Learn Linux & Dev Tools'],['Career','Build a Strong LinkedIn Presence'],['Career','Brainstorm Startup Ideas'],['Career','Understand Startup Ecosystems / Accelerators'],['Career','Practice Leetcode'],['Career','Prepare a Strong Resume'],['Career','Kickstart a Startup'],['Career','Build a Website to display projects'],['Career','Maintain a list of common interview questions and tricks'],
-  ['Upskill','Learn about AutoCAD & PCB'],['Upskill','Compile a list of AI Platforms'],['Upskill','Expand knowledge in Python (Computer Vision, Automation)'],['Upskill','Contribute to an Open Source Project'],['Upskill','Brainstorm ideas for a research paper'],['Upskill','Revisit NTU internship notes'],['Upskill','Build one full end-to-end project / passion project'],['Upskill','Invest $400 of NS allowance'],['Upskill','Learn about investing (Stocks, ETFs, Bonds, Prediction Markets)'],['Upskill','Read self-help / tech literature'],['Upskill','Learn about Condos / BTO'],['Upskill','Learn about CPF and Insurance'],
-  ['Organised','Maintain Budgeting & Google Calendar habit'],['Organised','Maintain a list of media to experience'],['Organised','Organise digital files (Drive, Bookmarks, Finder)'],['Organised','Organise media (Spotify, Instagram saves, YouTube)'],['Organised','Keep data secure (Yubikey, password manager)'],['Organised','Take regular backups of devices'],['Organised','Create a physical & digital archive of memories'],
-  ['Social / Fun','Try new experiences / restaurants in Singapore'],['Social / Fun','Go out with friends every 2\u20133 weeks'],['Social / Fun','Watch 365 movies in a year'],['Social / Fun','Buy new wants'],['Social / Fun','Build a new PC'],['Social / Fun','Keep a balanced downtime schedule'],['Social / Fun','Plan trips with the boys (JB, Thailand, Australia, Europe, 2030 WC)']
+  ['Life','Renew passport / ID documents'],['Life','Plan next big trip'],
+  ['Health','Build a consistent sleep schedule'],['Health','Hit a daily step goal'],['Health','Cook more meals at home'],
+  ['Academic','Research programs / courses of interest'],['Academic','Finish current semester strong'],
+  ['Career','Update resume and portfolio'],['Career','Grow professional network'],['Career','Apply to target roles'],
+  ['Upskill','Learn a new tool or language'],['Upskill','Finish an online course'],['Upskill','Build a side project'],
+  ['Organised','Set up a budgeting routine'],['Organised','Back up devices regularly'],
+  ['Social / Fun','See friends more often'],['Social / Fun','Try a new hobby']
 ];
 const HABIT_SEED=[
-  {name:'Coding Course'},{name:'Certification Study'},{name:'NTU Module Study'},{name:'Software Project'},{name:'DSA / Leetcode'},
-  {name:'Driving Theory'},{name:'Dental Care'},{name:'Gym'},
-  {name:'Physiotherapy'},{name:'Push-ups'},{name:'Vitamins & Water'}
+  {name:'Exercise'},{name:'Read'},{name:'Study / Learn'},{name:'Drink Water'},{name:'Journal'}
 ];
 function seedHabits(){return HABIT_SEED.map((h,i)=>({id:i+1,name:h.name,type:h.type||'check',log:{}}));}
 
-// Aug 2026 → Jun 2027 cert/module/project roadmap, added as its own Goals category so it
-// gets checklists, deadlines (shows on the Deadlines timeline), and focus-star for free.
-const WK_SPLIT_NO_DSA=[
-  '📆 Weekdays — 1.5h Certification Study OR NTU Module (alternate by day)',
-  '💻 Weekdays — 1.5h Software Project',
-  '🚗 Weekdays — 30–45min Driving Theory'
-];
+// Example multi-sprint roadmap, added as its own Goals category so it gets checklists,
+// deadlines (shows on the Deadlines timeline), and focus-star for free. Edit or delete
+// these sprints freely from the Goals tab once you're set up — this is just a starter.
 const WK_SPLIT=[
-  '📆 Weekdays — 1.5h Certification Study OR NTU Module (alternate by day)',
-  '💻 Weekdays — 1.5h Software Project',
-  '🚗 Weekdays — 30–45min Driving Theory',
-  '🧮 Weekdays — 30min DSA/Leetcode'
+  '📆 Weekdays — dedicated study/learning block',
+  '💻 Weekdays — project work block'
 ];
-const WE_SPLIT_HW=[
-  '🔧 Sat — 3–3.5h Hardware + PCB/CAD',
-  '🚗 Sat — 1–1.5h Driving Theory (mock test)',
-  '🎓 Sat — 1–1.5h Cert/Module catch-up',
-  '💻 Sun — 2–2.5h Software Project',
-  '🎓 Sun — 1–1.5h Cert/Module',
-  '🚗 Sun — 45min Driving Theory'
-];
-const WE_SPLIT_CAPSTONE=[
-  '💻 Weekends — full days on the capstone project + buffer for slippage',
-  '🚗 Weekends — keep Driving Theory daily until the practical is booked'
+const WE_SPLIT=[
+  '🎓 Weekends — catch-up / review block',
+  '💻 Weekends — longer project session'
 ];
 const ROADMAP_SPRINTS=[
-  {title:'Sprint 1 — Foundations (18 Aug – 30 Sep 2026)',start:'2026-08-18',deadline:'2026-09-30',
-   note:[...WK_SPLIT_NO_DSA,...WE_SPLIT_HW],subs:[
-    '🎓 Cert: AWS Cloud Practitioner — start','📘 Module: SC1003 Computational Thinking (Python)','📘 Learn: Python Refresher',
-    '💻 Project: CV / Automation project — MVP','🔧 Hardware: Gait Correction — research + PCB basics (weekends)'
+  {title:'Sprint 1 — Foundations',start:'2026-09-15',deadline:'2026-10-31',
+   note:[...WK_SPLIT,...WE_SPLIT],subs:[
+    '🎓 Start a course or certification','💻 Project: scope out an MVP'
   ]},
-  {title:'Sprint 2 — Momentum (1 Oct – 15 Nov 2026)',start:'2026-10-01',deadline:'2026-11-15',
-   note:[...WK_SPLIT,...WE_SPLIT_HW],subs:[
-    '🎓 Cert: AWS Cloud Practitioner — finish','🎓 Cert: ML/AI Specialisation — start','📘 Module: SC1004 Linear Algebra',
-    '🧮 DSA: DSA + Leetcode — standing weekly slot begins','💻 Project: CV / Automation project — ship to GitHub',
-    '🔧 Hardware: Gait Correction — build phase + CAD basics (weekends)'
+  {title:'Sprint 2 — Momentum',start:'2026-11-01',deadline:'2026-12-15',
+   note:[...WK_SPLIT,...WE_SPLIT],subs:[
+    '🎓 Continue course / certification','💻 Project: build out core features'
   ]},
-  {title:'Sprint 3 — Cert Deadline Checkpoint (16 Nov – 31 Dec 2026)',start:'2026-11-16',deadline:'2026-12-31',
-   note:[...WK_SPLIT,...WE_SPLIT_HW],subs:[
-    '🎓 Cert: ML/AI Specialisation — continue (~70–85% is fine)','📘 Module: SC2000 Probability & Statistics','🧮 DSA: DSA + Leetcode — continue',
-    '💻 Project: F1 / Football AI project — start','🔧 Hardware: Gait Correction — finish (weekends)',
-    '⚠ Decide: CCNA in H1 2027? Confirm Security+ is cut'
-  ]},
-  {title:'Sprint 4 — Reset (1 Jan – 15 Feb 2027)',start:'2027-01-01',deadline:'2027-02-15',
-   note:[...WK_SPLIT,...WE_SPLIT_HW],subs:[
-    '🎓 Cert: ML/AI Specialisation — finish','🎓 Cert: CCNA — start','📘 Module: SC1008 C & C++ Programming','📘 Learn: C++ learn track',
-    '💻 Project: F1 / Football AI project — finish','🔧 Hardware: Inverse Kinematics — start (weekends)'
-  ]},
-  {title:'Sprint 5 — Deep Work (16 Feb – 1 Apr 2027)',start:'2027-02-16',deadline:'2027-04-01',
-   note:[...WK_SPLIT,...WE_SPLIT_HW],subs:[
-    '🎓 Cert: CCNA — continue','📘 Learn: C++ learn track — continue','💻 Project: Blackholes with C++ project',
-    '🔧 Hardware: Inverse Kinematics — continue (weekends)'
-  ]},
-  {title:'Sprint 6 — Home Stretch (2 Apr – 15 May 2027)',start:'2027-04-02',deadline:'2027-05-15',
-   note:[...WK_SPLIT,...WE_SPLIT_HW],subs:[
-    '🎓 Cert: CCNA — push to finish','💻 Project: Physics Engine with C++ project','🔧 Hardware: Inverse Kinematics — finish (weekends)'
-  ]},
-  {title:'Sprint 7 — Capstone + Buffer (16 May – 30 Jun 2027)',start:'2027-05-16',deadline:'2027-06-30',
-   note:[...WK_SPLIT,...WE_SPLIT_CAPSTONE],subs:[
-    '💻 Project: Full-Stack Cloud project (capstone)','🧮 Buffer: for slippage from earlier sprints'
+  {title:'Sprint 3 — Capstone + Buffer',start:'2026-12-16',deadline:'2027-01-31',
+   note:[...WK_SPLIT,...WE_SPLIT],subs:[
+    '💻 Project: finish and ship','🧮 Buffer: for slippage from earlier sprints'
   ]}
 ];
 
 function freshState(){
   let id=1;
   return {
-    settings:{name:'',started:Date.now(),enlisted:'2025-10-23',countdown:{name:'NSF Disruption',date:'2027-08-02'}},
+    settings:{name:'',started:Date.now(),countdown:null},
     cats:CATS,
     goals:SEED.map(s=>({id:id++,cat:s[0],title:s[1],done:false,star:false,deadline:s[2]||null,pinned:s[3]||false})),
-    habits:seedHabits(),habitSeed:2,nsCountdownV1:true,nsCountdownV2:true,nsCountdownV3:true,nusDeadlineV1:true,driveDeadlineV1:true,goalCheckpointsCleanupV1:true,movieGoalV1:true,csDomainsTitleV1:true,flywheelLinksV1:true,weightLinksV1:true,focusResetV1:true,
-    meals:[],workouts:[],body:{weight:85,startWeight:85,goalWeight:75,height:180,age:19},bodyStatsV1:true,offDays:{},
+    habits:seedHabits(),habitSeed:2,goalCheckpointsCleanupV1:true,movieGoalV1:true,
+    meals:[],workouts:[],body:{weight:70,startWeight:70,goalWeight:65,height:170,age:25},bodyStatsV1:true,offDays:{},
     dumps:[],reviews:[],activeCat:'all',activeTerm:'all',quotes:[],reminders:[]
   };
 }
@@ -3215,17 +3176,16 @@ async function bootApp(){
   S=saved||freshState();
   // migrate: ensure fields exist
   S.settings=S.settings||{started:Date.now()};
-  if(!S.settings.enlisted)S.settings.enlisted='2025-10-23';
   S.cats=S.cats||CATS;S.goals=S.goals||[];S.dumps=S.dumps||[];S.reviews=S.reviews||[];
   if(S.wins)delete S.wins;
   if(!S.habits)S.habits=seedHabits();
   if(!S.meals)S.meals=[];if(!S.workouts)S.workouts=[];if(!S.body)S.body={weight:null};
   if(!S.bodyStatsV1){
-    if(S.body.weight==null)S.body.weight=85;
-    S.body.startWeight=S.body.startWeight||S.body.weight||85;
-    S.body.goalWeight=S.body.goalWeight||75;
-    S.body.height=S.body.height||180;
-    S.body.age=S.body.age||19;
+    if(S.body.weight==null)S.body.weight=70;
+    S.body.startWeight=S.body.startWeight||S.body.weight||70;
+    S.body.goalWeight=S.body.goalWeight||65;
+    S.body.height=S.body.height||170;
+    S.body.age=S.body.age||25;
     S.body.sex=S.body.sex||'male';
     S.bodyStatsV1=true;
   }
@@ -3237,47 +3197,7 @@ async function bootApp(){
     S.habitSeed=2;
   }
   S.habits.forEach(h=>{if(h.type==='counter'){h.type='check';if(/push-?up/i.test(h.name))h.name='Push-ups';}});
-  if(!S.habitRenameDrivingV1){
-    // "Driving Course" → "Driving Theory": renamed in place (not re-seeded) so any days
-    // you've already checked off stay checked — you're studying theory daily until the
-    // practical booking opens in December, so the habit name should say that.
-    const dh=S.habits.find(h=>h.name==='Driving Course');
-    if(dh)dh.name='Driving Theory';
-    S.habitRenameDrivingV1=true;
-  }
-  if(!S.habitRoadmapBlocksV1){
-    // Splits the daily schedule into independently-checkable habits — so a day where you
-    // only did Cert + DSA and skipped the project isn't "incomplete", it's just two ticks
-    // instead of three. The Roadmap sprint checklist is separate and only gets ticked once
-    // a deliverable is actually finished, whichever day that lands on.
-    const toAdd=['Cert Study','NTU Module Study','Software Project','DSA / Leetcode'];
-    const maxId=S.habits.reduce((m,h)=>Math.max(m,h.id||0),0);
-    toAdd.forEach((name,i)=>{
-      if(!S.habits.find(h=>h.name===name))S.habits.push({id:maxId+i+1,name,type:'check',log:{}});
-    });
-    S.habitRoadmapBlocksV1=true;
-  }
-  if(!S.habitSplitCertModuleV1){
-    // "Cert / Module Study" combined the two into one checkbox — which quietly let one slip
-    // while the other kept the streak alive. Splitting makes cert-vs-module balance visible,
-    // which is the whole point of tracking them "side by side" in the first place. Existing
-    // check-off history moves to Cert Study; NTU Module Study starts fresh alongside it.
-    const old=S.habits.find(h=>h.name==='Cert / Module Study');
-    if(old){
-      old.name='Cert Study';
-      if(!S.habits.find(h=>h.name==='NTU Module Study')){
-        const maxId=S.habits.reduce((m,h)=>Math.max(m,h.id||0),0);
-        S.habits.push({id:maxId+1,name:'NTU Module Study',type:'check',log:{}});
-      }
-    }
-    S.habitSplitCertModuleV1=true;
-  }
-  if(!S.habitRenameCertV1){
-    // "Cert Study" → "Certification Study" — renamed in place, log history preserved.
-    const ch=S.habits.find(h=>h.name==='Cert Study');
-    if(ch)ch.name='Certification Study';
-    S.habitRenameCertV1=true;
-  }
+
   // Defensive repair, runs every load (not one-shot): fixes any habit that ended up with a
   // missing/broken id or log object — e.g. from an in-between version while these Roadmap
   // habits were being iterated on — which would silently break its checkbox/dot clicks
@@ -3299,37 +3219,7 @@ async function bootApp(){
     });
     S.habits=Array.from(seen.values());
   }
-  if(!S.nsCountdownV1){
-    const ns=S.goals.find(g=>/NS Disruption/i.test(g.title));
-    if(ns){if(!ns.deadline)ns.deadline='2027-08-02';ns.pinned=true;}
-    S.nsCountdownV1=true;
-  }
-  if(!S.nsCountdownV2){
-    const apply=S.goals.find(g=>/Apply for NS Disruption/i.test(g.title));
-    if(apply){apply.deadline='2027-02-01';apply.pinned=false;}
-    let disrupt=S.goals.find(g=>/^NSF Disruption$/i.test(g.title));
-    if(disrupt){disrupt.deadline='2027-08-02';}
-    else{disrupt={id:Date.now(),cat:'Life',title:'NSF Disruption',done:false,star:false,deadline:'2027-08-02',pinned:false};S.goals.push(disrupt);}
-    S.goals.forEach(g=>{g.pinned=(g===disrupt);});
-    S.nsCountdownV2=true;
-  }
-  if(!S.nsCountdownV3){
-    S.goals=S.goals.filter(g=>!/^NSF Disruption$/i.test(g.title));
-    S.goals.forEach(g=>{g.pinned=false;});
-    if(!S.settings.countdown)S.settings.countdown={name:'NSF Disruption',date:'2027-08-02'};
-    S.nsCountdownV3=true;
-  }
-  S.settings.countdown=S.settings.countdown||{name:'NSF Disruption',date:'2027-08-02'};
-  if(!S.nusDeadlineV1){
-    const nusGoal=S.goals.find(g=>/^Apply for NUS/i.test(g.title));
-    if(nusGoal&&!nusGoal.deadline)nusGoal.deadline='2026-12-01';
-    S.nusDeadlineV1=true;
-  }
-  if(!S.driveDeadlineV1){
-    const driveGoal=S.goals.find(g=>/Driver.?s license/i.test(g.title));
-    if(driveGoal)driveGoal.deadline='2027-05-09';
-    S.driveDeadlineV1=true;
-  }
+  // (no default countdown — user sets one via Settings if they want the hero countdown widget)
   if(!S.goalCheckpointsCleanupV1){
     // one-time safety cleanup: strips any checklist items that a previous, since-reverted
     // version of this file may have auto-written into your saved data. Auto-added items used
@@ -3351,105 +3241,12 @@ async function bootApp(){
     }
     S.movieGoalV1=true;
   }
-  if(!S.csDomainsTitleV1){
-    const csGoal=S.goals.find(g=>/explore different cs domains/i.test(g.title));
-    if(csGoal)csGoal.title='Explore different CS domains and Identify Ideal Path (Software Engineering, Cybersecurity, DSAI, Robotics, Cloud, Network)';
-    S.csDomainsTitleV1=true;
-  }
-  if(!S.flywheelLinksV1){
-    // Link the two Health goals that duplicate existing Habits, so Flywheel shows their real
-    // status instead of a second checkbox. Adds both to Deep Focus, respecting the 5-goal cap.
-    const deficitHabit=S.habits.find(h=>h.auto==='deficit');
-    const deficitGoal=S.goals.find(g=>/maintain calorie deficit/i.test(g.title));
-    const gymHabit=S.habits.find(h=>/^gym$/i.test(h.name));
-    const vshapeGoal=S.goals.find(g=>/get a v-shape body/i.test(g.title));
-    [[deficitGoal,deficitHabit],[vshapeGoal,gymHabit]].forEach(([g,h])=>{
-      if(!g||!h)return;
-      g.linkedHabit=h.id;
-      const starredCount=S.goals.filter(x=>x.star&&!x.done).length;
-      if(!g.star&&starredCount<5)g.star=true;
-    });
-    S.flywheelLinksV1=true;
-  }
-  if(!S.weightLinksV1){
-    // Reduce weight to 75kg genuinely depends on both training and diet — link to both habits.
-    const weightGoal=S.goals.find(g=>/reduce weight to 75kg/i.test(g.title));
-    const deficitHabit=S.habits.find(h=>h.auto==='deficit');
-    const gymHabit=S.habits.find(h=>/^gym$/i.test(h.name));
-    if(weightGoal){
-      weightGoal.linkedHabits=[deficitHabit,gymHabit].filter(Boolean).map(h=>h.id);
-      const starredCount=S.goals.filter(x=>x.star&&!x.done).length;
-      if(!weightGoal.star&&starredCount<5)weightGoal.star=true;
-    }
-    S.weightLinksV1=true;
-  }
-  if(!S.focusResetV1){
-    // Habit-linked Health goals already run fine on autopilot (visible on the Habits page) —
-    // they don't need a Deep Focus slot too. Free those slots for goals with no tracking
-    // mechanism of their own, which is where deliberate daily attention actually matters.
-    S.goals.forEach(g=>{if((g.linkedHabits&&g.linkedHabits.length)||g.linkedHabit)g.star=false;});
-    const wantFocus=['Build a Website','Apply for NUS','Research NTU','Apply for NS Disruption','Secure an Internship'];
-    wantFocus.forEach(t=>{
-      const g=S.goals.find(x=>x.title.toLowerCase().includes(t.toLowerCase()));
-      const starredCount=S.goals.filter(x=>x.star&&!x.done).length;
-      if(g&&!g.star&&!g.done&&starredCount<5)g.star=true;
-    });
-    S.focusResetV1=true;
-  }
-  if(!S.notionTermSyncV1){
-    // Pulled directly from your real Notion "Goals" database (Priority column: Long Term / Short
-    // Term) — tags every goal exactly as it's set there. Two goals have no Priority set in Notion
-    // (Driver's license, No white hair) and are correctly left untagged, not guessed.
-    const TERM_MAP=[
-      [/secure an internship/i,'long'],[/graduate first class honours/i,'long'],[/join and host hackathons/i,'long'],
-      [/research ntu/i,'short'],[/dsa,? ?linear algebra|linear algebra.*dsa/i,'short'],
-      [/kickstart a startup/i,'long'],[/interview questions/i,'long'],[/prepare a strong resume/i,'long'],[/build a website/i,'long'],
-      [/coursework.*certificat|certificat.*coursework/i,'short'],[/linkedin/i,'short'],[/startup ecosystem/i,'short'],
-      [/brainstorm startup ideas/i,'short'],[/explore different cs domains/i,'short'],[/leetcode/i,'short'],[/linux.*dev tools/i,'short'],
-      [/v-?shape/i,'long'],[/reduce weight/i,'short'],[/physiotherapy/i,'short'],[/clear skin/i,'short'],[/dental hygiene/i,'short'],
-      [/citizenship/i,'long'],[/ns disrupt/i,'long'],[/apply for nus/i,'short'],
-      [/archive of memories/i,'long'],[/budgeting.*calendar/i,'short'],[/organise digital files/i,'short'],[/regular backups/i,'short'],
-      [/media to experience/i,'short'],[/keep data secure/i,'short'],[/organise media/i,'short'],
-      [/balanced downtime/i,'long'],[/trips with the boys/i,'long'],[/buy new wants/i,'long'],[/build a new pc/i,'long'],
-      [/every 2.?3 weeks|go out with friends/i,'short'],[/new experiences.*restaurants/i,'short'],[/365 movies/i,'short'],[/12 books/i,'short'],
-      [/research paper/i,'short'],[/open source/i,'short'],[/soldering/i,'short'],[/ai platforms/i,'short'],
-      [/end-to-end project|passion project/i,'short'],[/expand knowledge in python/i,'short'],[/learn about investing/i,'short'],
-      [/condos.*bto/i,'short'],[/revisit ntu internship/i,'short'],[/self-help.*literature|tech literature/i,'short'],
-      [/cpf and insurance/i,'short'],[/invest \$?400/i,'short'],
-    ];
-    S.goals.forEach(g=>{
-      if(g.term)return; // don't clobber a term you've already set yourself
-      const hit=TERM_MAP.find(([re])=>re.test(g.title));
-      if(hit)g.term=hit[1];
-    });
-    S.notionTermSyncV1=true;
-  }
-  if(!S.quoteSeedV1){
-    // Only your own original writing from the Motivation page — nothing sourced from a
-    // film, song, or book. Everything else there needs to be added by you via Sync quotes.
-    if(!S.quotes||!S.quotes.length){
-      S.quotes=[
-        'Discipline is \u2018I will make myself do the thing.\u2019 Motivation is \u2018I want to do the thing.\u2019 Obsession is \u2018I can\u2019t not do the thing.\u2019',
-        'After a certain age, it is literally your responsibility, no one else\u2019s, to teach yourself the things you were deprived of, to unlearn and let go of all the toxic habits \u2014 because flaunting anger issues, being emotionally unavailable, and not being able to communicate your feelings seems like nothing more than an excuse. Life is unfair to everyone in various ways, a little to some, a lot to others. You cannot spend your whole life whining and complaining about how cruel it was to you; the trauma inflicted upon you cannot be justified, but it is your duty to heal, grow, and feel safe in your mind.',
-      ];
-    }
-    S.quoteSeedV1=true;
-  }
-  if(!S.deadlineWindowsV1){
-    // NUS: can only be submitted within the actual application window, not before or after.
-    // NS Disruption: Feb 1, 2027 is the earliest it can go in; May 1, 2027 is the hard max.
-    const nusGoal=S.goals.find(g=>/apply for nus/i.test(g.title));
-    if(nusGoal){nusGoal.opensOn='2026-12-01';nusGoal.deadline='2027-02-23';}
-    const disruptGoal=S.goals.find(g=>/ns disrupt/i.test(g.title));
-    if(disruptGoal){disruptGoal.opensOn='2027-02-01';disruptGoal.deadline='2027-05-01';}
-    S.deadlineWindowsV1=true;
-  }
   if(!S.quotesClearV1){
     S.quotes=[];
     S.quotesClearV1=true;
   }
   if(!S.roadmapSeedV1){
-    // Adds the Aug 2026 → Jun 2027 cert/module/project roadmap as its own Goals category.
+    // Adds an example multi-sprint roadmap as its own Goals category.
     // Runs once, same as the other one-shot migrations above — won't re-add or duplicate
     // on later loads, and won't touch anything you've already customised elsewhere.
     if(!S.cats.find(c=>c.name==='Roadmap'))S.cats.push({name:'Roadmap',color:'#5fb3a8'});
@@ -3487,18 +3284,17 @@ async function bootApp(){
     S.roadmapTitleSyncV2=true;
   }
   if(!S.investRemovedV1){
-    // The Investment tab (portfolio, screener, watchlist, research) was removed entirely
-    // at your request — this cleans up any leftover state from it in already-synced data
-    // so nothing orphaned lingers around after the feature itself is gone.
+    // The Investment tab (portfolio, screener, watchlist, research) was removed entirely —
+    // this cleans up any leftover state from it in already-synced data so nothing orphaned
+    // lingers around after the feature itself is gone.
     delete S.investment;
     S.cats=S.cats.filter(c=>c.name!=='Investment');
     S.goals=S.goals.filter(g=>g.cat!=='Investment');
     S.investRemovedV1=true;
   }
   if(!S.roadmapTagsNoteSyncV2){
-    // Checklist items got 🎓/📘/💻/🧮/🔧 tags matching the Certification Study / NTU Module
-    // Study / Software Project / DSA split, plus each sprint got a `note` — now an array of
-    // separate lines (weekday/weekend, one per row) instead of one run-on paragraph. Item
+    // Roadmap sprint checklist items got emoji tags, plus each sprint got a `note` — now an
+    // array of separate lines (weekday/weekend, one per row) instead of one run-on paragraph. Item
     // count/order per sprint is unchanged, so this maps old subs to new text by position —
     // done/id are preserved, only the label text and note update.
     S.goals.forEach(g=>{
