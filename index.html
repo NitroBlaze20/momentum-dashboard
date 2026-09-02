@@ -1439,32 +1439,7 @@ function ymd(toStr){let a=new Date();a.setHours(0,0,0,0);const b=new Date(toStr+
   if(m<0){y--;m+=12;}return{y,m,d};}
 
 /* ---------------- Render ---------------- */
-/* Builds a selector that can re-find the currently focused field after a
-   render() rebuilds its container's innerHTML. Falls back to id, then to
-   the data-* attribute used to bind these inline log-editing inputs. */
-function focusSelector(el){
-  if(!el)return null;
-  if(el.id)return '#'+CSS.escape(el.id);
-  for(const attr of ['data-mealkcal','data-wokcal','data-mealmac']){
-    if(el.hasAttribute(attr))return `[${attr}="${CSS.escape(el.getAttribute(attr))}"]`;
-  }
-  return null;
-}
 function render(){
-  // Several inline inputs (calorie overrides, macro fields, body-metric
-  // fields) trigger render() on every keystroke, and render() rebuilds
-  // their container via innerHTML — which destroys and recreates the very
-  // input being typed in. Without this, that steals focus mid-keystroke
-  // and the page falls back to default scroll behavior. So: remember what
-  // was focused (and cursor position) before rebuilding, restore after.
-  const active=document.activeElement;
-  let restore=null;
-  if(active&&(active.tagName==='INPUT'||active.tagName==='TEXTAREA')){
-    const sel=focusSelector(active);
-    if(sel){
-      restore={sel,start:active.selectionStart,end:active.selectionEnd,x:window.scrollX,y:window.scrollY};
-    }
-  }
   syncDeficitHabit();
   renderBadges();
   if(view==='today')renderToday();
@@ -1476,16 +1451,6 @@ function render(){
   if(view==='deadlines')renderDeadlines();
   if(view==='capture')renderCapture();
   save();
-  if(restore){
-    const el=document.querySelector(restore.sel);
-    if(el){
-      el.focus({preventScroll:true});
-      if(typeof restore.start==='number'&&el.setSelectionRange){
-        try{el.setSelectionRange(restore.start,restore.end);}catch(e){}
-      }
-    }
-    window.scrollTo(restore.x,restore.y);
-  }
 }
 /* Keeps a "Calorie Deficit" habit in sync with Fuel — only an actual logged deficit day
    marks it done. Surplus days AND off days both break the streak — an off day means you
@@ -2467,28 +2432,43 @@ function renderFuel(){
     </div>`;
 
   $('#meal-total').textContent=meals.length?`~${inK} kcal · ${P}g P`:'';
-  $('#meals-list').innerHTML=meals.length?meals.map(m=>`
-    <div class="log-item meal" data-mid="${m.id}">
-      <div class="li-txt">${esc(m.text)}${estimating.has(m.id)?' <span class="est">estimating…</span>':''}</div>
-      <div class="mac-row">
-        <label class="mac"><input type="number" min="0" value="${m.protein??''}" data-mealmac="${m.id}:protein" placeholder="–">P</label>
-        <label class="mac"><input type="number" min="0" value="${m.carbs??''}" data-mealmac="${m.id}:carbs" placeholder="–">C</label>
-        <label class="mac"><input type="number" min="0" value="${m.fat??''}" data-mealmac="${m.id}:fat" placeholder="–">F</label>
-        <label class="mac kcal"><input type="number" min="0" value="${m.kcal??''}" data-mealkcal="${m.id}" placeholder="–">kcal</label>
-        <button class="li-del" data-act="mealdel" title="Remove">✕</button>
-      </div>
-    </div>`).join(''):`<div class="empty">Nothing logged yet today.</div>`;
+  // Skip rebuilding this list while one of its own inline inputs (P/C/F/kcal
+  // override) is focused — number inputs can't have their cursor position
+  // restored via JS (setSelectionRange throws on type=number), so
+  // recreating the element mid-keystroke resets the cursor to the start
+  // and reverses whatever the user is typing. The input's own native value
+  // is already correct on-screen; the list just doesn't need a rebuild
+  // until the user moves on to something else.
+  const mealsListEl=$('#meals-list');
+  const mealsListFocused=mealsListEl&&mealsListEl.contains(document.activeElement)&&document.activeElement.matches('[data-mealkcal],[data-mealmac]');
+  if(mealsListEl&&!mealsListFocused){
+    mealsListEl.innerHTML=meals.length?meals.map(m=>`
+      <div class="log-item meal" data-mid="${m.id}">
+        <div class="li-txt">${esc(m.text)}${estimating.has(m.id)?' <span class="est">estimating…</span>':''}</div>
+        <div class="mac-row">
+          <label class="mac"><input type="number" min="0" value="${m.protein??''}" data-mealmac="${m.id}:protein" placeholder="–">P</label>
+          <label class="mac"><input type="number" min="0" value="${m.carbs??''}" data-mealmac="${m.id}:carbs" placeholder="–">C</label>
+          <label class="mac"><input type="number" min="0" value="${m.fat??''}" data-mealmac="${m.id}:fat" placeholder="–">F</label>
+          <label class="mac kcal"><input type="number" min="0" value="${m.kcal??''}" data-mealkcal="${m.id}" placeholder="–">kcal</label>
+          <button class="li-del" data-act="mealdel" title="Remove">✕</button>
+        </div>
+      </div>`).join(''):`<div class="empty">Nothing logged yet today.</div>`;
+  }
 
   // movement
   $('#move-total').textContent=wos.length?`~${outK} kcal`:'';
-  $('#workouts-list').innerHTML=wos.length?wos.map(w=>{
-    const detail=[w.load?`${w.load}kg`:'',(w.sets&&w.reps)?`${w.sets}×${w.reps}`:(w.sets?`${w.sets} sets`:''),w.min?`${w.min} min`:'',w.sec?`${w.sec} sec`:''].filter(Boolean).join(' · ');
-    return `
-    <div class="log-item" data-wid="${w.id}">
-      <div class="li-txt">${esc(w.act)}${detail?` <span class="li-sub">· ${detail}</span>`:''}</div>
-      <label class="mac kcal"><input type="number" min="0" value="${w.kcal??''}" data-wokcal="${w.id}" placeholder="–">kcal</label>
-      <button class="li-del" data-act="wodel" title="Remove">✕</button>
-    </div>`;}).join(''):`<div class="empty">No movement logged yet today.</div>`;
+  const wosListEl=$('#workouts-list');
+  const wosListFocused=wosListEl&&wosListEl.contains(document.activeElement)&&document.activeElement.matches('[data-wokcal]');
+  if(wosListEl&&!wosListFocused){
+    wosListEl.innerHTML=wos.length?wos.map(w=>{
+      const detail=[w.load?`${w.load}kg`:'',(w.sets&&w.reps)?`${w.sets}×${w.reps}`:(w.sets?`${w.sets} sets`:''),w.min?`${w.min} min`:'',w.sec?`${w.sec} sec`:''].filter(Boolean).join(' · ');
+      return `
+      <div class="log-item" data-wid="${w.id}">
+        <div class="li-txt">${esc(w.act)}${detail?` <span class="li-sub">· ${detail}</span>`:''}</div>
+        <label class="mac kcal"><input type="number" min="0" value="${w.kcal??''}" data-wokcal="${w.id}" placeholder="–">kcal</label>
+        <button class="li-del" data-act="wodel" title="Remove">✕</button>
+      </div>`;}).join(''):`<div class="empty">No movement logged yet today.</div>`;
+  }
 
   // profile fill
   const sx=$('#pf-sex');if(sx&&document.activeElement!==sx)sx.value=(S.body&&S.body.sex)||'male';
@@ -3120,6 +3100,12 @@ document.addEventListener('input',e=>{
   if(e.target.matches&&e.target.matches('[data-mealmac]')){const[id,key]=e.target.dataset.mealmac.split(':');const m=S.meals.find(x=>x.id==id);if(m){const v=parseInt(e.target.value,10);m[key]=isNaN(v)?null:v;render();}}
   if(e.target.id==='pf-sex'){S.body=S.body||{};S.body.sex=e.target.value;render();}
   if(e.target.id==='rem-range'){const row=$('#rem-end-row');if(row)row.style.display=e.target.checked?'':'none';}
+});
+// The meal/workout list rebuild is skipped while one of its own inputs is
+// focused (see renderFuel) so typing doesn't reverse itself. Once the user
+// leaves the field, do one more render so the list is back in sync.
+document.addEventListener('focusout',e=>{
+  if(e.target.matches&&e.target.matches('[data-mealkcal],[data-mealmac],[data-wokcal]'))render();
 });
 
 document.addEventListener('keydown',e=>{
