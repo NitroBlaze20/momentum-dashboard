@@ -1,8 +1,4 @@
-[README.md](https://github.com/user-attachments/files/31717178/README.md)
-<<<<<<< HEAD
-=======
-[Uploading README.md…]()
->>>>>>> 4c735c2a28b299f3112743a9ae5fdf27b5b5a52d
+
 # Momentum
 
 A single-file personal dashboard — goals, habits, calorie/fitness tracking, deadlines, quick capture, and daily motivation — built as one self-contained HTML file with real cross-device sync via Supabase.
