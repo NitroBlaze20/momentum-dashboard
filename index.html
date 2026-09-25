@@ -9,7 +9,7 @@
 <meta name="darkreader-lock">
 <title>Momentum — Second Brain (Cutting Mat)</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@500;600;700&family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap');
 
 :root{
   /* Cutting-mat palette */
@@ -32,9 +32,10 @@
   --red:#ff8a7a;
   --r:2px;
   --display:'Barlow Condensed','Arial Narrow',sans-serif-condensed,sans-serif;
-  --body:'Barlow',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --body:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   --mono:'DM Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
   --hand:'Instrument Serif',Georgia,'Times New Roman',serif;
+  --ruler:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='9'%3E%3Cpath d='M.5 0V9' stroke='%23e8f4e2' stroke-opacity='.85'/%3E%3Cpath d='M8.5 4V9M16.5 4V9M24.5 4V9M32.5 4V9M40.5 4V9' stroke='%23e8f4e2' stroke-opacity='.4'/%3E%3C/svg%3E");
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -794,7 +795,7 @@ body{
 :focus-visible{outline:2px solid var(--pencil);outline-offset:2px}
 
 /* Square, drafted corners everywhere; true circles stay round */
-.app *,.overlay *,.auth-gate *,.toast{border-radius:2px!important}
+.app *,.overlay *,.auth-gate *,.toast{border-radius:5px!important}
 .dot,.hab-streak .spark,.dl-tl-dot,.dl-panel-dot,.cat-chip .swatch,.hab-dot,.brand .mark,
 [style*="border-radius:50%"]{border-radius:50%!important}
 
@@ -838,7 +839,7 @@ body{
 .hab-row,.dl-row,.dl-sprint,.dl-section-head,.dl-gantt-block,.profile-row label{
   background:rgba(10,48,35,.35);border:1.5px solid var(--line-strong);box-shadow:none}
 .card-head h3{font-family:var(--display);font-size:15px;font-weight:600;letter-spacing:.12em;color:var(--text)}
-.card-head{padding-bottom:12px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='9'%3E%3Cpath d='M.5 0V9' stroke='%23e8f4e2' stroke-opacity='.85'/%3E%3Cpath d='M8.5 4V9M16.5 4V9M24.5 4V9M32.5 4V9M40.5 4V9' stroke='%23e8f4e2' stroke-opacity='.4'/%3E%3C/svg%3E") left bottom/48px 9px repeat-x}
+.card-head{padding-bottom:12px;background:var(--ruler) left bottom/48px 9px repeat-x}
 .card-head .act{font-family:var(--display);font-size:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--pencil)}
 .focus-item,.dl-mini,.hab-mini{border-bottom:1px dashed var(--line)}
 .focus-item:hover,.goal:hover{background:rgba(232,244,226,.05)}
@@ -928,6 +929,99 @@ input::placeholder,textarea::placeholder{color:var(--mist-dim)}
 .sortable-drag{box-shadow:6px 6px 0 rgba(4,24,16,.6)}
 
 
+
+/* ==========================================================================
+   POLISH LAYER — depth and hierarchy.
+   Cards become solid "cut-out" panels resting on the mat (soft shadow,
+   quiet edges), so bright white lines are saved for rulers and active states.
+   One big typographic moment per page; one accent (mat yellow) for actions.
+   ========================================================================== */
+:root{
+  --panel:#174b38;
+  --panel-hi:#1b5541;
+  --edge:rgba(232,244,226,.14);
+  --edge-hi:rgba(232,244,226,.3);
+  --lift:inset 0 1px 0 rgba(255,255,255,.06),0 14px 28px -16px rgba(0,0,0,.6),0 2px 5px rgba(0,0,0,.18);
+  --ink:#153b2d;              /* dark text on yellow */
+}
+body{font-size:15.5px;line-height:1.55;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+
+/* ---- Panels ---- */
+.card,.card.glass,.capture-box,.macro-card,.gym-part,.fw-focus-item,.fw-focus-item.goal,.quote-row,.dump-item,.hab-row,.dl-row,.dl-sprint,.dl-section-head,.dl-gantt-block,.fuel-cell,.stat-chip,.def-card,.hero-cd,.log-item,.profile-row label{background:var(--panel);border:1px solid var(--edge);box-shadow:var(--lift);border-radius:10px!important}
+.card{padding:24px 26px}
+.def-card.good{background:linear-gradient(rgba(232,244,226,.05),rgba(232,244,226,.05)),var(--panel);border-color:rgba(232,244,226,.55)}
+.def-card.over{background:linear-gradient(rgba(255,138,122,.08),rgba(255,138,122,.08)),var(--panel)}
+.def-card.off{background:linear-gradient(rgba(255,179,71,.08),rgba(255,179,71,.08)),var(--panel)}
+.hab-row:hover,.dl-sprint:hover,.dl-section-head:hover,.dl-gantt-block:hover,.quote-row:hover{border-color:var(--edge-hi);background:var(--panel-hi)}
+.dl-gantt-block.current{border-color:var(--pencil)}
+.hero-cd{background:linear-gradient(135deg,#1f6249,#164836);border-color:var(--edge-hi);padding:28px 30px}
+.modal{background:#164836;border:1px solid var(--edge-hi);border-radius:14px!important;box-shadow:0 30px 70px -20px rgba(0,0,0,.7)}
+.ms-drop{background:#1a5240;border:1px solid var(--edge-hi);box-shadow:0 16px 32px -12px rgba(0,0,0,.6)}
+.focus-item,.dl-mini,.hab-mini{border-bottom:1px solid var(--edge)}
+.focus-item{padding:14px 8px;margin:0 -8px}
+
+/* ---- Section headers keep the ruler (the signature) ---- */
+.card-head{margin-bottom:18px}
+.card-head h3{font-size:16px;font-weight:700;letter-spacing:.12em}
+
+/* ---- Sidebar ---- */
+.side{background:#123e2f;border-right:1px solid var(--edge);box-shadow:inset -1px 0 0 rgba(0,0,0,.25)}
+.brand{border:0;padding:6px 10px 16px;margin:0 0 22px;background:var(--ruler) left bottom/48px 9px repeat-x}
+.brand h1{font-size:30px;font-weight:800;letter-spacing:.06em;line-height:1}
+.brand span{letter-spacing:.24em;font-size:10.5px}
+.nav button{border:0;padding:10px 12px;font-size:15.5px;letter-spacing:.08em}
+.nav button:hover{background:rgba(232,244,226,.05)}
+.nav button.on{background:rgba(232,244,226,.09);border:0;box-shadow:inset 3px 0 0 var(--pencil)}
+.nav button[data-go]::before{font-family:var(--mono);font-size:10px}
+.nav .badge{border:0;background:rgba(232,244,226,.1);color:var(--text);border-radius:999px!important;padding:1px 8px}
+.side-foot{border:0;border-top:1px solid var(--edge);padding:14px 10px 0;margin-top:10px}
+
+/* ---- Type ---- */
+.greet{margin-bottom:34px}
+.greet .hi{font-weight:800;line-height:.92;letter-spacing:-.005em}
+.greet .ground{font-size:clamp(19px,.5vw + 15px,24px);margin-top:12px;max-width:46ch}
+.h2{font-weight:800;line-height:.95;margin:8px 0 10px}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.24em}
+.sub{font-size:15.5px;line-height:1.6}
+.motiv-text{font-size:clamp(23px,.9vw + 16px,30px);line-height:1.25;color:var(--text);border-left:3px solid var(--pencil);padding:4px 0 4px 18px}
+/* Small print moves to the body face: the serif is kept for big, quotable lines only */
+.fuel-tip,.fuel-note,.capture-actions .hint,.steps-hint,.fdp-hint,.wheel-tip{font-family:var(--body);font-style:italic;font-size:14.5px;line-height:1.6;color:var(--mist)}
+.wheel-tip b{font-style:normal}
+.dl-sprint-note{font-family:var(--body);font-size:13.5px;border-style:solid;border-radius:8px!important}
+/* Numbers: heavy condensed with even-width digits */
+.dl-count,.dl-row .big,.hero-num,.fuel-cell .val,.stat-val,.def-num,.wheel-center .n,.hab-counter .cval{font-family:var(--display);font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:0}
+.dl-count{font-size:32px}
+.dl-row .big{font-size:38px}
+.fuel-cell .val,.def-num{font-size:36px}
+.focus-item .txt,.hab-name,.dl-mini .n,.dl-row .info .t,.dl-sprint-title{font-weight:600}
+
+/* ---- One accent for actions: mat yellow ---- */
+.btn{background:var(--pencil);color:var(--ink);border:0;border-radius:7px!important;box-shadow:0 2px 0 #b3952b;transition:transform .12s,box-shadow .12s}
+.btn:hover{box-shadow:0 2px 0 #b3952b,0 8px 18px -8px rgba(242,212,92,.7);transform:translateY(-1px)}
+.btn:active{transform:translateY(1px);box-shadow:0 1px 0 #b3952b}
+.btn.ghost{background:transparent;border:1px solid var(--edge-hi);color:var(--text);box-shadow:none}
+.btn.ghost:hover{border-color:var(--pencil);color:var(--pencil);transform:none;box-shadow:none}
+.review-btn{border:1px dashed var(--pencil);color:var(--pencil);border-radius:8px!important}
+.review-btn:hover{background:rgba(242,212,92,.08)}
+.focus-item .chk,.goal .chk,.fw-work-chk,.g-subs .sub-chk,.hab-mini .m-check,.rev-pick .opt .mk,.hab-check{border:1.5px solid rgba(232,244,226,.55)}
+.focus-item .chk.done,.goal .chk.done,.fw-work-chk.done,.g-subs .sub-chk.done,.hab-mini .m-check.done,.rev-pick .opt.sel .mk,.hab-check.done{background:var(--pencil);border-color:var(--pencil)}
+.focus-item .chk.done::after,.goal .chk.done::after,.fw-work-chk.done::after,.g-subs .sub-chk.done::after,.hab-mini .m-check.done::after,.rev-pick .opt.sel .mk::after{border-color:var(--ink)}
+.hab-check.done svg{color:var(--ink)}
+.fdp-day.on{background:var(--pencil);border-color:var(--pencil);color:var(--ink)}
+
+/* ---- Chips become pills ---- */
+.cat-chip,.term-chip,.heat-chip,.dl-view-btn,.sport-pick .sp,.off-toggle,.term-pill,.rem-chip,.gym-body .ex{border-radius:999px!important;border-width:1px}
+.cat-chip.on,.term-chip.on,.heat-chip.on,.dl-view-btn.on,.sport-pick .sp.on{background:rgba(232,244,226,.12);border-color:var(--edge-hi)}
+
+/* ---- Inputs ---- */
+.add-row input,.add-row select,.fw-add-row input,.fuel-add input,.fuel-add select,.profile-row input,.profile-row select,.weight-row input,.steps-row input,.capture-box textarea,.rev-q textarea,#quote-compose,.sync-area,.mac input,.log-item input.kc{background:#123d2e;border:1px solid var(--edge-hi);border-radius:7px!important}
+
+/* ---- Phone chrome ---- */
+.mbar,.tabbar{background:rgba(18,62,47,.95)!important;border-color:var(--edge)!important}
+.mbar-brand{border:0!important;padding:0!important;font-size:22px!important;font-weight:800!important;letter-spacing:.06em!important}
+.mbar-menu{border:1px solid var(--edge-hi);border-radius:8px!important}
+.tabbar button.on{border:0;background:rgba(232,244,226,.09);box-shadow:inset 0 3px 0 var(--pencil)}
+
 /* ==========================================================================
    FORCED-DARK SAFETY NET — only active when Chrome's auto dark mode is
    recolouring the page (html.forced-dark, set by the script in <head>).
@@ -960,6 +1054,12 @@ input::placeholder,textarea::placeholder{color:var(--mist-dim)}
 .forced-dark .hab-dot.today:not(.fill){border-image:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='9' fill='none' stroke='%23f2d45c' stroke-opacity='1' stroke-width='1.5'/%3E%3C/svg%3E") center/100% 100% no-repeat}
 .forced-dark :is(.dot,.hab-streak .spark){background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='9.5' fill='%23f2d45c' fill-opacity='1'/%3E%3C/svg%3E") center/100% 100% no-repeat}
 
+
+.forced-dark :is(.card,.card.glass,.capture-box,.macro-card,.gym-part,.fw-focus-item,.fw-focus-item.goal,.quote-row,.dump-item,.hab-row,.dl-row,.dl-sprint,.dl-section-head,.dl-gantt-block,.fuel-cell,.stat-chip,.def-card,.hero-cd,.log-item,.profile-row label,.side,.mbar,.tabbar,.nav .badge){border-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect x='1' y='1' width='4' height='4' fill='none' stroke='%23e8f4e2' stroke-opacity='.2' stroke-width='2'/%3E%3C/svg%3E") 2 stretch!important}
+.forced-dark .brand,.forced-dark .side-foot,.forced-dark .nav button.on,.forced-dark .tabbar button.on,.forced-dark .mbar-brand{border-image:none!important}
+.forced-dark .side-foot{border-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect x='1' y='1' width='4' height='4' fill='none' stroke='%23e8f4e2' stroke-opacity='.2' stroke-width='2'/%3E%3C/svg%3E") 2 stretch!important;border-image-width:1px 0 0 0!important}
+.forced-dark .btn:not(.ghost){border:1.5px solid;border-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect x='1' y='1' width='4' height='4' fill='none' stroke='%23f2d45c' stroke-opacity='1' stroke-width='2'/%3E%3C/svg%3E") 2 stretch!important;color:var(--pencil)!important;box-shadow:none}
+
 /* ==========================================================================
    RESPONSIVE SHELL — one layout that adapts from a big monitor to a phone
      ≥1600px     roomy desktop: wider sidebar and content
@@ -969,9 +1069,9 @@ input::placeholder,textarea::placeholder{color:var(--mist-dim)}
    ========================================================================== */
 .main{min-width:0;margin-inline:auto;max-width:1180px}
 .mbar,.tabbar,.drawer-scrim{display:none}
-.greet .hi{font-size:clamp(26px,1.6vw + 16px,40px)}
-.h2{font-size:clamp(24px,1.2vw + 14px,32px)}
-.hero-num{font-size:clamp(40px,3vw + 16px,60px)}
+.greet .hi{font-size:clamp(42px,3vw + 20px,72px)}
+.h2{font-size:clamp(34px,1.8vw + 18px,50px)}
+.hero-num{font-size:clamp(48px,3vw + 22px,72px)}
 .wheel{width:min(300px,100%);height:auto;aspect-ratio:1/1}
 .heat-scroll,#dl-timeline{-webkit-overflow-scrolling:touch}
 .term-bar,.fw-term-filter,.dl-view-toggle,.fdp-row{flex-wrap:wrap}
