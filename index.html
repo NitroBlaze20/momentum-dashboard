@@ -2,31 +2,35 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Momentum — Second Brain</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Momentum — Second Brain (Blueprint)</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Architects+Daughter&display=swap');
 
 :root{
-  --deep:#0d1b1e;
-  --deep-2:#0a1517;
-  --surface:#13262a;
-  --surface-2:#1a3338;
-  --line:#234247;
-  --current:#5fb3a8;
-  --current-soft:#3a6f69;
-  --sand:#e8c39e;
-  --sand-soft:#b8946e;
-  --mist:#a8c5c0;
-  --mist-dim:#7a9590;
-  --text:#eef3f1;
-  --amber:#e0a458;
-  --coral:#d98b7a;
-  --red:#e0685f;
-  --r:16px;
-  --display:'Spectral',Georgia,'Times New Roman',serif;
-  --body:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  /* Blueprint palette */
+  --deep:#17467d;          /* drafting paper */
+  --deep-2:#113865;        /* input wells */
+  --surface:#1c5089;
+  --surface-2:#245b98;
+  --line:rgba(234,242,255,.38);
+  --line-strong:rgba(234,242,255,.85);
+  --current:#eaf2ff;       /* white linework = primary */
+  --current-soft:#8fb0d8;
+  --pencil:#ffd66b;        /* yellow pencil notes */
+  --sand:#ffd66b;
+  --sand-soft:#e6bf55;
+  --mist:#cddcf0;
+  --mist-dim:#a9c3e4;
+  --text:#f2f7ff;
+  --amber:#ffb347;
+  --coral:#ffa194;
+  --red:#ff8577;
+  --r:2px;
+  --display:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --body:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --hand:'Architects Daughter','Comic Sans MS',cursive;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -767,6 +771,278 @@ body{
 @media(prefers-reduced-motion:reduce){
   .ring-flow{animation:none}.brand .mark{animation:none}.panel{animation:none}
 }
+
+/* ==========================================================================
+   BLUEPRINT THEME — layered on top of the base styles above.
+   Drafting-blue paper, white linework, yellow pencil notes.
+   ========================================================================== */
+html{background:var(--deep)}
+body{
+  background-color:var(--deep);
+  background-image:
+    linear-gradient(rgba(234,242,255,.13) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(234,242,255,.13) 1px,transparent 1px),
+    linear-gradient(rgba(234,242,255,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(234,242,255,.05) 1px,transparent 1px);
+  background-size:100px 100px,100px 100px,20px 20px,20px 20px;
+  background-attachment:fixed;
+}
+::selection{background:var(--pencil);color:var(--deep)}
+:focus-visible{outline:2px solid var(--pencil);outline-offset:2px}
+
+/* Square, drafted corners everywhere; true circles stay round */
+.app *,.overlay *,.auth-gate *,.toast{border-radius:2px!important}
+.dot,.hab-streak .spark,.dl-tl-dot,.dl-panel-dot,.cat-chip .swatch,.hab-dot,.brand .mark,
+[style*="border-radius:50%"]{border-radius:50%!important}
+
+/* ---------- Sidebar: title block ---------- */
+.side{background:rgba(10,40,78,.55);border-right:2px solid var(--line-strong)}
+.brand{border:2px solid var(--line-strong);padding:12px 14px;flex-direction:column;align-items:flex-start;gap:4px;margin:0 0 22px}
+.brand .mark{display:none}
+.brand h1{font-family:var(--display);font-size:19px;font-weight:600;letter-spacing:.18em;text-transform:uppercase}
+.brand span{color:var(--mist);letter-spacing:.2em}
+.nav{counter-reset:sheet}
+.nav button{font-family:var(--display);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mist);border:1px dashed transparent}
+.nav button[data-go]::before{counter-increment:sheet;content:counter(sheet,decimal-leading-zero);font-size:10.5px;color:var(--mist-dim);width:18px;flex:none}
+.nav button:hover{background:rgba(234,242,255,.07);color:var(--text)}
+.nav button.on{background:rgba(234,242,255,.12);border-color:var(--line-strong);color:var(--text)}
+.nav button.on .ic{color:var(--pencil)}
+.nav .badge{background:none;border:1px solid var(--line);color:var(--mist)}
+.nav .badge:empty{display:none}
+.nav-util{font-size:11.5px!important}
+.side-foot{border:1.5px solid var(--line-strong);border-top:1.5px solid var(--line-strong);padding:10px 12px;margin-top:12px}
+.side-foot .day{color:var(--text);letter-spacing:.04em}
+.side-foot .store{color:var(--mist);font-size:10.5px}
+.dot{background:var(--pencil)}
+
+/* ---------- Type ---------- */
+.eyebrow{font-family:var(--display);color:var(--pencil);letter-spacing:.22em}
+.h2,.greet .hi{font-family:var(--display);font-weight:500;letter-spacing:.01em}
+.greet .hi{font-size:36px}
+.greet .ground,.motiv-text,.wheel-tip,.fuel-tip,.fuel-note,.capture-actions .hint,.steps-hint,.fdp-hint,.quote-row-text{
+  font-family:var(--hand);font-style:normal}
+.greet .ground{color:var(--pencil);font-size:17px}
+.motiv-text{color:var(--pencil);font-size:21px;line-height:1.45}
+.quote-row-text{font-size:16px}
+.fuel-tip,.fuel-note{font-size:13.5px;color:var(--mist)}
+.wheel-tip{font-size:15px}
+.wheel-tip b{color:var(--pencil);font-family:var(--display)}
+.sub{color:var(--mist)}
+
+/* ---------- Cards = drafted figures ---------- */
+.panel{counter-reset:fig}
+.card,.card.glass,.capture-box,.macro-card,.gym-part,.fw-focus-item,.fw-focus-item.goal,.quote-row,.dump-item,.log-item,
+.hab-row,.dl-row,.dl-sprint,.dl-section-head,.dl-gantt-block,.profile-row label{
+  background:rgba(10,40,78,.35);border:1.5px solid var(--line-strong);box-shadow:none}
+.card-head h3{font-family:var(--display);font-size:11.5px;letter-spacing:.16em;color:var(--text)}
+.card-head h3::before{counter-increment:fig;content:"FIG. " counter(fig,upper-alpha) " — ";color:var(--mist-dim)}
+.card-head .act{font-family:var(--hand);font-size:14px;color:var(--pencil)}
+.focus-item,.dl-mini,.hab-mini{border-bottom:1px dashed var(--line)}
+.focus-item:hover,.goal:hover{background:rgba(234,242,255,.05)}
+.focus-item .cat,.dl-row .big small,.dl-count small{color:var(--mist)}
+
+/* Checkboxes: white squares, blue tick */
+.focus-item .chk,.goal .chk,.fw-work-chk,.g-subs .sub-chk,.hab-mini .m-check,.rev-pick .opt .mk,.hab-check{border:2px solid var(--line-strong)}
+.hab-check.done svg{color:var(--deep)}
+
+/* ---------- Countdown hero: a dimension line ---------- */
+.hero-cd{background:rgba(10,40,78,.45);border:2px solid var(--line-strong)}
+.hero-cd::before{display:none}
+.hero-eyebrow{font-family:var(--display);color:var(--pencil)}
+.hero-name{font-family:var(--display);font-weight:500}
+.hero-num{font-family:var(--display);font-weight:500;color:var(--pencil)}
+.hero-bar{left:26px;right:26px;width:auto;bottom:10px;height:1px;background:var(--line-strong)}
+.hero-bar::before,.hero-bar::after{content:"";position:absolute;top:-6px;width:1.5px;height:13px;background:var(--line-strong)}
+.hero-bar::before{left:0}.hero-bar::after{right:0}
+.hero-bar i{height:3px;margin-top:-1px;background:var(--pencil)}
+
+/* Deadlines */
+.dl-count,.dl-row .big{font-family:var(--display)}
+.near .dl-count,.goal .dl-pill.near{color:var(--pencil)}
+.calm .dl-count{color:var(--text)}
+.dl-sprint-bar,.dl-gantt-bar,.dl-row .bar,.cat-block .prog,.mc-bar,.mc-split{background:rgba(234,242,255,.12)}
+.dl-gantt-block.done{background:rgba(234,242,255,.08)}
+.dl-gantt-block.current{border-color:var(--pencil);box-shadow:none}
+.dl-gantt-block.expanded{border-color:var(--pencil);box-shadow:0 0 0 2px var(--pencil)}
+.dl-tl-line{background:var(--line-strong)}
+.dl-sprint-note{background:rgba(255,214,107,.08);border:1px dashed var(--pencil);color:var(--pencil);font-family:var(--hand);font-size:13.5px}
+
+/* ---------- Buttons & inputs ---------- */
+.btn{background:var(--text);color:var(--deep);font-family:var(--display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:12.5px;border:1.5px solid var(--text)}
+.btn:hover{box-shadow:3px 3px 0 var(--pencil)}
+.btn.ghost{background:transparent;border:1.5px solid var(--line-strong);color:var(--text)}
+.btn.ghost:hover{border-color:var(--pencil);color:var(--pencil)}
+.review-btn{background:transparent;border:1.5px dashed var(--line-strong);font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;font-size:12.5px}
+.review-btn:hover{border-style:solid;border-color:var(--pencil);color:var(--pencil);box-shadow:none;transform:none}
+input,select,textarea,.sync-area,#quote-compose{border-style:solid}
+.add-row input:focus,.add-row select:focus,textarea:focus,input:focus,select:focus{border-color:var(--pencil)!important;box-shadow:none!important}
+input::placeholder,textarea::placeholder{color:var(--mist-dim)}
+.cat-chip,.term-chip,.heat-chip,.dl-view-btn,.fdp-day,.sport-pick .sp,.off-toggle,.dn-today,.dn-btn,.day-arrow{border:1.5px solid var(--line)}
+.cat-chip.on,.term-chip.on,.heat-chip.on,.dl-view-btn.on,.sport-pick .sp.on{background:rgba(234,242,255,.14);border-color:var(--line-strong)}
+.term-pill.short{background:rgba(234,242,255,.1)}
+.fdp-day.on{background:var(--text);color:var(--deep)}
+
+/* ---------- Flywheel ---------- */
+.ring-track{stroke:rgba(234,242,255,.35);stroke-dasharray:4 5}
+.stage circle{fill:var(--deep);stroke:var(--line-strong)}
+.stage:hover circle{fill:var(--surface-2);stroke:var(--pencil)}
+.stage.lit circle{fill:var(--text);stroke:var(--text)}
+.wheel-center .n{font-family:var(--display);font-weight:500;color:var(--pencil)}
+
+/* ---------- Habits ---------- */
+.hab-dot{background:transparent;border:1.5px dashed rgba(234,242,255,.5)}
+.hab-dot.fill{background:var(--current-soft);border:1.5px solid var(--current-soft)}
+.hab-dot.fill.today{background:var(--text);border-color:var(--text)}
+.hab-dot.today{border:1.5px solid var(--pencil)}
+.hab-streak.live,.hab-mini .m-streak,.heat-stats b{color:var(--pencil)}
+.hab-streak .spark{background:var(--pencil);box-shadow:none}
+.heat-title{font-family:var(--display);font-weight:500}
+.heat-cell{background:rgba(234,242,255,.07)}
+.heat-cell.l1{background:rgba(234,242,255,.28)}
+.heat-cell.l2{background:rgba(234,242,255,.5)}
+.heat-cell.l3{background:rgba(234,242,255,.74)}
+.heat-cell.l4{background:var(--text)}
+.heat-cell.toggleable:hover{outline-color:var(--pencil)}
+
+/* ---------- Fuel ---------- */
+.fuel-cell,.stat-chip,.def-card{background:rgba(10,40,78,.4);border:1.5px solid var(--line-strong)}
+.def-card.good{border-color:var(--text);background:rgba(234,242,255,.06)}
+.def-card.over{border-color:var(--red);background:rgba(255,123,110,.08)}
+.def-card.off{border-color:var(--amber);background:rgba(255,179,71,.08)}
+.fuel-cell .val,.stat-val,.def-num,.dn-label,.day-label span,.fuel-sec h3,.cat-block h3,.dl-section-title,.gym-head .gp-name,.modal h3,.dl-panel-head{font-family:var(--display);font-weight:500}
+.fuel-cell.eat .val,.log-item .li-kcal,.log-item input.kc{color:var(--pencil)}
+.def-hist .dh{background:rgba(234,242,255,.07)}
+.def-hist .dh.def,.lg-dot.def{background:rgba(234,242,255,.7);color:var(--deep)}
+.def-hist .dh.sel{outline-color:var(--pencil)}
+
+/* ---------- Modals, dropdowns, toast ---------- */
+.overlay{background:rgba(8,30,60,.75)}
+.modal{background:var(--deep);border:2px solid var(--line-strong);box-shadow:8px 8px 0 rgba(4,20,44,.6)}
+.ms-drop{background:var(--surface-2);border:1.5px solid var(--line-strong)}
+.toast{background:var(--deep);border:1.5px solid var(--pencil);font-family:var(--display);font-size:13px}
+.rev-q label,.sync-sec h4{color:var(--pencil);font-family:var(--display)}
+.auth-card{background:var(--deep);border:2px solid var(--line-strong)}
+.sortable-drag{box-shadow:6px 6px 0 rgba(4,20,44,.6)}
+
+/* ==========================================================================
+   RESPONSIVE SHELL — one layout that adapts from a big monitor to a phone
+     ≥1600px     roomy desktop: wider sidebar and content
+     ≥1280px     full desktop: Today splits into two columns
+     761–1100px  half screen / tablet: sidebar shrinks to an icon rail
+     ≤760px      phone: top bar, bottom tab bar, slide-out menu
+   ========================================================================== */
+.main{min-width:0;margin-inline:auto;max-width:1180px}
+.mbar,.tabbar,.drawer-scrim{display:none}
+.greet .hi{font-size:clamp(26px,1.6vw + 16px,40px)}
+.h2{font-size:clamp(24px,1.2vw + 14px,32px)}
+.hero-num{font-size:clamp(40px,3vw + 16px,60px)}
+.wheel{width:min(300px,100%);height:auto;aspect-ratio:1/1}
+.heat-scroll,#dl-timeline{-webkit-overflow-scrolling:touch}
+.term-bar,.fw-term-filter,.dl-view-toggle,.fdp-row{flex-wrap:wrap}
+
+/* ---- Full desktop: Today in two columns ---- */
+@media(min-width:1280px){
+  .today-grid-single>div{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:20px;align-items:start}
+  .today-grid-single>div>.card{margin-top:0!important}
+  .today-grid-single>div>.card:nth-child(1){grid-column:1;grid-row:1}
+  .today-grid-single>div>.card:nth-child(2){grid-column:2;grid-row:1 / span 2}
+  .today-grid-single>div>.card:nth-child(3){grid-column:1;grid-row:2}
+}
+@media(min-width:1600px){
+  .app{grid-template-columns:260px 1fr}
+  .main{max-width:1320px;padding:48px 64px 96px}
+}
+
+/* ---- Half screen / tablet: icon rail ---- */
+@media(min-width:761px) and (max-width:1100px){
+  .app{grid-template-columns:76px 1fr}
+  .side{padding:18px 10px}
+  .brand{padding:10px 0;align-items:center;margin-bottom:16px}
+  .brand h1{font-size:0;letter-spacing:0}
+  .brand h1::after{content:"M";font-size:22px;letter-spacing:0}
+  .brand span{display:none}
+  .nav button{font-size:0;justify-content:center;padding:0;min-height:44px;position:relative;gap:0}
+  .nav button[data-go]::before{display:none}
+  .nav .ic{font-size:17px;width:auto;height:auto}
+  .nav .badge{position:absolute;top:3px;right:3px;margin:0;font-size:9px;padding:0 4px;line-height:14px}
+  .nav-util{font-size:0!important}
+  .side-foot{display:none}
+  .main{padding:32px 32px 72px}
+}
+
+/* ---- Phone ---- */
+@media(max-width:760px){
+  body{background-attachment:scroll}
+  body.no-scroll{overflow:hidden}
+  .app{display:block}
+
+  /* Top bar */
+  .mbar{display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:40;
+    padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;
+    background:rgba(17,56,101,.94);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    border-bottom:1.5px solid var(--line-strong)}
+  .mbar-brand{font-family:var(--display);font-weight:600;letter-spacing:.18em;font-size:14px;border:1.5px solid var(--line-strong);padding:5px 9px}
+  .mbar-day{font-family:var(--display);font-size:11.5px;color:var(--mist);margin-right:auto}
+  .mbar-menu{width:44px;height:44px;background:none;border:1.5px solid var(--line-strong);color:var(--text);font-size:20px;cursor:pointer}
+
+  /* Slide-out menu (the desktop sidebar) */
+  .side{position:fixed;top:0;left:0;bottom:0;width:min(300px,86vw);height:100%;z-index:90;
+    flex-direction:column;flex-wrap:nowrap;align-items:stretch;overflow-y:auto;
+    padding:calc(22px + env(safe-area-inset-top,0px)) 16px calc(18px + env(safe-area-inset-bottom,0px));
+    background:var(--deep-2);transform:translateX(-105%);visibility:hidden;
+    transition:transform .25s ease,visibility 0s linear .25s}
+  .app.drawer-open .side{transform:none;visibility:visible;transition:transform .25s ease,visibility 0s}
+  .brand{margin:0 0 18px}
+  .nav{flex-direction:column;flex-wrap:nowrap;flex:1 0 auto;margin-top:0}
+  .nav button{width:100%;min-height:46px}
+  .nav .badge{display:inline-block}
+  .side-foot{display:block}
+  .nav-section-break{margin-top:14px;border-top:1px solid var(--line);padding-top:14px!important}
+  .drawer-scrim{position:fixed;inset:0;z-index:85;background:rgba(6,22,44,.6)}
+  .app.drawer-open .drawer-scrim{display:block}
+
+  /* Bottom tab bar */
+  .tabbar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:45;
+    background:rgba(17,56,101,.96);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    border-top:1.5px solid var(--line-strong);padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px))}
+  .tabbar button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:54px;
+    background:none;border:1px dashed transparent;color:var(--mist);font-family:var(--display);font-size:10px;
+    letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+  .tabbar .ic{font-size:18px;line-height:1}
+  .tabbar button.on{color:var(--text);border-color:var(--line-strong);background:rgba(234,242,255,.1)}
+  .tabbar button.on .ic{color:var(--pencil)}
+
+  /* Content */
+  .main{padding:22px 16px calc(96px + env(safe-area-inset-bottom,0px))}
+  .card{padding:16px}
+  .greet{margin-bottom:20px}
+  input,select,textarea{font-size:16px!important}   /* stops iOS zooming into fields */
+  .card-head{flex-wrap:wrap;gap:6px}
+  .add-row{flex-wrap:wrap}
+  .add-row input{min-width:0;flex:1 1 180px}
+  .add-row .btn{flex:1 1 auto}
+  .focus-item{flex-wrap:wrap}
+  .focus-day-picker{padding-left:0}
+  .hab-row{flex-wrap:wrap;gap:12px;padding:12px}
+  .hab-week{order:3;flex:1 0 100%;justify-content:space-between;padding:0 4px 16px 56px}
+  .hab-legend{display:none}
+  .dl-row{flex-wrap:wrap;gap:12px;padding:14px}
+  .dl-row .big{width:64px;font-size:24px}
+  .dl-row .barwrap{order:3;flex:1 0 100%;width:auto}
+  .dl-gantt-block{flex:1 1 100%}
+  .profile-row label{flex:1 1 140px;justify-content:space-between}
+  .fuel-add input[type=text]{flex:1 1 100%}
+  .dump-item{flex-wrap:wrap}
+  .overlay{align-items:flex-end;padding:0}
+  .overlay .modal{max-width:none;max-height:92vh;padding:22px 18px calc(22px + env(safe-area-inset-bottom,0px));border-bottom:none}
+  .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 32px);text-align:center}
+}
+@media(max-width:380px){
+  .main{padding-left:12px;padding-right:12px}
+  .tabbar button{font-size:9px;letter-spacing:.02em}
+  .hab-week{padding-left:0}
+}
+@media(prefers-reduced-motion:reduce){.side{transition:none!important}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
@@ -787,7 +1063,13 @@ body{
   </div>
 </div>
 <div class="app">
-  <aside class="side">
+  <header class="mbar">
+    <div class="mbar-brand">MOMENTUM</div>
+    <div class="mbar-day" id="mbar-day"></div>
+    <button id="m-menu" class="mbar-menu" aria-label="Open menu" aria-expanded="false" aria-controls="side">☰</button>
+  </header>
+  <div class="drawer-scrim" id="drawer-scrim"></div>
+  <aside class="side" id="side">
     <div class="brand">
       <span class="mark"></span>
       <div>
@@ -884,8 +1166,8 @@ body{
                 <svg viewBox="0 0 300 300" id="wheel-svg" aria-label="Momentum flywheel">
                   <defs>
                     <linearGradient id="flow" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stop-color="#5fb3a8"/>
-                      <stop offset="100%" stop-color="#e8c39e"/>
+                      <stop offset="0%" stop-color="#eaf2ff"/>
+                      <stop offset="100%" stop-color="#ffd66b"/>
                     </linearGradient>
                   </defs>
                   <circle class="ring-track" cx="150" cy="150" r="112"/>
@@ -945,7 +1227,7 @@ body{
             </div>
           </div>
         </div>
-        <div class="heat-legend"><span>Less</span><div class="heat-key"><i style="background:#ffffff0a"></i><i style="background:rgba(95,179,168,.28)"></i><i style="background:rgba(95,179,168,.5)"></i><i style="background:rgba(95,179,168,.74)"></i><i style="background:var(--current)"></i></div><span>More</span></div>
+        <div class="heat-legend"><span>Less</span><div class="heat-key"><i style="background:rgba(234,242,255,.07)"></i><i style="background:rgba(234,242,255,.28)"></i><i style="background:rgba(234,242,255,.5)"></i><i style="background:rgba(234,242,255,.74)"></i><i style="background:var(--current)"></i></div><span>More</span></div>
       </div>
       <div class="hab-legend"><span>Last 7 days</span><span class="hab-legend-today">today →</span></div>
       <div id="habits-list" style="margin-top:6px"></div>
@@ -1110,6 +1392,14 @@ body{
 
   </main>
 </div>
+
+<nav class="tabbar" aria-label="Main">
+  <button data-go="today" class="on"><span class="ic">◎</span><span>Today</span></button>
+  <button data-go="habits"><span class="ic">◍</span><span>Habits</span></button>
+  <button data-go="fuel"><span class="ic">◆</span><span>Fuel</span></button>
+  <button data-go="goals"><span class="ic">⬡</span><span>Goals</span></button>
+  <button id="tab-more" aria-label="More pages and settings" aria-controls="side"><span class="ic">☰</span><span>More</span></button>
+</nav>
 
 <!-- Review modal -->
 <div class="overlay" id="overlay">
@@ -2516,7 +2806,10 @@ function findGoal(id){return S.goals.find(g=>g.id==id);}
 function go(v){
   if(!$('#p-'+v))return;
   view=v;
-  $$('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.go===v));
+  $$('.nav button, .tabbar button[data-go]').forEach(b=>b.classList.toggle('on',b.dataset.go===v));
+  const tabMore=$('#tab-more');
+  if(tabMore)tabMore.classList.toggle('on',![...$$('.tabbar button[data-go]')].some(b=>b.dataset.go===v));
+  window.scrollTo(0,0);
   $$('.panel').forEach(p=>p.classList.remove('on'));
   $('#p-'+v).classList.add('on');
   render();
@@ -3401,6 +3694,37 @@ const cloudRefreshBtn=document.getElementById('cloud-refresh');
 if(cloudRefreshBtn)cloudRefreshBtn.addEventListener('click',forceRefreshFromCloud);
 const cloudSaveBtn=document.getElementById('cloud-save');
 if(cloudSaveBtn)cloudSaveBtn.addEventListener('click',forceSaveToCloud);
+/* ---------------- Responsive shell (phone menu + rail tooltips) ---------------- */
+(function(){
+  const app=document.querySelector('.app');
+  const menuBtn=document.getElementById('m-menu');
+  const moreBtn=document.getElementById('tab-more');
+  const scrim=document.getElementById('drawer-scrim');
+  const dayEl=document.getElementById('mbar-day');
+  if(dayEl)dayEl.textContent=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+  function isOpen(){return app.classList.contains('drawer-open');}
+  function setDrawer(open,returnFocus){
+    app.classList.toggle('drawer-open',open);
+    document.body.classList.toggle('no-scroll',open);
+    [menuBtn,moreBtn].forEach(b=>b&&b.setAttribute('aria-expanded',open));
+    if(open){const f=document.querySelector('#nav button.on')||document.querySelector('#nav button');if(f)setTimeout(()=>f.focus(),60);}
+    else if(returnFocus)returnFocus.focus();
+  }
+  if(menuBtn)menuBtn.addEventListener('click',()=>setDrawer(!isOpen(),menuBtn));
+  if(moreBtn)moreBtn.addEventListener('click',()=>setDrawer(!isOpen(),moreBtn));
+  if(scrim)scrim.addEventListener('click',()=>setDrawer(false));
+  const navEl=document.getElementById('nav');
+  if(navEl)navEl.addEventListener('click',e=>{if(e.target.closest('button'))setDrawer(false);});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&isOpen())setDrawer(false,menuBtn);});
+  const wide=window.matchMedia('(min-width:761px)');
+  const onWide=()=>{if(wide.matches&&isOpen())setDrawer(false);};
+  if(wide.addEventListener)wide.addEventListener('change',onWide);else if(wide.addListener)wide.addListener(onWide);
+  // Name every sidebar button so the icon-only rail still has tooltips and screen-reader labels
+  document.querySelectorAll('#nav button').forEach(b=>{
+    const t=[...b.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join('').trim();
+    if(t){b.title=t;b.setAttribute('aria-label',t);}
+  });
+})();
 initAuth();
 </script>
 </body>
