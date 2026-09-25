@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- This page is already dark: tells Chrome's "Auto Dark Mode" flag (and dark-mode extensions) not to recolour it -->
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#1d5a43">
+<meta name="darkreader-lock">
 <title>Momentum — Second Brain (Cutting Mat)</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@500;600;700&family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap');
@@ -776,18 +780,14 @@ body{
    CUTTING MAT THEME — layered on top of the base styles above.
    Self-healing green mat, printed white grid, yellow 45° guide lines.
    ========================================================================== */
-html{background:var(--deep)}
+html{background:var(--deep);color-scheme:dark only}
+/* Native controls (dropdowns, date pickers, scrollbars) drawn in dark mode to match */
+:root{accent-color:var(--pencil);scrollbar-color:rgba(232,244,226,.45) var(--deep-2)}
+select option{background:var(--deep-2);color:var(--text)}
 body{
   background-color:var(--deep);
-  background-image:
-    linear-gradient(135deg,transparent calc(50% - 1px),rgba(242,212,92,.22) 50%,transparent calc(50% + 1px)),
-    linear-gradient(45deg,transparent calc(50% - .5px),rgba(242,212,92,.12) 50%,transparent calc(50% + .5px)),
-    linear-gradient(rgba(232,244,226,.16) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(232,244,226,.16) 1px,transparent 1px),
-    linear-gradient(rgba(232,244,226,.06) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(232,244,226,.06) 1px,transparent 1px),
-    radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.05),transparent 60%);
-  background-size:100% 100%,100% 100%,120px 120px,120px 120px,24px 24px,24px 24px,100% 100%;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cline x1='0' y1='0' x2='100' y2='100' stroke='%23f2d45c' stroke-opacity='.24' stroke-width='1.5' vector-effect='non-scaling-stroke'/%3E%3Cline x1='100' y1='0' x2='0' y2='100' stroke='%23f2d45c' stroke-opacity='.13' stroke-width='1' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cpath d='M24.5 0V120M0 24.5H120M48.5 0V120M0 48.5H120M72.5 0V120M0 72.5H120M96.5 0V120M0 96.5H120' stroke='%23e8f4e2' stroke-opacity='.07' fill='none'/%3E%3Cpath d='M.5 0V120M0 .5H120' stroke='%23e8f4e2' stroke-opacity='.17' fill='none'/%3E%3C/svg%3E"),radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.05),transparent 60%);
+  background-size:100% 100%,120px 120px,100% 100%;
   background-attachment:fixed;
 }
 ::selection{background:var(--pencil);color:var(--deep)}
@@ -838,9 +838,7 @@ body{
 .hab-row,.dl-row,.dl-sprint,.dl-section-head,.dl-gantt-block,.profile-row label{
   background:rgba(10,48,35,.35);border:1.5px solid var(--line-strong);box-shadow:none}
 .card-head h3{font-family:var(--display);font-size:15px;font-weight:600;letter-spacing:.12em;color:var(--text)}
-.card-head{padding-bottom:12px;background:
-  repeating-linear-gradient(90deg,var(--line-strong) 0 1px,transparent 1px 48px) left bottom/100% 9px no-repeat,
-  repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 8px) left bottom/100% 5px no-repeat}
+.card-head{padding-bottom:12px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='9'%3E%3Cpath d='M.5 0V9' stroke='%23e8f4e2' stroke-opacity='.85'/%3E%3Cpath d='M8.5 4V9M16.5 4V9M24.5 4V9M32.5 4V9M40.5 4V9' stroke='%23e8f4e2' stroke-opacity='.4'/%3E%3C/svg%3E") left bottom/48px 9px repeat-x}
 .card-head .act{font-family:var(--display);font-size:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--pencil)}
 .focus-item,.dl-mini,.hab-mini{border-bottom:1px dashed var(--line)}
 .focus-item:hover,.goal:hover{background:rgba(232,244,226,.05)}
@@ -928,6 +926,39 @@ input::placeholder,textarea::placeholder{color:var(--mist-dim)}
 .rev-q label,.sync-sec h4{color:var(--pencil);font-family:var(--display)}
 .auth-card{background:var(--deep);border:2px solid var(--line-strong)}
 .sortable-drag{box-shadow:6px 6px 0 rgba(4,24,16,.6)}
+
+
+/* ==========================================================================
+   FORCED-DARK SAFETY NET — only active when Chrome's auto dark mode is
+   recolouring the page (html.forced-dark, set by the script in <head>).
+   Chrome darkens light CSS borders and fills but leaves SVG images alone,
+   so lines and fills are redrawn as SVG here. Same look, stays visible.
+   ========================================================================== */
+.forced-dark :is(input,select,textarea,.cat-chip,.term-chip,.heat-chip,.dl-view-btn,.fdp-day,.sport-pick .sp,.off-toggle,.nav .badge,.term-pill,.focus-item,.dl-mini,.hab-mini,.rev-pick .opt,.nav-section-break,.dl-panel-head,.g-subs,.rem-chip,.gym-body .ex,.ms-item){border-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect x='1' y='1' width='4' height='4' fill='none' stroke='%23e8f4e2' stroke-opacity='.42' stroke-width='2'/%3E%3C/svg%3E") 2 stretch}
+.forced-dark :is(.card,.brand,.side-foot,.hero-cd,.modal,.fuel-cell,.stat-chip,.def-card,.capture-box,.hab-row,.dl-row,.dl-sprint,.dl-section-head,.dl-gantt-block,.log-item,.dump-item,.quote-row,.fw-focus-item,.macro-card,.gym-part,.profile-row label,.nav button.on,.tabbar button.on,.mbar-brand,.mbar-menu,.side,.mbar,.tabbar,.toast,.auth-card,.btn,.review-btn,.dn-btn,.day-arrow,.dn-today,.focus-item .chk,.goal .chk,.fw-work-chk,.g-subs .sub-chk,.hab-mini .m-check,.rev-pick .opt .mk,.hab-check,.ms-drop,.fdp-day.on,.cat-chip.on,.term-chip.on,.heat-chip.on,.dl-view-btn.on,.sport-pick .sp.on){border-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect x='1' y='1' width='4' height='4' fill='none' stroke='%23e8f4e2' stroke-opacity='.85' stroke-width='2'/%3E%3C/svg%3E") 2 stretch}
+.forced-dark :is(.hab-dot.today,.dl-gantt-block.current,.dl-gantt-block.expanded,.dl-sprint-note,.toast){border-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect x='1' y='1' width='4' height='4' fill='none' stroke='%23f2d45c' stroke-opacity='1' stroke-width='2'/%3E%3C/svg%3E") 2 stretch}
+.forced-dark .nav-section-break{border-image-width:1px 0 0 0!important}
+.forced-dark .def-card.over{border-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect x='1' y='1' width='4' height='4' fill='none' stroke='%23ff8a7a' stroke-opacity='1' stroke-width='2'/%3E%3C/svg%3E") 2 stretch}
+.forced-dark .def-card.off{border-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect x='1' y='1' width='4' height='4' fill='none' stroke='%23ffb347' stroke-opacity='1' stroke-width='2'/%3E%3C/svg%3E") 2 stretch}
+.forced-dark :is(.btn:not(.ghost),.fdp-day.on){background:transparent;color:var(--text)}
+.forced-dark :is(.focus-item .chk.done,.goal .chk.done,.fw-work-chk.done,.g-subs .sub-chk.done,.hab-mini .m-check.done,.rev-pick .opt.sel .mk,.hab-check.done,.heat-cell.l4,.cat-block .prog i,.mc-bar i.good,.mc-split i.p){background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Crect width='10' height='10' fill='%23e8f4e2' fill-opacity='1'/%3E%3C/svg%3E");background-size:100% 100%}
+.forced-dark :is(.heat-cell:not(.future),.def-hist .dh,.lg-dot.none,.dl-sprint-bar,.dl-gantt-bar,.dl-row .bar,.cat-block .prog,.mc-bar,.mc-split){background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Crect width='10' height='10' fill='%23e8f4e2' fill-opacity='.1'/%3E%3C/svg%3E");background-size:100% 100%}
+.forced-dark .heat-key i:nth-child(1){background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Crect width='10' height='10' fill='%23e8f4e2' fill-opacity='.1'/%3E%3C/svg%3E")!important;background-size:100% 100%!important}
+.forced-dark .heat-key i:nth-child(2){background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Crect width='10' height='10' fill='%23e8f4e2' fill-opacity='.28'/%3E%3C/svg%3E")!important;background-size:100% 100%!important}
+.forced-dark .heat-key i:nth-child(3){background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Crect width='10' height='10' fill='%23e8f4e2' fill-opacity='.5'/%3E%3C/svg%3E")!important;background-size:100% 100%!important}
+.forced-dark .heat-key i:nth-child(4){background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Crect width='10' height='10' fill='%23e8f4e2' fill-opacity='.74'/%3E%3C/svg%3E")!important;background-size:100% 100%!important}
+.forced-dark .heat-key i:nth-child(5){background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Crect width='10' height='10' fill='%23e8f4e2' fill-opacity='1'/%3E%3C/svg%3E")!important;background-size:100% 100%!important}
+.forced-dark .heat-cell.l1{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Crect width='10' height='10' fill='%23e8f4e2' fill-opacity='.28'/%3E%3C/svg%3E");background-size:100% 100%}
+.forced-dark .heat-cell.l2{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Crect width='10' height='10' fill='%23e8f4e2' fill-opacity='.5'/%3E%3C/svg%3E");background-size:100% 100%}
+.forced-dark .heat-cell.l3{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Crect width='10' height='10' fill='%23e8f4e2' fill-opacity='.74'/%3E%3C/svg%3E");background-size:100% 100%}
+.forced-dark :is(.def-hist .dh.def,.lg-dot.def){background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Crect width='10' height='10' fill='%23e8f4e2' fill-opacity='.7'/%3E%3C/svg%3E");background-size:100% 100%}
+.forced-dark .hero-bar i{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Crect width='10' height='10' fill='%23f2d45c' fill-opacity='1'/%3E%3C/svg%3E");background-size:100% 100%}
+.forced-dark .hero-bar,.forced-dark .hero-bar::before,.forced-dark .hero-bar::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Crect width='10' height='10' fill='%23e8f4e2' fill-opacity='.85'/%3E%3C/svg%3E");background-size:100% 100%}
+.forced-dark .hab-dot{border-color:transparent;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='9' fill='none' stroke='%23e8f4e2' stroke-opacity='.55' stroke-width='1.5' stroke-dasharray='3 2.5'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+.forced-dark .hab-dot.fill{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='9.5' fill='%238fbfa4' fill-opacity='1'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+.forced-dark .hab-dot.fill.today{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='9.5' fill='%23e8f4e2' fill-opacity='1'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+.forced-dark .hab-dot.today:not(.fill){border-image:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='9' fill='none' stroke='%23f2d45c' stroke-opacity='1' stroke-width='1.5'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+.forced-dark :is(.dot,.hab-streak .spark){background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='9.5' fill='%23f2d45c' fill-opacity='1'/%3E%3C/svg%3E") center/100% 100% no-repeat}
 
 /* ==========================================================================
    RESPONSIVE SHELL — one layout that adapts from a big monitor to a phone
@@ -1050,6 +1081,11 @@ input::placeholder,textarea::placeholder{color:var(--mist-dim)}
 @media(prefers-reduced-motion:reduce){.side{transition:none!important}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+/* Detect Chrome's forced/auto dark mode (it ignores our colours and recolours lines & fills).
+   If active, <html> gets .forced-dark and the CSS swaps in SVG-drawn lines, which Chrome leaves alone. */
+(function(){try{var e=document.createElement('div');e.style.cssText='color-scheme:light;background-color:canvas;position:absolute;visibility:hidden';document.documentElement.appendChild(e);var c=getComputedStyle(e).backgroundColor;e.remove();if(c&&c.replace(/\s/g,'')!=='rgb(255,255,255)')document.documentElement.classList.add('forced-dark');}catch(_){}})();
+</script>
 </head>
 <body>
 <div id="auth-gate" class="auth-gate">
