@@ -1198,6 +1198,23 @@ code,.mono{font-family:var(--mono)}
   .side{background:#0a0c0e}
 }
 
+/* ---- Sprint add / delete controls ---- */
+.dl-gantt-tools{position:absolute;top:4px;right:4px;display:flex;gap:0}
+.dl-gantt-block{padding-top:30px!important}
+.dl-gantt-tools .dl-gantt-edit{padding:5px 6px;font-size:12px}
+.dl-gantt-tools .dl-gantt-edit{position:static;opacity:.5}
+.dl-gantt-block:hover .dl-gantt-tools .dl-gantt-edit,.dl-gantt-tools .dl-gantt-edit:focus-visible{opacity:1}
+.dl-del:hover{color:var(--red)!important;border-color:rgba(255,93,93,.4)!important}
+.dl-gantt-add{flex:0 0 96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:120px;
+  background:transparent;border:1px dashed var(--edge-hi,#2b323a);border-radius:4px;color:var(--mist-dim);cursor:pointer;
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;transition:color .15s,border-color .15s,background .15s}
+.dl-gantt-add span{font-family:var(--display);font-size:24px;font-weight:300;line-height:1;letter-spacing:0}
+.dl-gantt-add:hover,.dl-gantt-add:focus-visible{color:var(--pencil);border-color:rgba(111,211,255,.5);background:rgba(111,211,255,.04)}
+.dl-roadmap-empty{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 18px;
+  border:1px dashed var(--edge-hi,#2b323a);border-radius:4px;color:var(--mist);font-size:14px;margin-bottom:14px}
+@media(max-width:900px){.dl-gantt-add{flex:1 1 46%;min-height:90px}}
+@media(max-width:560px){.dl-gantt-tools .dl-gantt-edit{opacity:1}}
+
 /* ---- Goal & sprint editor ---- */
 .ge-modal{max-width:620px;width:100%}
 .ge-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px;margin-top:18px}
@@ -2439,7 +2456,7 @@ function renderGoals(){
       <div class="add-row">
         <input data-addcat="${esc(cn)}" placeholder="Add a goal to ${esc(cn)}…">
         <button class="btn ghost" data-addbtn="${esc(cn)}">Add</button>
-        ${cn==='Roadmap'?'<button class="btn ghost newsprint" data-newsprint>+ New sprint</button>':''}
+        ${cn==='Roadmap'?'<button class="btn ghost newsprint" data-newsprint>+ Add sprint</button>':''}
       </div>
     </div>`;
   }).join('');
@@ -2510,8 +2527,11 @@ function renderDeadlines(){
         <span class="dl-section-title">🛣 Roadmap <span class="dl-section-ct">${doneCt}/${roadmap.length} sprints</span></span>
         ${!S.dlRoadmapOpen&&next?`<span class="dl-section-next">Next up: ${esc(next.title.split(' — ')[0].split(' (')[0])} · ${nd<0?Math.abs(nd)+'d over':nd+'d left'}</span>`:''}
       </button>
-      ${S.dlRoadmapOpen?`<div class="dl-roadmap-list">${roadmap.map(g=>dlSprintRow(g)).join('')}</div>`:''}
+      ${S.dlRoadmapOpen?`<div class="dl-roadmap-list">${roadmap.map(g=>dlSprintRow(g)).join('')}</div>
+      <div class="dl-roadmap-actions"><button class="btn ghost newsprint" data-newsprint>+ Add sprint</button></div>`:''}
     </div>`;
+  }else{
+    html+=`<div class="dl-section dl-roadmap-empty"><span>🛣 No sprints on your roadmap yet.</span><button class="btn ghost newsprint" data-newsprint>+ Add sprint</button></div>`;
   }
   if(others.length){
     html+=`<div class="dl-section"><div class="dl-section-title plain">Other deadlines</div>${others.map(g=>dlOtherRow(g)).join('')}</div>`;
@@ -2539,6 +2559,7 @@ function dlSprintRow(g){
       <div class="dl-sprint-title">${esc(g.title)}</div>
       <div class="dl-sprint-count" style="color:${col}">${ws.txt}</div>
       <button class="dl-row-edit" data-editgoal="${g.id}" title="Edit sprint" aria-label="Edit sprint">✎</button>
+      <button class="dl-row-edit dl-del" data-delsprint="${g.id}" title="Delete sprint" aria-label="Delete sprint">✕</button>
     </div>
     <div class="dl-sprint-bar"><i style="width:${pct}%;background:${col}"></i></div>
     <div class="dl-sprint-meta">${windowLabel} · ${dc}/${subs.length} done</div>
@@ -2603,7 +2624,7 @@ function sprintShortLabel(title){
 function renderRoadmapGantt(){
   const wrap=$('#dl-roadmap-gantt');if(!wrap)return;
   const roadmap=S.goals.filter(g=>g.cat==='Roadmap'&&g.deadline).sort((a,b)=>daysTo(a.deadline)-daysTo(b.deadline));
-  if(!roadmap.length){wrap.innerHTML='';return;}
+  if(!roadmap.length){wrap.innerHTML=`<div class="dl-roadmap-empty"><span>🛣 No sprints on your roadmap yet.</span><button class="btn ghost newsprint" data-newsprint>+ Add sprint</button></div>`;return;}
   if(typeof S.dlRoadmapOpen==='undefined')S.dlRoadmapOpen=false;
   const doneCt=roadmap.filter(g=>g.done).length;
   const next=roadmap.find(g=>!g.done);
@@ -2625,15 +2646,17 @@ function renderRoadmapGantt(){
       const days=g.done?'Done':d<0?Math.abs(d)+'d overdue':!isOpen?'Not started':d+'d left';
       const dateRange=`${fmtDate(g.opensOn).replace(/ \d{4}$/,'')} – ${fmtDate(g.deadline)}`;
       return `<div class="dl-gantt-block ${g.done?'done':''} ${isCurrent?'current':''} ${isExpanded?'expanded':''} goal" data-id="${g.id}" data-act="expand" title="Click to show/hide checklist below">
-        <button class="dl-gantt-edit" data-editgoal="${g.id}" title="Edit sprint" aria-label="Edit ${esc(shortTitle)}">✎</button>
+        <div class="dl-gantt-tools">
+          <button class="dl-gantt-edit" data-editgoal="${g.id}" title="Edit sprint" aria-label="Edit ${esc(shortTitle)}">✎</button>
+          <button class="dl-gantt-edit dl-del" data-delsprint="${g.id}" title="Delete sprint" aria-label="Delete ${esc(shortTitle)}">✕</button>
+        </div>
         <div class="dl-gantt-num">${g.done?'✓ complete':isCurrent?'current':!isOpen?'upcoming':'in progress'}</div>
         <div class="dl-gantt-label">${esc(shortTitle)}</div>
         <div class="dl-gantt-dates">${dateRange}</div>
         <div class="dl-gantt-bar"><i style="width:${pct}%;background:${col}"></i></div>
         <div class="dl-gantt-days" style="color:${col}">${days} · ${dc}/${subs.length}</div>
       </div>`;
-    }).join('')}</div>
-    <div class="dl-roadmap-actions"><button class="btn ghost newsprint" data-newsprint>+ New sprint</button></div>
+    }).join('')}<button class="dl-gantt-add" data-newsprint title="Add a sprint after the last one"><span>+</span>Add sprint</button></div>
     <div class="dl-roadmap-list" style="margin-top:12px">${roadmap.filter(g=>openGoals.has(String(g.id))).map(g=>{
       const dateRange=`${fmtDate(g.opensOn)} – ${fmtDate(g.deadline)}`;
       return `<div class="goal dl-goal-wrap" data-id="${g.id}">
@@ -3271,12 +3294,34 @@ function saveGoalEditor(){
   }
   closeGoalEditor();render();
 }
+/* Keeps sprint numbers in order after a delete: "Sprint 1…Sprint N" by start date.
+   Only touches titles that already start with "Sprint <number>". */
+function renumberSprints(){
+  const sp=S.goals.filter(g=>g.cat==='Roadmap'&&/^Sprint \d+/.test(g.title))
+    .sort((a,b)=>(a.opensOn||a.deadline||'')<(b.opensOn||b.deadline||'')?-1:1);
+  let changed=0;
+  sp.forEach((g,i)=>{const t=g.title.replace(/^Sprint \d+/,'Sprint '+(i+1));if(t!==g.title){g.title=t;changed++;}});
+  return changed;
+}
+function deleteGoalById(id){
+  const g=findGoal(id);if(!g)return false;
+  const n=(g.subs||[]).length;
+  const isSprint=g.cat==='Roadmap';
+  const msg=`Delete “${g.title}”${n?` and its ${n} checklist item${n===1?'':'s'}`:''}?`
+    +(isSprint?`\n\nLater sprints will be renumbered so the sequence stays in order.`:'')
+    +`\n\nThis can't be undone.`;
+  if(!confirm(msg))return false;
+  S.goals=S.goals.filter(x=>x.id!=g.id);
+  openGoals.delete(String(g.id));
+  const renum=isSprint?renumberSprints():0;
+  toast(isSprint?(renum?`Sprint deleted — ${renum} renumbered.`:'Sprint deleted.'):'Deleted.');
+  render();return true;
+}
 function deleteFromEditor(){
   if(!geState||geState.isNew)return;
-  const g=findGoal(geState.id);if(!g)return closeGoalEditor();
-  if(!confirm(`Delete “${g.title}”${(g.subs||[]).length?` and its ${g.subs.length} checklist item${g.subs.length===1?'':'s'}`:''}? This can't be undone.`))return;
-  S.goals=S.goals.filter(x=>x.id!=g.id);
-  closeGoalEditor();toast('Deleted.');render();
+  const id=geState.id;
+  $('#goal-overlay').classList.remove('on');
+  if(deleteGoalById(id)){geState=null;}else{$('#goal-overlay').classList.add('on');}
 }
 (function wireGoalEditor(){
   const ov=document.getElementById('goal-overlay');if(!ov)return;
@@ -3308,6 +3353,8 @@ document.addEventListener('click',e=>{
   const editBtn=e.target.closest('[data-editgoal]');
   if(editBtn){e.stopPropagation();openGoalEditor(editBtn.dataset.editgoal);return;}
   if(e.target.closest('[data-newsprint]')){openGoalEditor(null,{newSprint:true});return;}
+  const delBtn=e.target.closest('[data-delsprint]');
+  if(delBtn){e.stopPropagation();deleteGoalById(delBtn.dataset.delsprint);return;}
   const nav=e.target.closest('[data-go]');
   if(nav){go(nav.dataset.go);return;}
 
@@ -3385,7 +3432,7 @@ document.addEventListener('click',e=>{
   if(goalEl){
     const g=findGoal(goalEl.dataset.id);const act=e.target.closest('[data-act]');
     if(g&&act){
-      if(act.dataset.act==='goaldel'){S.goals=S.goals.filter(x=>x.id!=g.id);toast('Goal removed.');render();return;}
+      if(act.dataset.act==='goaldel'){if(g.cat==='Roadmap'){deleteGoalById(g.id);return;}S.goals=S.goals.filter(x=>x.id!=g.id);toast('Goal removed.');render();return;}
       if(act.dataset.act==='goaltitleedit'){editingGoals.add(String(g.id));render();
         const ni=document.querySelector(`.goal[data-id="${g.id}"] [data-goaledit]`);if(ni){ni.focus();ni.select();}return;}
       if(act.dataset.act==='goaltitlesave'){saveGoalTitleEdit(g);return;}
