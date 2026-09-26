@@ -1198,6 +1198,39 @@ code,.mono{font-family:var(--mono)}
   .side{background:#0a0c0e}
 }
 
+/* ---- Sprint cards (Deadlines → List) ---- */
+.dl-roadmap-list{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.dl-roadmap-list .sprint-card{display:block;padding:0!important;border:1px solid var(--edge,#1d2228)!important;border-left:3px solid var(--mist-dim)!important;
+  border-radius:4px!important;background:linear-gradient(180deg,#13161a,#0f1114)!important}
+.dl-roadmap-list .sprint-card.is-current{border-left-color:var(--amber)!important}
+.dl-roadmap-list .sprint-card.is-overdue{border-left-color:var(--red)!important}
+.dl-roadmap-list .sprint-card.is-done{border-left-color:var(--pencil)!important;opacity:.75}
+.dl-roadmap-list .sprint-card:hover{border-color:var(--edge-hi,#2b323a)!important}
+.spc-head{display:flex;align-items:center;gap:12px;padding:14px 12px 14px 12px}
+.spc-head .g-caret{margin:0}
+.spc-head .chk{margin:0}
+.spc-main{flex:1;min-width:0}
+.spc-title{font-size:15px;font-weight:500;letter-spacing:-.01em;color:var(--text);line-height:1.35}
+.sprint-card.is-done .spc-title{text-decoration:line-through;color:var(--mist-dim)}
+.spc-meta{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:4px;font-family:var(--mono);font-size:11.5px;color:var(--mist-dim)}
+.spc-state{text-transform:uppercase;letter-spacing:.12em;font-size:10.5px}
+.spc-status{flex:0 0 170px;display:flex;flex-direction:column;align-items:flex-end;gap:7px}
+.spc-when{font-family:var(--mono);font-size:12px;white-space:nowrap}
+.spc-prog{display:flex;align-items:center;gap:8px;width:100%}
+.spc-bar{flex:1;height:3px;background:#1a1f25;border-radius:2px;overflow:hidden}
+.spc-bar i{display:block;height:100%;transition:width .25s}
+.spc-count{font-family:var(--mono);font-size:11px;color:var(--mist);white-space:nowrap}
+.spc-tools{display:flex;gap:2px;flex:none}
+.spc-body{border-top:1px solid var(--edge,#1d2228);padding:12px 14px 14px 48px}
+.spc-body .dl-sprint-note{margin-top:0}
+@media(max-width:640px){
+  .spc-head{flex-wrap:wrap;row-gap:10px;align-items:flex-start}
+  .spc-head .g-caret,.spc-head .chk{margin-top:2px}
+  .spc-status{order:5;flex:1 1 100%;align-items:stretch;padding-left:48px;flex-direction:row;align-items:center;gap:12px}
+  .spc-when{flex:none}
+  .spc-body{padding-left:14px}
+}
+
 /* ---- Sprint add / delete controls ---- */
 .dl-gantt-tools{position:absolute;top:4px;right:4px;display:flex;gap:0}
 .dl-gantt-block{padding-top:30px!important}
@@ -2543,28 +2576,44 @@ function renderDeadlines(){
 }
 /* Compact checklist row for a Roadmap sprint — reuses the same .goal delegation (expand,
    subtoggle, done) as the Goals panel via the .goal class + data-id, so no new handlers needed. */
+function sprintCleanTitle(t){return String(t||'').replace(/\s*\([^)]*\d[^)]*\)\s*$/,'');}
+function fmtRange(a,b){
+  if(!a)return fmtDate(b);
+  const A=new Date(a+'T00:00:00'),B=new Date(b+'T00:00:00');
+  const left=A.toLocaleDateString('en-GB',{day:'numeric',month:'short',...(A.getFullYear()!==B.getFullYear()?{year:'numeric'}:{})});
+  return `${left} → ${fmtDate(b)}`;
+}
+/* One self-contained card per sprint: name, dates, status and progress all live INSIDE the
+   same bordered box, so nothing can be misread as belonging to the sprint below it. */
 function dlSprintRow(g){
   const subs=g.subs||[];
   const dc=subs.filter(s=>s.done).length;
   const pct=subs.length?Math.round(dc/subs.length*100):0;
   const ws=windowStatus(g);
   const d=daysTo(g.deadline);
-  const col=ws.cls==='upcoming'?'var(--mist-dim)':d<0?'var(--coral)':d<=14?'var(--amber)':'var(--current)';
+  const state=g.done?'done':ws.cls==='upcoming'?'upcoming':d<0?'overdue':'current';
+  const col=state==='done'?'var(--pencil)':state==='upcoming'?'var(--mist-dim)':state==='overdue'?'var(--red)':'var(--amber)';
   const open=openGoals.has(String(g.id));
-  const windowLabel=g.opensOn?`${fmtDate(g.opensOn)} → ${fmtDate(g.deadline)}`:fmtDate(g.deadline);
-  return `<div class="dl-sprint goal dl-goal-wrap ${g.done?'is-done':''}" data-id="${g.id}">
-    <div class="dl-sprint-top">
-      <button class="g-caret" data-act="expand" title="Show checklist">${open?'▾':'▸'}</button>
+  const len=g.opensOn?Math.round((new Date(g.deadline+'T00:00:00')-new Date(g.opensOn+'T00:00:00'))/864e5)+1:null;
+  const label=state==='done'?'Complete':state==='current'?'In progress':state==='overdue'?'Overdue':'Upcoming';
+  return `<div class="dl-sprint goal dl-goal-wrap sprint-card is-${state} ${g.done?'is-done':''}" data-id="${g.id}">
+    <div class="spc-head">
+      <button class="g-caret" data-act="expand" title="${open?'Hide':'Show'} checklist" aria-expanded="${open}">${open?'▾':'▸'}</button>
       <div class="chk ${g.done?'done':''}" data-act="done" title="Mark sprint done"></div>
-      <div class="dl-sprint-title">${esc(g.title)}</div>
-      <div class="dl-sprint-count" style="color:${col}">${ws.txt}</div>
-      <button class="dl-row-edit" data-editgoal="${g.id}" title="Edit sprint" aria-label="Edit sprint">✎</button>
-      <button class="dl-row-edit dl-del" data-delsprint="${g.id}" title="Delete sprint" aria-label="Delete sprint">✕</button>
+      <div class="spc-main">
+        <div class="spc-title">${esc(sprintCleanTitle(g.title))}</div>
+        <div class="spc-meta"><span class="spc-state" style="color:${col}">${label}</span><span>${fmtRange(g.opensOn,g.deadline)}</span>${len?`<span>${len} days</span>`:''}</div>
+      </div>
+      <div class="spc-status">
+        <div class="spc-when" style="color:${col}">${g.done?'Done':ws.txt}</div>
+        <div class="spc-prog"><span class="spc-bar"><i style="width:${pct}%;background:${col}"></i></span><span class="spc-count">${dc}/${subs.length} done</span></div>
+      </div>
+      <div class="spc-tools">
+        <button class="dl-row-edit" data-editgoal="${g.id}" title="Edit sprint" aria-label="Edit sprint">✎</button>
+        <button class="dl-row-edit dl-del" data-delsprint="${g.id}" title="Delete sprint" aria-label="Delete sprint">✕</button>
+      </div>
     </div>
-    <div class="dl-sprint-bar"><i style="width:${pct}%;background:${col}"></i></div>
-    <div class="dl-sprint-meta">${windowLabel} · ${dc}/${subs.length} done</div>
-    ${open?renderSprintNote(g):''}
-    ${open?buildSubsPanel(g):''}
+    ${open?`<div class="spc-body">${renderSprintNote(g)}${buildSubsPanel(g)}</div>`:''}
   </div>`;
 }
 /* Original single-line row, unchanged behaviour, for every non-Roadmap dated goal. */
@@ -2660,7 +2709,7 @@ function renderRoadmapGantt(){
     <div class="dl-roadmap-list" style="margin-top:12px">${roadmap.filter(g=>openGoals.has(String(g.id))).map(g=>{
       const dateRange=`${fmtDate(g.opensOn)} – ${fmtDate(g.deadline)}`;
       return `<div class="goal dl-goal-wrap" data-id="${g.id}">
-        <div class="dl-panel-head"><span class="dl-panel-dot"></span>${esc(g.title.split(' (')[0])} <span class="dl-panel-dates">${dateRange}</span><button class="dl-panel-edit" data-editgoal="${g.id}">✎ Edit sprint</button></div>
+        <div class="dl-panel-head"><span class="dl-panel-dot"></span>${esc(sprintCleanTitle(g.title))} <span class="dl-panel-dates">${dateRange}</span><button class="dl-panel-edit" data-editgoal="${g.id}">✎ Edit sprint</button></div>
         ${renderSprintNote(g)}
         ${buildSubsPanel(g)}
       </div>`;
