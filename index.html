@@ -1198,6 +1198,35 @@ code,.mono{font-family:var(--mono)}
   .side{background:#0a0c0e}
 }
 
+/* ---- Goal & sprint editor ---- */
+.ge-modal{max-width:620px;width:100%}
+.ge-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px;margin-top:18px}
+.ge-wide{grid-column:1 / -1}
+.ge-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ge-field>span{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mist)}
+.ge-field>span em{font-style:normal;color:var(--mist-dim);letter-spacing:.06em;text-transform:none;margin-left:6px}
+.ge-field input,.ge-field select,.ge-field textarea{width:100%;background:var(--deep-2);border:1px solid var(--edge-hi,#2b323a);border-radius:4px;color:var(--text);
+  padding:10px 12px;font-family:var(--body);font-size:14.5px;min-height:42px}
+.ge-field textarea{resize:vertical;line-height:1.5;font-family:var(--mono);font-size:13px}
+.ge-field input:focus,.ge-field select:focus,.ge-field textarea:focus{outline:none;border-color:var(--pencil)}
+.ge-span{font-family:var(--mono);font-size:12px;color:var(--mist-dim);min-height:16px;margin-top:-4px}
+.ge-span b{color:var(--pencil);font-weight:500}
+.ge-error{color:var(--red);font-size:13px;min-height:18px;margin-top:10px}
+.ge-foot{display:flex;align-items:center;gap:10px;margin-top:14px}
+.ge-del{color:var(--red)!important;border-color:rgba(255,93,93,.35)!important}
+.ge-del:hover{background:rgba(255,93,93,.08)!important;border-color:var(--red)!important}
+.ge-modal.no-note #ge-note-wrap{display:none}
+.dl-gantt-block{position:relative}
+.dl-gantt-edit,.dl-row-edit,.dl-panel-edit{background:none;border:1px solid transparent;color:var(--mist-dim);cursor:pointer;font-size:13px;line-height:1;padding:6px 7px;border-radius:3px}
+.dl-gantt-edit{position:absolute;top:6px;right:6px;opacity:.55}
+.dl-gantt-block:hover .dl-gantt-edit,.dl-gantt-edit:focus-visible{opacity:1}
+.dl-gantt-edit:hover,.dl-row-edit:hover,.dl-panel-edit:hover{color:var(--pencil);border-color:var(--edge-hi,#2b323a)}
+.dl-panel-edit{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase}
+.dl-panel-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dl-roadmap-actions{display:flex;justify-content:flex-end;margin-top:12px}
+.btn.newsprint{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em}
+@media(max-width:560px){.ge-grid{grid-template-columns:1fr}.ge-foot{flex-wrap:wrap}.dl-gantt-edit{opacity:1}}
+
 /* ==========================================================================
    FORCED-DARK SAFETY NET — only active when Chrome's auto dark mode is
    recolouring the page (html.forced-dark, set by the script in <head>).
@@ -1740,6 +1769,32 @@ code,.mono{font-family:var(--mono)}
     <div class="modal-foot">
       <button class="btn ghost" id="rev-cancel">Not now</button>
       <button class="btn" id="rev-save">Set next week in motion</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="goal-overlay" role="dialog" aria-modal="true" aria-labelledby="ge-heading">
+  <div class="modal ge-modal">
+    <h3 id="ge-heading">Edit goal</h3>
+    <p class="lead" id="ge-lead">Change anything here. Checklist items are edited on the goal itself.</p>
+    <div class="ge-grid">
+      <label class="ge-field ge-wide"><span>Name</span>
+        <input type="text" id="ge-title" autocomplete="off" placeholder="e.g. Sprint 8 — Launch"></label>
+      <label class="ge-field"><span>Category</span><select id="ge-cat"></select></label>
+      <label class="ge-field"><span>Term</span>
+        <select id="ge-term"><option value="">None</option><option value="short">Short term</option><option value="long">Long term</option><option value="fixed">Fixed</option></select></label>
+      <label class="ge-field"><span id="ge-start-lbl">Start date <em>optional</em></span><input type="date" id="ge-start"></label>
+      <label class="ge-field"><span id="ge-end-lbl">Deadline <em>optional</em></span><input type="date" id="ge-end"></label>
+      <div class="ge-span ge-wide" id="ge-span"></div>
+      <label class="ge-field ge-wide" id="ge-note-wrap"><span>Daily time budget <em>one line per row</em></span>
+        <textarea id="ge-note" rows="5" placeholder="Weekdays: 2h cert, 1h module&#10;Weekends: 3h project"></textarea></label>
+    </div>
+    <div class="ge-error" id="ge-error" role="alert"></div>
+    <div class="modal-foot ge-foot">
+      <button class="btn ghost ge-del" id="ge-delete">Delete</button>
+      <span style="flex:1"></span>
+      <button class="btn ghost" id="ge-cancel">Cancel</button>
+      <button class="btn" id="ge-save">Save</button>
     </div>
   </div>
 </div>
@@ -2384,6 +2439,7 @@ function renderGoals(){
       <div class="add-row">
         <input data-addcat="${esc(cn)}" placeholder="Add a goal to ${esc(cn)}…">
         <button class="btn ghost" data-addbtn="${esc(cn)}">Add</button>
+        ${cn==='Roadmap'?'<button class="btn ghost newsprint" data-newsprint>+ New sprint</button>':''}
       </div>
     </div>`;
   }).join('');
@@ -2423,7 +2479,7 @@ function goalRow(g){
       <div class="chk ${g.done?'done':''}" data-act="done"></div>
       <div class="body">${editingGoals.has(String(g.id))
         ?`<div class="g-title-edit"><input type="text" class="g-title-input" value="${esc(g.title)}" data-goaledit="${g.id}"><button class="g-title-save" data-act="goaltitlesave" title="Save">✓</button></div>`
-        :`<div class="g-title">${esc(g.title)} <button class="g-title-edit-btn" data-act="goaltitleedit" title="Edit">✎</button></div>`}
+        :`<div class="g-title">${esc(g.title)} <button class="g-title-edit-btn" data-editgoal="${g.id}" title="Edit name, dates &amp; details" aria-label="Edit goal">✎</button></div>`}
         <div class="g-sub">${sub}${g.deadline?'<span>'+fmtDate(g.deadline)+'</span>':''}${countBadge}</div>
       </div>
       <button class="term-pill ${g.term||'unset'}" data-act="cycleterm" title="Click to change">${g.term==='short'?'Short Term':g.term==='long'?'Long Term':g.term==='fixed'?'Fixed':'+ Term'}</button>
@@ -2482,6 +2538,7 @@ function dlSprintRow(g){
       <div class="chk ${g.done?'done':''}" data-act="done" title="Mark sprint done"></div>
       <div class="dl-sprint-title">${esc(g.title)}</div>
       <div class="dl-sprint-count" style="color:${col}">${ws.txt}</div>
+      <button class="dl-row-edit" data-editgoal="${g.id}" title="Edit sprint" aria-label="Edit sprint">✎</button>
     </div>
     <div class="dl-sprint-bar"><i style="width:${pct}%;background:${col}"></i></div>
     <div class="dl-sprint-meta">${windowLabel} · ${dc}/${subs.length} done</div>
@@ -2498,7 +2555,8 @@ function dlOtherRow(g){
       <div class="big" style="color:var(--mist-dim)">${opD}<small>d til opens</small></div>
       <div class="info"><div class="t">${esc(g.title)}</div><div class="when">Window: ${fmtDate(g.opensOn)} → ${fmtDate(g.deadline)} · ${esc(g.cat)}</div></div>
       <div class="barwrap"><div class="bar"><i style="width:4%;background:var(--mist-dim)"></i></div></div>
-      <button class="x" data-act="cleardate" title="Remove date">✕</button>
+      <button class="dl-row-edit" data-editgoal="${g.id}" title="Edit" aria-label="Edit">✎</button>
+    <button class="x" data-act="cleardate" title="Remove date">✕</button>
     </div>`;
   }
   const now=Date.now();
@@ -2514,6 +2572,7 @@ function dlOtherRow(g){
     <div class="big" style="color:${col}">${n}<small>${lbl}${d>=0&&d!==0?' left':''}</small></div>
     <div class="info"><div class="t">${esc(g.title)}</div><div class="when">${windowLabel} · ${esc(g.cat)}</div></div>
     <div class="barwrap"><div class="bar"><i style="width:${pct}%;background:${col}"></i></div></div>
+    <button class="dl-row-edit" data-editgoal="${g.id}" title="Edit" aria-label="Edit">✎</button>
     <button class="x" data-act="cleardate" title="Remove date">✕</button>
   </div>`;
 }
@@ -2566,6 +2625,7 @@ function renderRoadmapGantt(){
       const days=g.done?'Done':d<0?Math.abs(d)+'d overdue':!isOpen?'Not started':d+'d left';
       const dateRange=`${fmtDate(g.opensOn).replace(/ \d{4}$/,'')} – ${fmtDate(g.deadline)}`;
       return `<div class="dl-gantt-block ${g.done?'done':''} ${isCurrent?'current':''} ${isExpanded?'expanded':''} goal" data-id="${g.id}" data-act="expand" title="Click to show/hide checklist below">
+        <button class="dl-gantt-edit" data-editgoal="${g.id}" title="Edit sprint" aria-label="Edit ${esc(shortTitle)}">✎</button>
         <div class="dl-gantt-num">${g.done?'✓ complete':isCurrent?'current':!isOpen?'upcoming':'in progress'}</div>
         <div class="dl-gantt-label">${esc(shortTitle)}</div>
         <div class="dl-gantt-dates">${dateRange}</div>
@@ -2573,10 +2633,11 @@ function renderRoadmapGantt(){
         <div class="dl-gantt-days" style="color:${col}">${days} · ${dc}/${subs.length}</div>
       </div>`;
     }).join('')}</div>
+    <div class="dl-roadmap-actions"><button class="btn ghost newsprint" data-newsprint>+ New sprint</button></div>
     <div class="dl-roadmap-list" style="margin-top:12px">${roadmap.filter(g=>openGoals.has(String(g.id))).map(g=>{
       const dateRange=`${fmtDate(g.opensOn)} – ${fmtDate(g.deadline)}`;
       return `<div class="goal dl-goal-wrap" data-id="${g.id}">
-        <div class="dl-panel-head"><span class="dl-panel-dot"></span>${esc(g.title.split(' (')[0])} <span class="dl-panel-dates">${dateRange}</span></div>
+        <div class="dl-panel-head"><span class="dl-panel-dot"></span>${esc(g.title.split(' (')[0])} <span class="dl-panel-dates">${dateRange}</span><button class="dl-panel-edit" data-editgoal="${g.id}">✎ Edit sprint</button></div>
         ${renderSprintNote(g)}
         ${buildSubsPanel(g)}
       </div>`;
@@ -3125,6 +3186,112 @@ function completeGoal(g){
 }
 function findGoal(id){return S.goals.find(g=>g.id==id);}
 
+/* ---------------- Goal & sprint editor ----------------
+   One modal edits any goal: name, category, term, start date (opensOn), deadline, and —
+   for Roadmap sprints — the daily time-budget note. "+ New sprint" opens it pre-filled with
+   the next sprint number and dates that start the day after the last sprint ends.
+   Checklist items stay editable inline on the goal itself. */
+let geState=null; // {id|null, isNew, returnFocus}
+function isoAddDays(iso,n){const d=new Date(iso+'T00:00:00');d.setDate(d.getDate()+n);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function todayIso(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function geRefreshForm(){
+  const cat=$('#ge-cat').value;const isSprint=cat==='Roadmap';
+  $('.ge-modal').classList.toggle('no-note',!isSprint);
+  $('#ge-start-lbl').innerHTML=isSprint?'Start date':'Start date <em>optional</em>';
+  $('#ge-end-lbl').innerHTML=isSprint?'End date':'Deadline <em>optional</em>';
+  const a=$('#ge-start').value,b=$('#ge-end').value;let t='';
+  if(a&&b){const len=Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/864e5)+1;
+    t=len>0?`Window: <b>${len} days</b> · ${fmtDate(a)} → ${fmtDate(b)}`:'';}
+  else if(b){const d=daysTo(b);t=d>=0?`Due in <b>${d} day${d===1?'':'s'}</b>`:`<b>${Math.abs(d)} days</b> overdue`;}
+  $('#ge-span').innerHTML=t;$('#ge-error').textContent='';
+}
+function openGoalEditor(id,opts){
+  opts=opts||{};
+  const g=id!=null?findGoal(id):null;
+  if(id!=null&&!g)return;
+  const isNew=!g;
+  const sel=$('#ge-cat');
+  sel.innerHTML=S.cats.map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('');
+  if(isNew&&opts.newSprint&&!S.cats.find(c=>c.name==='Roadmap')){S.cats.push({name:'Roadmap',color:'#6fd3ff'});sel.innerHTML+=`<option value="Roadmap">Roadmap</option>`;}
+  if(isNew){
+    const sprints=S.goals.filter(x=>x.cat==='Roadmap'&&x.deadline).sort((a,b)=>a.deadline<b.deadline?-1:1);
+    const nums=S.goals.filter(x=>x.cat==='Roadmap').map(x=>parseInt((x.title.match(/^Sprint (\d+)/)||[])[1]||0,10));
+    const next=(nums.length?Math.max(...nums):0)+1;
+    const last=sprints[sprints.length-1];
+    const start=last?isoAddDays(last.deadline,1):todayIso();
+    $('#ge-title').value=`Sprint ${next} — `;
+    sel.value='Roadmap';$('#ge-term').value='fixed';
+    $('#ge-start').value=start;$('#ge-end').value=isoAddDays(start,44);
+    $('#ge-note').value='';
+    $('#ge-heading').textContent='New sprint';
+    $('#ge-lead').textContent='Dates default to starting the day after your last sprint ends. Add checklist items after saving.';
+  }else{
+    $('#ge-title').value=g.title;sel.value=g.cat;$('#ge-term').value=g.term||'';
+    $('#ge-start').value=g.opensOn||'';$('#ge-end').value=g.deadline||'';
+    $('#ge-note').value=Array.isArray(g.note)?g.note.join('\n'):(g.note||'');
+    $('#ge-heading').textContent=g.cat==='Roadmap'?'Edit sprint':'Edit goal';
+    $('#ge-lead').textContent='Checklist items are edited on the '+(g.cat==='Roadmap'?'sprint':'goal')+' itself.';
+  }
+  $('#ge-delete').style.display=isNew?'none':'';
+  geState={id:g?g.id:null,isNew,returnFocus:document.activeElement};
+  geRefreshForm();
+  $('#goal-overlay').classList.add('on');
+  setTimeout(()=>{const t=$('#ge-title');t.focus();const L=t.value.length;t.setSelectionRange(L,L);},30);
+}
+function closeGoalEditor(){
+  $('#goal-overlay').classList.remove('on');
+  const rf=geState&&geState.returnFocus;geState=null;
+  if(rf&&document.body.contains(rf))try{rf.focus();}catch(_){}
+}
+function saveGoalEditor(){
+  if(!geState)return;
+  const title=$('#ge-title').value.trim().replace(/\s+—\s*$/,'');
+  const cat=$('#ge-cat').value;const term=$('#ge-term').value||null;
+  const start=$('#ge-start').value||null;const end=$('#ge-end').value||null;
+  const note=$('#ge-note').value.split('\n').map(l=>l.trim()).filter(Boolean);
+  const err=m=>{$('#ge-error').textContent=m;};
+  if(!title)return err('Give it a name.');
+  if(cat==='Roadmap'&&(!start||!end))return err('Sprints need both a start and an end date to show on the roadmap.');
+  if(start&&!end)return err('Add a deadline too, or clear the start date.');
+  if(start&&end&&start>end)return err('The start date is after the end date.');
+  if(geState.isNew){
+    const maxId=S.goals.reduce((m,x)=>Math.max(m,+x.id||0),0);
+    const g={id:Math.max(Date.now(),maxId+1),cat,title,done:false,star:false,term,opensOn:start,deadline:end,subs:[]};
+    if(cat==='Roadmap')g.note=note;
+    S.goals.push(g);
+    openGoals.add(String(g.id));
+    if(cat==='Roadmap')S.dlRoadmapOpen=true;
+    toast(cat==='Roadmap'?'Sprint added — add its checklist below.':'Goal added.');
+  }else{
+    const g=findGoal(geState.id);if(!g)return closeGoalEditor();
+    g.title=title;g.cat=cat;g.term=term;g.opensOn=start;g.deadline=end;
+    if(cat==='Roadmap'||(g.note&&g.note.length))g.note=note;
+    toast(cat==='Roadmap'?'Sprint updated.':'Goal updated.');
+  }
+  closeGoalEditor();render();
+}
+function deleteFromEditor(){
+  if(!geState||geState.isNew)return;
+  const g=findGoal(geState.id);if(!g)return closeGoalEditor();
+  if(!confirm(`Delete “${g.title}”${(g.subs||[]).length?` and its ${g.subs.length} checklist item${g.subs.length===1?'':'s'}`:''}? This can't be undone.`))return;
+  S.goals=S.goals.filter(x=>x.id!=g.id);
+  closeGoalEditor();toast('Deleted.');render();
+}
+(function wireGoalEditor(){
+  const ov=document.getElementById('goal-overlay');if(!ov)return;
+  ov.addEventListener('click',e=>{if(e.target===ov)closeGoalEditor();});
+  document.getElementById('ge-cancel').addEventListener('click',closeGoalEditor);
+  document.getElementById('ge-save').addEventListener('click',saveGoalEditor);
+  document.getElementById('ge-delete').addEventListener('click',deleteFromEditor);
+  ['ge-cat','ge-start','ge-end'].forEach(id=>document.getElementById(id).addEventListener('input',geRefreshForm));
+  document.getElementById('ge-cat').addEventListener('change',geRefreshForm);
+  ov.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){e.preventDefault();closeGoalEditor();}
+    if(e.key==='Enter'&&e.target.tagName==='INPUT'){e.preventDefault();saveGoalEditor();}
+  });
+})();
+
 /* ---------------- Events ---------------- */
 function go(v){
   if(!$('#p-'+v))return;
@@ -3138,6 +3305,9 @@ function go(v){
   render();
 }
 document.addEventListener('click',e=>{
+  const editBtn=e.target.closest('[data-editgoal]');
+  if(editBtn){e.stopPropagation();openGoalEditor(editBtn.dataset.editgoal);return;}
+  if(e.target.closest('[data-newsprint]')){openGoalEditor(null,{newSprint:true});return;}
   const nav=e.target.closest('[data-go]');
   if(nav){go(nav.dataset.go);return;}
 
