@@ -2087,6 +2087,7 @@ const PERSONAL_REMAP_2026=[
     '🎓 Cert: CCNA — finish',
     '🎓 Cert: CompTIA Security+ — start',
     '📘 Exemption: SC2000 Probability & Statistics — finish',
+    '📘 Learn: Verilog + digital logic basics (FPGA prep)',
     '🧮 LeetCode — weekly',
     '💻 Project: Physics Engine with C++ project',
     '🔧 Hardware: Inverse Kinematics — finish (weekends)'
@@ -2095,6 +2096,7 @@ const PERSONAL_REMAP_2026=[
     '🎓 Cert: CompTIA Security+ — finish',
     '📘 Exemption revision: SC1003 · SC1004 · SC1008 · SC2000 practice papers',
     '💻 Project: Full-Stack Cloud project (capstone)',
+    '🔧 Hardware: FPGA project — build + demo (weekends)',
     '🧮 Buffer: for slippage from earlier sprints'
   ]}
 ];
@@ -2149,7 +2151,7 @@ function freshState(){
     goals:[...goals,...defaultRoadmapGoals(todayIso(),id)],
     // every one-shot migration is already "done" for a brand-new account
     roadmapSeedV1:true,roadmapOpensOnV1:true,roadmapTitleSyncV2:true,roadmapTagsNoteSyncV2:true,
-    roadmapRemap20260928:true,quotesClearV1:true,investRemovedV1:true,
+    roadmapRemap20260928:true,roadmapFpgaV1:true,quotesClearV1:true,investRemovedV1:true,
     habits:seedHabits(),habitSeed:2,goalCheckpointsCleanupV1:true,movieGoalV1:true,
     meals:[],workouts:[],body:{weight:70,startWeight:70,goalWeight:65,height:170,age:25},bodyStatsV1:true,offDays:{},
     dumps:[],reviews:[],activeCat:'all',activeTerm:'all',quotes:[],reminders:[]
@@ -4355,6 +4357,27 @@ async function bootApp(){
     S.roadmapRemap20260928=true;
     try{save();}catch(_){}
     }
+  }
+  if(!S.roadmapFpgaV1){
+    // Adds the FPGA project to the owner's remapped roadmap (only accounts that went through the
+    // 27 Sep personal remap, i.e. have S.roadmapBackupPre20260928). Sprints are found by NAME, so
+    // renumbering doesn't matter; nothing is added twice, and nobody else's roadmap is touched.
+    if(S.roadmapBackupPre20260928){
+      const byName=n=>S.goals.find(g=>g.cat==='Roadmap'&&sprintCleanTitle(g.title).replace(/^Sprint \d+\s*—\s*/,'')===n);
+      const add=(sprint,text,beforeRx)=>{
+        const g=byName(sprint);if(!g)return;
+        g.subs=g.subs||[];
+        if(g.subs.some(x=>/FPGA/i.test(x.text)&&x.text.split('—')[0]===text.split('—')[0]))return;
+        const item={id:Date.now()+Math.floor(Math.random()*1e5),text,done:false};
+        const at=g.subs.findIndex(x=>beforeRx.test(x.text));
+        if(at>=0)g.subs.splice(at,0,item);else g.subs.push(item);
+        if(g.done)g.done=false;
+      };
+      add('Home Stretch','📘 Learn: Verilog + digital logic basics (FPGA prep)',/LeetCode/);
+      add('Capstone + Buffer','🔧 Hardware: FPGA project — build + demo (weekends)',/Buffer/);
+      try{save();}catch(_){}
+    }
+    S.roadmapFpgaV1=true;
   }
   if(!S.activeCat)S.activeCat='all';
   render();
