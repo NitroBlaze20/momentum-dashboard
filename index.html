@@ -2010,20 +2010,58 @@ const WE_SPLIT=[
   '🎓 Weekends — catch-up / review block',
   '💻 Weekends — longer project session'
 ];
-const ROADMAP_SPRINTS=[
-  {title:'Sprint 1 — Foundations',start:'2026-09-15',deadline:'2026-10-31',
-   note:[...WK_SPLIT,...WE_SPLIT],subs:[
-    '🎓 Start a course or certification','💻 Project: scope out an MVP'
+/* Roadmap: 6 × 46-day sprints, 28 Sep 2026 → 30 Jun 2027 (remapped 27 Sep 2026). */
+const ROADMAP_PLAN_2026=[
+  {title:'Sprint 1 — Foundations',start:'2026-09-28',deadline:'2026-11-12',subs:[
+    '🎓 Cert: AWS Cloud Practitioner — finish',
+    '📘 Exemption: SC1003 Computational Thinking — prep + mock test',
+    '📘 Learn: Python — finish refresher',
+    '🧮 DSA: fundamentals — start',
+    '🧮 LeetCode: weekly slot begins',
+    '💻 Project: CV / Automation project — MVP → ship to GitHub',
+    '🔧 Hardware: Gait Correction — research + PCB basics (weekends)'
   ]},
-  {title:'Sprint 2 — Momentum',start:'2026-11-01',deadline:'2026-12-15',
-   note:[...WK_SPLIT,...WE_SPLIT],subs:[
-    '🎓 Continue course / certification','💻 Project: build out core features'
+  {title:'Sprint 2 — Momentum',start:'2026-11-13',deadline:'2026-12-28',subs:[
+    '🎓 Cert: ML/AI Specialisation — start',
+    '📘 Exemption: SC1004 Linear Algebra',
+    '🧮 DSA — continue',
+    '🧮 LeetCode — weekly',
+    '💻 Project: F1 / Football AI project — start',
+    '🔧 Hardware: Gait Correction — build phase + CAD basics (weekends)'
   ]},
-  {title:'Sprint 3 — Capstone + Buffer',start:'2026-12-16',deadline:'2027-01-31',
-   note:[...WK_SPLIT,...WE_SPLIT],subs:[
-    '💻 Project: finish and ship','🧮 Buffer: for slippage from earlier sprints'
+  {title:'Sprint 3 — Reset',start:'2026-12-29',deadline:'2027-02-12',subs:[
+    '🎓 Cert: ML/AI Specialisation — finish',
+    '📘 Exemption: SC1008 C & C++ — start',
+    '📘 Learn: C++ — start',
+    '🧮 LeetCode — weekly',
+    '💻 Project: F1 / Football AI project — finish',
+    '🔧 Hardware: Inverse Kinematics — start (weekends)'
+  ]},
+  {title:'Sprint 4 — Deep Work',start:'2027-02-13',deadline:'2027-03-30',subs:[
+    '🎓 Cert: CCNA — start',
+    '📘 Exemption: SC1008 C & C++ — finish',
+    '📘 Exemption: SC2000 Probability & Statistics — start',
+    '📘 Learn: C++ — continue',
+    '🧮 LeetCode — weekly',
+    '💻 Project: Blackholes with C++ project',
+    '🔧 Hardware: Inverse Kinematics — continue (weekends)'
+  ]},
+  {title:'Sprint 5 — Home Stretch',start:'2027-03-31',deadline:'2027-05-15',subs:[
+    '🎓 Cert: CCNA — finish',
+    '🎓 Cert: CompTIA Security+ — start',
+    '📘 Exemption: SC2000 Probability & Statistics — finish',
+    '🧮 LeetCode — weekly',
+    '💻 Project: Physics Engine with C++ project',
+    '🔧 Hardware: Inverse Kinematics — finish (weekends)'
+  ]},
+  {title:'Sprint 6 — Capstone + Buffer',start:'2027-05-16',deadline:'2027-06-30',subs:[
+    '🎓 Cert: CompTIA Security+ — finish',
+    '📘 Exemption revision: SC1003 · SC1004 · SC1008 · SC2000 practice papers',
+    '💻 Project: Full-Stack Cloud project (capstone)',
+    '🧮 Buffer: for slippage from earlier sprints'
   ]}
 ];
+const ROADMAP_SPRINTS=ROADMAP_PLAN_2026.map(sp=>({...sp,note:[...WK_SPLIT,...WE_SPLIT]}));
 
 function freshState(){
   let id=1;
@@ -4191,6 +4229,36 @@ async function bootApp(){
       g.note=sp.note;
     });
     S.roadmapTagsNoteSyncV2=true;
+  }
+  if(!S.roadmapRemap20260928){
+    // Remap (27 Sep 2026): the whole Roadmap is rebuilt as 6 × 46-day sprints running from
+    // 28 Sep 2026 to 30 Jun 2027, built around the certifications, NTU exemption modules and
+    // learning tracks. Safety rules:
+    //  • the old sprints are kept in S.roadmapBackupPre20260928, so nothing is lost;
+    //  • any checklist item already ticked stays ticked if the same item exists in the new plan;
+    //  • each sprint keeps its own daily time-budget note, matched by name (e.g. "Foundations");
+    //  • the Today star moves with Sprint 1.
+    const old=S.goals.filter(g=>g.cat==='Roadmap');
+    S.roadmapBackupPre20260928=JSON.parse(JSON.stringify(old));
+    if(!S.cats.find(c=>c.name==='Roadmap'))S.cats.push({name:'Roadmap',color:'#6fd3ff'});
+    const norm=t=>String(t||'').toLowerCase().replace(/\s+/g,' ').trim();
+    const ticked=new Set();old.forEach(g=>(g.subs||[]).forEach(x=>{if(x.done)ticked.add(norm(x.text));}));
+    const nameOf=t=>sprintCleanTitle(String(t||'')).replace(/^Sprint \d+\s*—\s*/,'').toLowerCase();
+    const wasStarred=old.some(g=>g.star&&!g.done);
+    const firstIdx=S.goals.findIndex(g=>g.cat==='Roadmap');
+    S.goals=S.goals.filter(g=>g.cat!=='Roadmap');
+    const maxId=S.goals.reduce((m,g)=>Math.max(m,+g.id||0),0);
+    const base=Date.now();
+    const fresh=ROADMAP_PLAN_2026.map((sp,i)=>{
+      const prev=old.find(g=>nameOf(g.title)===nameOf(sp.title));
+      const note=prev&&Array.isArray(prev.note)&&prev.note.length?prev.note:[...WK_SPLIT,...WE_SPLIT];
+      return {id:Math.max(base,maxId+1)+i,cat:'Roadmap',title:sp.title,done:false,star:i===0&&wasStarred,term:'fixed',
+        opensOn:sp.start,deadline:sp.deadline,note,
+        subs:sp.subs.map((t,j)=>({id:base+1000+i*100+j,text:t,done:ticked.has(norm(t))}))};
+    });
+    if(firstIdx>=0&&firstIdx<=S.goals.length)S.goals.splice(firstIdx,0,...fresh);else S.goals.push(...fresh);
+    S.roadmapRemap20260928=true;
+    try{save();}catch(_){}
   }
   if(!S.activeCat)S.activeCat='all';
   render();
