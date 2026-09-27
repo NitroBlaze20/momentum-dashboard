@@ -1880,7 +1880,7 @@ code,.mono{font-family:var(--mono)}
     </div>
     <div class="sync-sec">
       <h4>2 · Restore onto this device</h4>
-      <p>Paste a backup below, or load a file. This replaces what's currently on this device, so back up first if there's anything here worth keeping.</p>
+      <p>Paste a backup below, or load a file. A full backup replaces everything; a <b>patch</b> only changes the parts it names. Either way, <b>Undo last change</b> appears below.</p>
       <textarea class="sync-area" id="sync-in" placeholder="Paste a backup here…"></textarea>
       <div class="sync-row">
         <button class="btn" id="sync-restore">Restore from paste</button>
@@ -1903,7 +1903,7 @@ code,.mono{font-family:var(--mono)}
         </div>
       </div>
       <div class="sync-row" id="reset-undo-row" hidden>
-        <button class="btn ghost" id="reset-undo">↶ Undo last reset</button>
+        <button class="btn ghost" id="reset-undo">↶ Undo last change</button>
         <span class="reset-undo-when" id="reset-undo-when"></span>
       </div>
     </div>
@@ -2046,60 +2046,6 @@ const WE_SPLIT=[
   '🎓 Weekends — catch-up / review block',
   '💻 Weekends — longer project session'
 ];
-/* One-off personal remap (27 Sep 2026). Used ONLY by the guarded migration that upgrades the original
-   owner's pre-remap roadmap. New users and resets never see this — they get DEFAULT_ROADMAP below. */
-const PERSONAL_REMAP_2026=[
-  {title:'Sprint 1 — Foundations',start:'2026-09-28',deadline:'2026-11-12',subs:[
-    '🎓 Cert: AWS Cloud Practitioner — finish',
-    '📘 Exemption: SC1003 Computational Thinking — prep + mock test',
-    '📘 Learn: Python — finish refresher',
-    '🧮 DSA: fundamentals — start',
-    '🧮 LeetCode: weekly slot begins',
-    '💻 Project: CV / Automation project — MVP → ship to GitHub',
-    '🔧 Hardware: Gait Correction — research + PCB basics (weekends)'
-  ]},
-  {title:'Sprint 2 — Momentum',start:'2026-11-13',deadline:'2026-12-28',subs:[
-    '🎓 Cert: ML/AI Specialisation — start',
-    '📘 Exemption: SC1004 Linear Algebra',
-    '🧮 DSA — continue',
-    '🧮 LeetCode — weekly',
-    '💻 Project: F1 / Football AI project — start',
-    '🔧 Hardware: Gait Correction — build phase + CAD basics (weekends)'
-  ]},
-  {title:'Sprint 3 — Reset',start:'2026-12-29',deadline:'2027-02-12',subs:[
-    '🎓 Cert: ML/AI Specialisation — finish',
-    '📘 Exemption: SC1008 C & C++ — start',
-    '📘 Learn: C++ — start',
-    '🧮 LeetCode — weekly',
-    '💻 Project: F1 / Football AI project — finish',
-    '🔧 Hardware: Inverse Kinematics — start (weekends)'
-  ]},
-  {title:'Sprint 4 — Deep Work',start:'2027-02-13',deadline:'2027-03-30',subs:[
-    '🎓 Cert: CCNA — start',
-    '📘 Exemption: SC1008 C & C++ — finish',
-    '📘 Exemption: SC2000 Probability & Statistics — start',
-    '📘 Learn: C++ — continue',
-    '🧮 LeetCode — weekly',
-    '💻 Project: Blackholes with C++ project',
-    '🔧 Hardware: Inverse Kinematics — continue (weekends)'
-  ]},
-  {title:'Sprint 5 — Home Stretch',start:'2027-03-31',deadline:'2027-05-15',subs:[
-    '🎓 Cert: CCNA — finish',
-    '🎓 Cert: CompTIA Security+ — start',
-    '📘 Exemption: SC2000 Probability & Statistics — finish',
-    '📘 Learn: Verilog + digital logic basics (FPGA prep)',
-    '🧮 LeetCode — weekly',
-    '💻 Project: Physics Engine with C++ project',
-    '🔧 Hardware: Inverse Kinematics — finish (weekends)'
-  ]},
-  {title:'Sprint 6 — Capstone + Buffer',start:'2027-05-16',deadline:'2027-06-30',subs:[
-    '🎓 Cert: CompTIA Security+ — finish',
-    '📘 Exemption revision: SC1003 · SC1004 · SC1008 · SC2000 practice papers',
-    '💻 Project: Full-Stack Cloud project (capstone)',
-    '🔧 Hardware: FPGA project — build + demo (weekends)',
-    '🧮 Buffer: for slippage from earlier sprints'
-  ]}
-];
 /* ---------------- Default roadmap (new users + "Reset to default") ----------------
    Generic template, no personal content and no fixed calendar dates: sprints are laid out
    back-to-back starting from the day it's created (first login, or the day you reset). */
@@ -2150,9 +2096,8 @@ function freshState(){
     cats:[...CATS.map(c=>({...c})),{name:'Roadmap',color:'#6fd3ff'}],
     goals:[...goals,...defaultRoadmapGoals(todayIso(),id)],
     // every one-shot migration is already "done" for a brand-new account
-    roadmapSeedV1:true,roadmapOpensOnV1:true,roadmapTitleSyncV2:true,roadmapTagsNoteSyncV2:true,
-    roadmapRemap20260928:true,roadmapFpgaV1:true,quotesClearV1:true,investRemovedV1:true,
-    habits:seedHabits(),habitSeed:2,goalCheckpointsCleanupV1:true,movieGoalV1:true,
+    roadmapSeedV1:true,investRemovedV1:true,
+    habits:seedHabits(),habitSeed:2,goalCheckpointsCleanupV1:true,
     meals:[],workouts:[],body:{weight:70,startWeight:70,goalWeight:65,height:170,age:25},bodyStatsV1:true,offDays:{},
     dumps:[],reviews:[],activeCat:'all',activeTerm:'all',quotes:[],reminders:[]
   };
@@ -3890,34 +3835,35 @@ function recalcAllExercises(){
    Same inputs always produce the same number — no randomness. */
 /* Exercise-specific MET table — different movements burn meaningfully different amounts
    per unit time even at the same sets/reps, so the name has to affect the number. */
-/* Pulled directly from the "Grind" page in your Personal Notion (Exercise Plan + Weekly Split). */
-const GRIND_EXERCISES=[
-  'Incline Chest Press Machine','Cable Chest Press','Dumbbell Bench Press',
-  'Dumbbell Rows','Seated Cable Row','Rowing Machine','Lat Pulldown Machine',
-  'Shoulder Press Machine','Standing Dumbbell Shoulder Press','Sitting Dumbbell Shoulder Press','Dumbbell Lateral Raise','Forward Leaning Rear Delt Flies',
-  'Dumbbell Bicep Curl','EZ Bar Bicep Curl','Dumbbell Hammer Curl',
-  'Cable Tricep Pushdown','Overhead Cable Tricep Extension','EZ-Bar Skull Crushers','Dumbbell Skull Crushers',
-  'Dumbbell Goblet Squat','Leg Extension Machine','Lying Leg Curl Machine','Seated Leg Curl Machine',
-  'Pushup','Situp','Plank','Side Plank','Extended Plank','Reverse Plank','Double Crunch','Leg Raises','Flutter Kicks'
-];
-const GRIND_SPLIT=[  // index = Date.getDay(): 0 Sun ... 6 Sat
-  {focus:'Back, Biceps + Core',ex:['Lat Pulldown Machine','Dumbbell Rows','Dumbbell Bicep Curl','Dumbbell Hammer Curl','Pushup','Situp']},
-  {focus:'Chest, Shoulders, Triceps + Core',ex:['Incline Chest Press Machine','Dumbbell Bench Press','Shoulder Press Machine','Dumbbell Lateral Raise','Forward Leaning Rear Delt Flies','Cable Tricep Pushdown','Overhead Cable Tricep Extension','EZ-Bar Skull Crushers','Plank']},
-  {focus:'Legs + Core',ex:['Dumbbell Goblet Squat','Leg Extension Machine','Lying Leg Curl Machine','Seated Leg Curl Machine','Pushup','Double Crunch']},
-  {focus:'Chest, Shoulders, Triceps + Core',ex:['Incline Chest Press Machine','Dumbbell Bench Press','Standing Dumbbell Shoulder Press','Sitting Dumbbell Shoulder Press','Dumbbell Lateral Raise','Forward Leaning Rear Delt Flies','Cable Tricep Pushdown','Overhead Cable Tricep Extension','EZ-Bar Skull Crushers','Plank']},
-  {focus:'Back, Biceps + Core',ex:['Seated Cable Row','Rowing Machine','EZ Bar Bicep Curl','Dumbbell Hammer Curl','Pushup','Situp']},
-  {focus:'Home + Core',ex:['Pushup','Situp','Plank','Side Plank','Extended Plank','Reverse Plank','Double Crunch','Leg Raises','Flutter Kicks']},
-  {focus:'Home + Core',ex:['Pushup','Situp','Plank','Side Plank','Extended Plank','Reverse Plank','Double Crunch','Leg Raises','Flutter Kicks']},
-];
+/* Training plan lives in the user's data (S.training = {exercises:[...], split:[7 days, Sun..Sat]}).
+   Brand-new accounts use this generic starter until they set their own. */
+const DEFAULT_TRAINING={
+  exercises:['Pushup','Squat','Lunges','Plank','Situp','Dumbbell Rows','Dumbbell Shoulder Press','Dumbbell Bicep Curl','Tricep Dips','Glute Bridge','Jumping Jack','Walking'],
+  split:[ // index = Date.getDay(): 0 Sun ... 6 Sat
+    {focus:'Rest + Walk',ex:['Walking']},
+    {focus:'Full Body A',ex:['Squat','Pushup','Dumbbell Rows','Plank']},
+    {focus:'Cardio + Core',ex:['Jumping Jack','Situp','Plank']},
+    {focus:'Full Body B',ex:['Lunges','Dumbbell Shoulder Press','Dumbbell Bicep Curl','Tricep Dips']},
+    {focus:'Rest + Walk',ex:['Walking']},
+    {focus:'Full Body A',ex:['Squat','Pushup','Dumbbell Rows','Glute Bridge']},
+    {focus:'Cardio + Core',ex:['Jumping Jack','Situp','Plank']}
+  ]
+};
+function getTraining(){
+  const t=S&&S.training;
+  const ok=t&&Array.isArray(t.exercises)&&Array.isArray(t.split)&&t.split.length===7&&t.split.every(d=>d&&Array.isArray(d.ex));
+  return ok?t:DEFAULT_TRAINING;
+}
 function renderWoSuggest(filterStr){
   const el=$('#wo-suggest');if(!el)return;
-  const today=GRIND_SPLIT[new Date().getDay()];
+  const plan=getTraining();
+  const today=plan.split[new Date().getDay()];
   let list;
   if(!filterStr){
     list=today.ex.map(name=>({name,today:true}));
   }else{
     const f=filterStr.toLowerCase();
-    list=GRIND_EXERCISES.filter(n=>n.toLowerCase().includes(f)).map(name=>({name,today:today.ex.includes(name)}));
+    list=plan.exercises.filter(n=>n.toLowerCase().includes(f)).map(name=>({name,today:today.ex.includes(name)}));
     list.sort((a,b)=>(b.today-a.today));
   }
   if(!list.length){el.innerHTML='';el.classList.remove('show');return;}
@@ -4149,7 +4095,7 @@ function resetUiRefresh(){
   let b=null;try{b=JSON.parse(localStorage.getItem(RESET_BACKUP_KEY)||'null');}catch(e){}
   const row=$('#reset-undo-row');if(!row)return;
   row.hidden=!b;
-  if(b)$('#reset-undo-when').textContent=`from ${new Date(b.at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})} (${b.kind==='all'?'everything':'roadmap'})`;
+  if(b)$('#reset-undo-when').textContent=`from ${new Date(b.at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})} (${({all:'full reset',roadmap:'roadmap reset',patch:'patch',restore:'restore'})[b.kind]||b.kind})`;
 }
 function resetRoadmap(){
   if(!confirm('Replace your roadmap with the default 4 sprints, starting today?\n\nYour current sprints are kept as a backup on this device.'))return;
@@ -4171,11 +4117,29 @@ function undoLastReset(){
   let b=null;try{b=JSON.parse(localStorage.getItem(RESET_BACKUP_KEY)||'null');}catch(e){}
   if(!b||!b.data){toast('No reset to undo on this device.');return;}
   if(!confirm('Bring back your data from before the last reset? Anything changed since then will be replaced.'))return;
-  if(applyImport(b.data)){try{localStorage.removeItem(RESET_BACKUP_KEY);}catch(e){}closeSync();toast('Restored from before the reset.');}
+  if(applyImport(b.data,{noStash:true})){try{localStorage.removeItem(RESET_BACKUP_KEY);}catch(e){}closeSync();toast('Restored from before the last change.');}
 }
 function closeSync(){$('#sync-overlay').classList.remove('on');}
-function applyImport(data){
-  if(!data||typeof data!=='object'||!Array.isArray(data.goals)){toast('That doesn\u2019t look like a Momentum backup.');return false;}
+/* Two kinds of import:
+   • full backup (has a "goals" list) → replaces everything;
+   • patch (any other object) → only the keys it names change: a value sets/replaces that key,
+     null removes it. Core lists can't be removed by a patch. Both keep an undo copy first. */
+const CORE_KEYS=['settings','cats','goals','habits','meals','workouts','body','quotes','dumps','reviews'];
+function applyImport(data,opts){
+  opts=opts||{};
+  if(!data||typeof data!=='object'||Array.isArray(data)){toast('That doesn\u2019t look like a Momentum backup.');return false;}
+  if(!Array.isArray(data.goals)){
+    const keys=Object.keys(data);
+    if(!keys.length){toast('That patch is empty.');return false;}
+    const blocked=keys.filter(k=>data[k]===null&&CORE_KEYS.includes(k));
+    if(blocked.length){toast('A patch can\u2019t remove '+blocked.join(', ')+'.');return false;}
+    const sets=keys.filter(k=>data[k]!==null),dels=keys.filter(k=>data[k]===null);
+    if(!confirm(`Apply this patch?\n\nAdds / updates: ${sets.length?sets.join(', '):'nothing'}\nRemoves: ${dels.length} old setting${dels.length===1?'':'s'}\n\nEverything else stays exactly as it is.`))return false;
+    if(!opts.noStash)stashBeforeReset('patch');
+    keys.forEach(k=>{if(data[k]===null)delete S[k];else S[k]=data[k];});
+    save();render();return 'patch';
+  }
+  if(!opts.noStash)stashBeforeReset('restore');
   S=data;
   S.settings=S.settings||{started:Date.now()};S.cats=S.cats||CATS;
   S.goals=S.goals||[];S.habits=S.habits||[];S.dumps=S.dumps||[];S.reviews=S.reviews||[];
@@ -4207,12 +4171,12 @@ $('#sync-download').addEventListener('click',()=>{
 });
 $('#sync-restore').addEventListener('click',()=>{
   const v=$('#sync-in').value.trim();if(!v){toast('Paste a backup first.');return;}
-  try{if(applyImport(JSON.parse(v))){closeSync();toast('Progress restored.');}}
+  try{const r=applyImport(JSON.parse(v));if(r){closeSync();toast(r==='patch'?'Patch applied. Undo is in Backup & sync.':'Progress restored.');}}
   catch(e){toast('Couldn\u2019t read that — make sure the whole backup was copied.');}
 });
 $('#sync-file').addEventListener('change',e=>{
   const f=e.target.files[0];if(!f)return;const r=new FileReader();
-  r.onload=()=>{try{if(applyImport(JSON.parse(r.result))){closeSync();toast('Progress restored.');}}
+  r.onload=()=>{try{const res=applyImport(JSON.parse(r.result));if(res){closeSync();toast(res==='patch'?'Patch applied. Undo is in Backup & sync.':'Progress restored.');}}
     catch(err){toast('Couldn\u2019t read that file.');}};
   r.readAsText(f);e.target.value='';
 });
@@ -4280,20 +4244,6 @@ async function bootApp(){
     });
     S.goalCheckpointsCleanupV1=true;
   }
-  if(!S.movieGoalV1){
-    const already=S.goals.some(g=>/365 movies/i.test(g.title));
-    if(!already){
-      const newGoal={id:Date.now(),cat:'Social / Fun',title:'Watch 365 movies in a year',done:false,star:false,deadline:null,pinned:false};
-      const buyIdx=S.goals.findIndex(g=>/^buy new wants$/i.test(g.title.trim()));
-      if(buyIdx>=0)S.goals.splice(buyIdx,0,newGoal);
-      else S.goals.push(newGoal);
-    }
-    S.movieGoalV1=true;
-  }
-  if(!S.quotesClearV1){
-    S.quotes=[];
-    S.quotesClearV1=true;
-  }
   if(!S.roadmapSeedV1){
     // Existing account with no roadmap yet: give it the generic default roadmap (dated from today).
     if(!S.goals.some(g=>g.cat==='Roadmap')){
@@ -4303,14 +4253,6 @@ async function bootApp(){
     }
     S.roadmapSeedV1=true;
   }
-  if(!S.roadmapOpensOnV1){
-    // Retired: patched the old hard-coded sprint list, which no longer exists.
-    S.roadmapOpensOnV1=true;
-  }
-  if(!S.roadmapTitleSyncV2){
-    // Retired: renamed sprints from the old hard-coded list, which no longer exists.
-    S.roadmapTitleSyncV2=true;
-  }
   if(!S.investRemovedV1){
     // The Investment tab (portfolio, screener, watchlist, research) was removed entirely —
     // this cleans up any leftover state from it in already-synced data so nothing orphaned
@@ -4319,65 +4261,6 @@ async function bootApp(){
     S.cats=S.cats.filter(c=>c.name!=='Investment');
     S.goals=S.goals.filter(g=>g.cat!=='Investment');
     S.investRemovedV1=true;
-  }
-  if(!S.roadmapTagsNoteSyncV2){
-    // Retired: relabelled sprints from the old hard-coded list, which no longer exists.
-    S.roadmapTagsNoteSyncV2=true;
-  }
-  if(!S.roadmapRemap20260928){
-    // Remap (27 Sep 2026): the whole Roadmap is rebuilt as 6 × 46-day sprints running from
-    // 28 Sep 2026 to 30 Jun 2027, built around the certifications, NTU exemption modules and
-    // learning tracks. Safety rules:
-    //  • the old sprints are kept in S.roadmapBackupPre20260928, so nothing is lost;
-    //  • any checklist item already ticked stays ticked if the same item exists in the new plan;
-    //  • each sprint keeps its own daily time-budget note, matched by name (e.g. "Foundations");
-    //  • the Today star moves with Sprint 1.
-    const old=S.goals.filter(g=>g.cat==='Roadmap');
-    // Guard: only upgrade the specific pre-remap 7-sprint roadmap. Anyone else is left untouched.
-    const isOwnersOldRoadmap=old.some(g=>/Cert Deadline Checkpoint/.test(g.title)||g.deadline==='2026-09-30');
-    if(!isOwnersOldRoadmap){S.roadmapRemap20260928=true;}else{
-    S.roadmapBackupPre20260928=JSON.parse(JSON.stringify(old));
-    if(!S.cats.find(c=>c.name==='Roadmap'))S.cats.push({name:'Roadmap',color:'#6fd3ff'});
-    const norm=t=>String(t||'').toLowerCase().replace(/\s+/g,' ').trim();
-    const ticked=new Set();old.forEach(g=>(g.subs||[]).forEach(x=>{if(x.done)ticked.add(norm(x.text));}));
-    const nameOf=t=>sprintCleanTitle(String(t||'')).replace(/^Sprint \d+\s*—\s*/,'').toLowerCase();
-    const wasStarred=old.some(g=>g.star&&!g.done);
-    const firstIdx=S.goals.findIndex(g=>g.cat==='Roadmap');
-    S.goals=S.goals.filter(g=>g.cat!=='Roadmap');
-    const maxId=S.goals.reduce((m,g)=>Math.max(m,+g.id||0),0);
-    const base=Date.now();
-    const fresh=PERSONAL_REMAP_2026.map((sp,i)=>{
-      const prev=old.find(g=>nameOf(g.title)===nameOf(sp.title));
-      const note=prev&&Array.isArray(prev.note)&&prev.note.length?prev.note:[...WK_SPLIT,...WE_SPLIT];
-      return {id:Math.max(base,maxId+1)+i,cat:'Roadmap',title:sp.title,done:false,star:i===0&&wasStarred,term:'fixed',
-        opensOn:sp.start,deadline:sp.deadline,note,
-        subs:sp.subs.map((t,j)=>({id:base+1000+i*100+j,text:t,done:ticked.has(norm(t))}))};
-    });
-    if(firstIdx>=0&&firstIdx<=S.goals.length)S.goals.splice(firstIdx,0,...fresh);else S.goals.push(...fresh);
-    S.roadmapRemap20260928=true;
-    try{save();}catch(_){}
-    }
-  }
-  if(!S.roadmapFpgaV1){
-    // Adds the FPGA project to the owner's remapped roadmap (only accounts that went through the
-    // 27 Sep personal remap, i.e. have S.roadmapBackupPre20260928). Sprints are found by NAME, so
-    // renumbering doesn't matter; nothing is added twice, and nobody else's roadmap is touched.
-    if(S.roadmapBackupPre20260928){
-      const byName=n=>S.goals.find(g=>g.cat==='Roadmap'&&sprintCleanTitle(g.title).replace(/^Sprint \d+\s*—\s*/,'')===n);
-      const add=(sprint,text,beforeRx)=>{
-        const g=byName(sprint);if(!g)return;
-        g.subs=g.subs||[];
-        if(g.subs.some(x=>/FPGA/i.test(x.text)&&x.text.split('—')[0]===text.split('—')[0]))return;
-        const item={id:Date.now()+Math.floor(Math.random()*1e5),text,done:false};
-        const at=g.subs.findIndex(x=>beforeRx.test(x.text));
-        if(at>=0)g.subs.splice(at,0,item);else g.subs.push(item);
-        if(g.done)g.done=false;
-      };
-      add('Home Stretch','📘 Learn: Verilog + digital logic basics (FPGA prep)',/LeetCode/);
-      add('Capstone + Buffer','🔧 Hardware: FPGA project — build + demo (weekends)',/Buffer/);
-      try{save();}catch(_){}
-    }
-    S.roadmapFpgaV1=true;
   }
   if(!S.activeCat)S.activeCat='all';
   render();
