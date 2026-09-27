@@ -1231,6 +1231,22 @@ code,.mono{font-family:var(--mono)}
   .spc-body{padding-left:14px}
 }
 
+/* ---- Reset to default ---- */
+.reset-sec{border-top:1px solid rgba(255,93,93,.18);padding-top:16px}
+.reset-sec h4{color:var(--red)!important}
+.reset-danger{color:var(--red)!important;border-color:rgba(255,93,93,.35)!important}
+.reset-danger:hover{background:rgba(255,93,93,.08)!important;border-color:var(--red)!important}
+.reset-danger-solid{background:var(--red)!important;border-color:var(--red)!important;color:#fff!important}
+.reset-danger-solid:disabled{opacity:.35;cursor:not-allowed}
+.reset-confirm{margin-top:12px;padding:12px 14px;border:1px solid rgba(255,93,93,.35);border-radius:4px;background:rgba(255,93,93,.05)}
+.reset-confirm p{margin:0 0 10px;font-size:13.5px;color:var(--mist)}
+.reset-confirm p b{color:var(--text)}
+.reset-confirm input{flex:1 1 140px;min-width:0;background:var(--deep-2);border:1px solid var(--edge-hi,#2b323a);border-radius:4px;color:var(--text);
+  padding:9px 12px;font-family:var(--mono);letter-spacing:.2em;text-transform:uppercase}
+.reset-confirm input:focus{outline:none;border-color:var(--red)}
+.reset-undo-when{font-family:var(--mono);font-size:11.5px;color:var(--mist-dim)}
+[hidden]{display:none!important}
+
 /* ---- Sprint add / delete controls ---- */
 .dl-gantt-tools{position:absolute;top:4px;right:4px;display:flex;gap:0}
 .dl-gantt-block{padding-top:30px!important}
@@ -1852,7 +1868,7 @@ code,.mono{font-family:var(--mono)}
 <div class="overlay" id="sync-overlay">
   <div class="modal">
     <h3>Backup &amp; sync</h3>
-    <p class="lead">Your progress saves on this device only. To carry it to another device, move a backup across — copy the text or download the file here, then restore it on the other side.</p>
+    <p class="lead">Your progress syncs to your account automatically. Backups here are an extra safety copy you can keep or move by hand.</p>
     <div class="sync-sec">
       <h4>1 · Back up this device</h4>
       <p>Copy this, or download it as a file, then send it to your other device however suits you — Notes, Drive, AirDrop, a message to yourself.</p>
@@ -1869,6 +1885,26 @@ code,.mono{font-family:var(--mono)}
       <div class="sync-row">
         <button class="btn" id="sync-restore">Restore from paste</button>
         <label class="file-label">Load a file<input type="file" id="sync-file" accept="application/json,.json"></label>
+      </div>
+    </div>
+    <div class="sync-sec reset-sec">
+      <h4>3 · Reset to default</h4>
+      <p>Start over with the same setup a brand-new account gets. A copy of your current data is kept on this device first, so you can undo.</p>
+      <div class="sync-row">
+        <button class="btn ghost" id="reset-roadmap">Reset roadmap only</button>
+        <button class="btn ghost reset-danger" id="reset-all-open">Reset everything…</button>
+      </div>
+      <div class="reset-confirm" id="reset-confirm" hidden>
+        <p>This replaces <b>all</b> goals, sprints, habits, fuel logs, captures and quotes with the defaults, on every device. Type <b>RESET</b> to confirm.</p>
+        <div class="sync-row">
+          <input type="text" id="reset-word" autocomplete="off" autocapitalize="characters" placeholder="RESET" aria-label="Type RESET to confirm">
+          <button class="btn reset-danger-solid" id="reset-all-go" disabled>Erase &amp; reset</button>
+          <button class="btn ghost" id="reset-all-cancel">Cancel</button>
+        </div>
+      </div>
+      <div class="sync-row" id="reset-undo-row" hidden>
+        <button class="btn ghost" id="reset-undo">↶ Undo last reset</button>
+        <span class="reset-undo-when" id="reset-undo-when"></span>
       </div>
     </div>
     <div class="modal-foot"><button class="btn ghost" id="sync-close">Close</button></div>
@@ -2010,8 +2046,9 @@ const WE_SPLIT=[
   '🎓 Weekends — catch-up / review block',
   '💻 Weekends — longer project session'
 ];
-/* Roadmap: 6 × 46-day sprints, 28 Sep 2026 → 30 Jun 2027 (remapped 27 Sep 2026). */
-const ROADMAP_PLAN_2026=[
+/* One-off personal remap (27 Sep 2026). Used ONLY by the guarded migration that upgrades the original
+   owner's pre-remap roadmap. New users and resets never see this — they get DEFAULT_ROADMAP below. */
+const PERSONAL_REMAP_2026=[
   {title:'Sprint 1 — Foundations',start:'2026-09-28',deadline:'2026-11-12',subs:[
     '🎓 Cert: AWS Cloud Practitioner — finish',
     '📘 Exemption: SC1003 Computational Thinking — prep + mock test',
@@ -2061,14 +2098,58 @@ const ROADMAP_PLAN_2026=[
     '🧮 Buffer: for slippage from earlier sprints'
   ]}
 ];
-const ROADMAP_SPRINTS=ROADMAP_PLAN_2026.map(sp=>({...sp,note:[...WK_SPLIT,...WE_SPLIT]}));
+/* ---------------- Default roadmap (new users + "Reset to default") ----------------
+   Generic template, no personal content and no fixed calendar dates: sprints are laid out
+   back-to-back starting from the day it's created (first login, or the day you reset). */
+const DEFAULT_SPRINT_DAYS=42; // 6 weeks each
+const DEFAULT_ROADMAP=[
+  {name:'Foundations',subs:[
+    '🎓 Course / certification — pick one and start',
+    '📘 Learn: choose one core skill to build',
+    '💻 Project: scope out an MVP',
+    '🧮 Practice: set a weekly slot'
+  ]},
+  {name:'Momentum',subs:[
+    '🎓 Course / certification — keep going',
+    '📘 Learn: core skill — continue',
+    '💻 Project: build the core features',
+    '🧮 Practice: keep the weekly slot'
+  ]},
+  {name:'Deep Work',subs:[
+    '🎓 Course / certification — finish',
+    '📘 Learn: start a second skill',
+    '💻 Project: polish and ship',
+    '🔧 Side build or experiment (weekends)'
+  ]},
+  {name:'Capstone + Buffer',subs:[
+    '💻 Capstone: combine what you learned',
+    '📝 Review: what worked, what to change next',
+    '🧮 Buffer: catch up on anything that slipped'
+  ]}
+];
+function defaultRoadmapGoals(startIso,firstId){
+  const start=startIso||todayIso();
+  const base=Date.now();
+  let id=firstId||base;
+  return DEFAULT_ROADMAP.map((sp,i)=>{
+    const opens=isoAddDays(start,i*DEFAULT_SPRINT_DAYS);
+    return {id:id++,cat:'Roadmap',title:`Sprint ${i+1} — ${sp.name}`,done:false,star:i===0,term:'fixed',
+      opensOn:opens,deadline:isoAddDays(opens,DEFAULT_SPRINT_DAYS-1),note:[...WK_SPLIT,...WE_SPLIT],
+      subs:sp.subs.map((t,j)=>({id:base+5000+i*100+j,text:t,done:false}))};
+  });
+}
+
 
 function freshState(){
   let id=1;
+  const goals=SEED.map(s=>({id:id++,cat:s[0],title:s[1],done:false,star:false,deadline:s[2]||null,pinned:s[3]||false}));
   return {
     settings:{name:'',started:Date.now(),countdown:null},
-    cats:CATS,
-    goals:SEED.map(s=>({id:id++,cat:s[0],title:s[1],done:false,star:false,deadline:s[2]||null,pinned:s[3]||false})),
+    cats:[...CATS.map(c=>({...c})),{name:'Roadmap',color:'#6fd3ff'}],
+    goals:[...goals,...defaultRoadmapGoals(todayIso(),id)],
+    // every one-shot migration is already "done" for a brand-new account
+    roadmapSeedV1:true,roadmapOpensOnV1:true,roadmapTitleSyncV2:true,roadmapTagsNoteSyncV2:true,
+    roadmapRemap20260928:true,quotesClearV1:true,investRemovedV1:true,
     habits:seedHabits(),habitSeed:2,goalCheckpointsCleanupV1:true,movieGoalV1:true,
     meals:[],workouts:[],body:{weight:70,startWeight:70,goalWeight:65,height:170,age:25},bodyStatsV1:true,offDays:{},
     dumps:[],reviews:[],activeCat:'all',activeTerm:'all',quotes:[],reminders:[]
@@ -4050,7 +4131,46 @@ $('#rev-save').addEventListener('click',()=>{
 });
 
 /* ---------------- Backup & sync ---------------- */
-function openSync(){$('#sync-out').value=JSON.stringify(S);$('#sync-in').value='';$('#sync-overlay').classList.add('on');}
+function openSync(){$('#sync-out').value=JSON.stringify(S);$('#sync-in').value='';resetUiRefresh();$('#sync-overlay').classList.add('on');}
+/* ---------------- Reset to default ----------------
+   Before any reset, the current state is copied to localStorage (this device) so "Undo last reset"
+   can bring it back. Resets then save normally, so the defaults sync to every device. */
+const RESET_BACKUP_KEY='secondbrain:pre-reset-backup';
+function stashBeforeReset(kind){
+  try{localStorage.setItem(RESET_BACKUP_KEY,JSON.stringify({at:Date.now(),kind,data:S}));return true;}
+  catch(e){return false;}
+}
+function resetUiRefresh(){
+  const box=$('#reset-confirm');if(box)box.hidden=true;
+  const w=$('#reset-word');if(w)w.value='';
+  const go=$('#reset-all-go');if(go)go.disabled=true;
+  let b=null;try{b=JSON.parse(localStorage.getItem(RESET_BACKUP_KEY)||'null');}catch(e){}
+  const row=$('#reset-undo-row');if(!row)return;
+  row.hidden=!b;
+  if(b)$('#reset-undo-when').textContent=`from ${new Date(b.at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})} (${b.kind==='all'?'everything':'roadmap'})`;
+}
+function resetRoadmap(){
+  if(!confirm('Replace your roadmap with the default 4 sprints, starting today?\n\nYour current sprints are kept as a backup on this device.'))return;
+  if(!stashBeforeReset('roadmap')&&!confirm('Couldn\u2019t save a backup on this device. Reset anyway?'))return;
+  const keep=S.goals.filter(g=>g.cat!=='Roadmap');
+  const maxId=keep.reduce((m,g)=>Math.max(m,+g.id||0),0);
+  if(!S.cats.find(c=>c.name==='Roadmap'))S.cats.push({name:'Roadmap',color:'#6fd3ff'});
+  S.goals=[...keep,...defaultRoadmapGoals(todayIso(),maxId+1)];
+  S.dlRoadmapOpen=true;openGoals.clear();
+  save();render();resetUiRefresh();toast('Roadmap reset to default.');
+}
+function resetEverything(){
+  if(!stashBeforeReset('all')&&!confirm('Couldn\u2019t save a backup on this device. Reset anyway?'))return;
+  S=freshState();openGoals.clear();habView='all';
+  save();closeSync();go('today');render();
+  toast('Reset complete. Undo is in Backup & sync.');
+}
+function undoLastReset(){
+  let b=null;try{b=JSON.parse(localStorage.getItem(RESET_BACKUP_KEY)||'null');}catch(e){}
+  if(!b||!b.data){toast('No reset to undo on this device.');return;}
+  if(!confirm('Bring back your data from before the last reset? Anything changed since then will be replaced.'))return;
+  if(applyImport(b.data)){try{localStorage.removeItem(RESET_BACKUP_KEY);}catch(e){}closeSync();toast('Restored from before the reset.');}
+}
 function closeSync(){$('#sync-overlay').classList.remove('on');}
 function applyImport(data){
   if(!data||typeof data!=='object'||!Array.isArray(data.goals)){toast('That doesn\u2019t look like a Momentum backup.');return false;}
@@ -4063,6 +4183,13 @@ function applyImport(data){
 }
 $('#open-sync').addEventListener('click',openSync);
 $('#sync-close').addEventListener('click',closeSync);
+$('#reset-roadmap').addEventListener('click',resetRoadmap);
+$('#reset-all-open').addEventListener('click',()=>{const b=$('#reset-confirm');b.hidden=false;setTimeout(()=>$('#reset-word').focus(),30);});
+$('#reset-all-cancel').addEventListener('click',()=>{$('#reset-confirm').hidden=true;$('#reset-word').value='';$('#reset-all-go').disabled=true;});
+$('#reset-word').addEventListener('input',e=>{$('#reset-all-go').disabled=e.target.value.trim().toUpperCase()!=='RESET';});
+$('#reset-word').addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('#reset-all-go').disabled)resetEverything();});
+$('#reset-all-go').addEventListener('click',resetEverything);
+$('#reset-undo').addEventListener('click',undoLastReset);
 $('#sync-overlay').addEventListener('click',e=>{if(e.target.id==='sync-overlay')closeSync();});
 $('#sync-copy').addEventListener('click',()=>{
   const ta=$('#sync-out');ta.focus();ta.select();ta.setSelectionRange(0,ta.value.length);
@@ -4166,41 +4293,20 @@ async function bootApp(){
     S.quotesClearV1=true;
   }
   if(!S.roadmapSeedV1){
-    // Adds an example multi-sprint roadmap as its own Goals category.
-    // Runs once, same as the other one-shot migrations above — won't re-add or duplicate
-    // on later loads, and won't touch anything you've already customised elsewhere.
-    if(!S.cats.find(c=>c.name==='Roadmap'))S.cats.push({name:'Roadmap',color:'#5fb3a8'});
-    const maxId=S.goals.reduce((m,g)=>Math.max(m,g.id||0),0);
-    const base=Date.now();
-    ROADMAP_SPRINTS.forEach((sp,i)=>{
-      const subs=sp.subs.map((t,j)=>({id:base+i*100+j,text:t,done:false}));
-      S.goals.push({id:maxId+i+1,cat:'Roadmap',title:sp.title,done:false,star:false,term:'fixed',opensOn:sp.start,deadline:sp.deadline,note:sp.note,subs});
-    });
-    const starredCount=S.goals.filter(x=>x.star&&!x.done).length;
-    const firstSprint=S.goals.find(g=>g.cat==='Roadmap'&&/Sprint 1/.test(g.title));
-    if(firstSprint&&starredCount<5)firstSprint.star=true;
+    // Existing account with no roadmap yet: give it the generic default roadmap (dated from today).
+    if(!S.goals.some(g=>g.cat==='Roadmap')){
+      if(!S.cats.find(c=>c.name==='Roadmap'))S.cats.push({name:'Roadmap',color:'#6fd3ff'});
+      const maxId=S.goals.reduce((m,g)=>Math.max(m,+g.id||0),0);
+      S.goals.push(...defaultRoadmapGoals(todayIso(),maxId+1));
+    }
     S.roadmapSeedV1=true;
   }
   if(!S.roadmapOpensOnV1){
-    // Patch for anyone who got the Roadmap seed before sprint start dates (opensOn) were
-    // added — backfills them onto the existing Sprint goals by matching title, no duplicates.
-    ROADMAP_SPRINTS.forEach(sp=>{
-      const g=S.goals.find(x=>x.cat==='Roadmap'&&x.title===sp.title);
-      if(g&&!g.opensOn)g.opensOn=sp.start;
-    });
+    // Retired: patched the old hard-coded sprint list, which no longer exists.
     S.roadmapOpensOnV1=true;
   }
   if(!S.roadmapTitleSyncV2){
-    // Sprint 5 & 6 originally had no name, just a date range — gave them names (Deep Work,
-    // Home Stretch) to match the others. Match by sprint NUMBER (not exact title, since the
-    // title text itself is what changed) so this updates existing goals instead of duplicating.
-    S.goals.forEach(g=>{
-      if(g.cat!=='Roadmap')return;
-      const num=(g.title.match(/^Sprint (\d+)/)||[])[1];
-      if(!num)return;
-      const sp=ROADMAP_SPRINTS.find(s=>s.title.startsWith('Sprint '+num+' '));
-      if(sp){g.title=sp.title;if(!g.opensOn)g.opensOn=sp.start;}
-    });
+    // Retired: renamed sprints from the old hard-coded list, which no longer exists.
     S.roadmapTitleSyncV2=true;
   }
   if(!S.investRemovedV1){
@@ -4213,21 +4319,7 @@ async function bootApp(){
     S.investRemovedV1=true;
   }
   if(!S.roadmapTagsNoteSyncV2){
-    // Roadmap sprint checklist items got emoji tags, plus each sprint got a `note` — now an
-    // array of separate lines (weekday/weekend, one per row) instead of one run-on paragraph. Item
-    // count/order per sprint is unchanged, so this maps old subs to new text by position —
-    // done/id are preserved, only the label text and note update.
-    S.goals.forEach(g=>{
-      if(g.cat!=='Roadmap')return;
-      const num=(g.title.match(/^Sprint (\d+)/)||[])[1];
-      if(!num)return;
-      const sp=ROADMAP_SPRINTS.find(s=>s.title.startsWith('Sprint '+num+' '));
-      if(!sp)return;
-      if(Array.isArray(g.subs)&&g.subs.length===sp.subs.length){
-        g.subs.forEach((sub,i)=>{sub.text=sp.subs[i];});
-      }
-      g.note=sp.note;
-    });
+    // Retired: relabelled sprints from the old hard-coded list, which no longer exists.
     S.roadmapTagsNoteSyncV2=true;
   }
   if(!S.roadmapRemap20260928){
@@ -4239,6 +4331,9 @@ async function bootApp(){
     //  • each sprint keeps its own daily time-budget note, matched by name (e.g. "Foundations");
     //  • the Today star moves with Sprint 1.
     const old=S.goals.filter(g=>g.cat==='Roadmap');
+    // Guard: only upgrade the specific pre-remap 7-sprint roadmap. Anyone else is left untouched.
+    const isOwnersOldRoadmap=old.some(g=>/Cert Deadline Checkpoint/.test(g.title)||g.deadline==='2026-09-30');
+    if(!isOwnersOldRoadmap){S.roadmapRemap20260928=true;}else{
     S.roadmapBackupPre20260928=JSON.parse(JSON.stringify(old));
     if(!S.cats.find(c=>c.name==='Roadmap'))S.cats.push({name:'Roadmap',color:'#6fd3ff'});
     const norm=t=>String(t||'').toLowerCase().replace(/\s+/g,' ').trim();
@@ -4249,7 +4344,7 @@ async function bootApp(){
     S.goals=S.goals.filter(g=>g.cat!=='Roadmap');
     const maxId=S.goals.reduce((m,g)=>Math.max(m,+g.id||0),0);
     const base=Date.now();
-    const fresh=ROADMAP_PLAN_2026.map((sp,i)=>{
+    const fresh=PERSONAL_REMAP_2026.map((sp,i)=>{
       const prev=old.find(g=>nameOf(g.title)===nameOf(sp.title));
       const note=prev&&Array.isArray(prev.note)&&prev.note.length?prev.note:[...WK_SPLIT,...WE_SPLIT];
       return {id:Math.max(base,maxId+1)+i,cat:'Roadmap',title:sp.title,done:false,star:i===0&&wasStarred,term:'fixed',
@@ -4259,6 +4354,7 @@ async function bootApp(){
     if(firstIdx>=0&&firstIdx<=S.goals.length)S.goals.splice(firstIdx,0,...fresh);else S.goals.push(...fresh);
     S.roadmapRemap20260928=true;
     try{save();}catch(_){}
+    }
   }
   if(!S.activeCat)S.activeCat='all';
   render();
