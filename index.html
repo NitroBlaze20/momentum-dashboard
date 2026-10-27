@@ -1231,6 +1231,36 @@ code,.mono{font-family:var(--mono)}
   .spc-body{padding-left:14px}
 }
 
+/* ---- Exercise library ---- */
+.fuel-sec h3{flex-wrap:wrap;row-gap:6px}
+.ex-modal{max-width:680px;width:100%}
+.ex-add{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.ex-add input{flex:1 1 220px;min-width:0}
+.ex-add select{flex:1 1 220px;min-width:0}
+.ex-add input,.ex-add select,.ex-tools input,.ex-type{background:var(--deep-2);border:1px solid var(--edge-hi,#2b323a);border-radius:4px;color:var(--text);
+  padding:9px 11px;font-family:var(--body);font-size:14px;min-height:40px}
+.ex-add input:focus,.ex-add select:focus,.ex-tools input:focus,.ex-type:focus{outline:none;border-color:var(--pencil)}
+.ex-hint{font-family:var(--mono);font-size:11.5px;color:var(--mist-dim);min-height:18px;margin:8px 0 4px}
+.ex-hint b{color:var(--pencil);font-weight:500}
+.ex-tools{display:flex;align-items:center;gap:12px;margin:8px 0 8px;padding-top:12px;border-top:1px solid var(--edge,#1d2228)}
+.ex-tools input{flex:1;min-width:0}
+.ex-count{font-family:var(--mono);font-size:11px;color:var(--mist-dim);white-space:nowrap}
+.ex-list{max-height:min(46vh,420px);overflow-y:auto;border:1px solid var(--edge,#1d2228);border-radius:4px}
+.ex-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--edge,#1d2228)}
+.ex-row:last-child{border-bottom:0}
+.ex-row:hover{background:rgba(170,190,210,.03)}
+.ex-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ex-name{font-size:14px;font-weight:500;color:var(--text);overflow-wrap:anywhere}
+.ex-meta{font-family:var(--mono);font-size:10.5px;color:var(--mist-dim)}
+.ex-meta b{color:var(--pencil);font-weight:500}
+.ex-type{flex:0 1 230px;min-width:0;font-size:12.5px!important;min-height:34px!important;padding:6px 8px!important}
+.ex-del{background:none;border:1px solid transparent;border-radius:3px;color:var(--mist-dim);cursor:pointer;font-size:13px;padding:6px 8px;min-width:32px;min-height:32px}
+.ex-del:hover{color:var(--red);border-color:rgba(255,93,93,.4)}
+.ex-empty{padding:18px;text-align:center;color:var(--mist-dim);font-size:13.5px}
+.ex-foot-note{font-size:12.5px;color:var(--mist-dim);margin:10px 0 0}
+.ex-foot-note b{color:var(--mist);font-weight:500}
+@media(max-width:560px){.ex-row{flex-wrap:wrap}.ex-type{flex:1 1 100%;order:3}}
+
 /* ---- Reset to default ---- */
 .reset-sec{border-top:1px solid rgba(255,93,93,.18);padding-top:16px}
 .reset-sec h4{color:var(--red)!important}
@@ -1721,7 +1751,7 @@ code,.mono{font-family:var(--mono)}
       </div>
 
       <div class="fuel-sec">
-        <h3>Movement <small id="move-total"></small> <button class="btn ghost tiny" id="wo-recalc" title="Re-run every logged exercise through the current formula">↻ Recalculate all</button></h3>
+        <h3>Movement <small id="move-total"></small> <button class="btn ghost tiny" id="wo-recalc" title="Re-run every logged exercise through the current formula">↻ Recalculate all</button> <button class="btn ghost tiny" id="ex-lib-open" title="Add, edit or remove exercises">＋ Exercises</button></h3>
         <div id="workouts-list"></div>
         <div class="fuel-add" style="position:relative">
           <input type="text" id="wo-name" placeholder="Exercise or activity — e.g. bench press, running" autocomplete="off">
@@ -1837,6 +1867,26 @@ code,.mono{font-family:var(--mono)}
       <button class="btn ghost" id="rev-cancel">Not now</button>
       <button class="btn" id="rev-save">Set next week in motion</button>
     </div>
+  </div>
+</div>
+
+<div class="overlay" id="ex-overlay" role="dialog" aria-modal="true" aria-labelledby="ex-heading">
+  <div class="modal ex-modal">
+    <h3 id="ex-heading">Exercise library</h3>
+    <p class="lead">These power the suggestions when you log a workout, and their burn rate feeds the calorie maths. Saved to your account.</p>
+    <div class="ex-add">
+      <input type="text" id="ex-new-name" placeholder="New exercise, e.g. Bulgarian Split Squat" autocomplete="off" aria-label="Exercise name">
+      <select id="ex-new-type" aria-label="Exercise type"></select>
+      <button class="btn" id="ex-add-btn">Add</button>
+    </div>
+    <div class="ex-hint" id="ex-new-hint"></div>
+    <div class="ex-tools">
+      <input type="search" id="ex-filter" placeholder="Search your exercises…" autocomplete="off" aria-label="Search exercises">
+      <span class="ex-count" id="ex-count"></span>
+    </div>
+    <div class="ex-list" id="ex-list"></div>
+    <p class="ex-foot-note">Changing a burn rate affects new logs. Use <b>↻ Recalculate all</b> to update past entries too.</p>
+    <div class="modal-foot"><button class="btn ghost" id="ex-close">Done</button></div>
   </div>
 </div>
 
@@ -3902,7 +3952,121 @@ const EXERCISE_MET=[
   {k:['stretch','stretching','physio'],met:2.5},
   {k:['dance','dancing'],met:5.5},
 ];
-function findMET(name,timed){
+/* ---------------- Exercise library (user data) ----------------
+   S.training.exercises : names offered when logging
+   S.training.met       : optional {name: MET} overrides for the calorie maths
+   Exercise types map to the same MET bands as the built-in table. */
+const EX_TYPES=[
+  {id:'auto',label:'Auto-detect from name',met:null},
+  {id:'heavy',label:'Heavy lower body (squat, deadlift)',met:6.0},
+  {id:'compound',label:'Compound upper (press, row, pull-up)',met:5.5},
+  {id:'bodyweight',label:'Bodyweight / explosive',met:6.5},
+  {id:'isolation',label:'Isolation (curls, raises, extensions)',met:3.3},
+  {id:'core',label:'Core',met:4.0},
+  {id:'cardio-light',label:'Cardio — light (walk)',met:3.5},
+  {id:'cardio',label:'Cardio — moderate (cycle, row, swim)',met:7.0},
+  {id:'cardio-hard',label:'Cardio — hard (run, HIIT)',met:9.8},
+  {id:'sport',label:'Sport',met:6.5},
+  {id:'mobility',label:'Mobility / stretching',met:2.5}
+];
+function ensureTraining(){
+  // first edit copies the current plan (or the starter) into the user's own data
+  if(!S.training||!Array.isArray(S.training.exercises)||!Array.isArray(S.training.split)){
+    S.training=JSON.parse(JSON.stringify(getTraining()));
+  }
+  if(!S.training.met||typeof S.training.met!=='object')S.training.met={};
+  return S.training;
+}
+function customMET(name){
+  const m=S.training&&S.training.met;if(!m)return null;
+  const n=String(name||'').trim().toLowerCase();
+  const key=Object.keys(m).find(k=>k.toLowerCase()===n);
+  return key!=null&&isFinite(m[key])?+m[key]:null;
+}
+function builtinMET(name,timed){return findMET(name,timed,true);}
+function typeForMET(met){const t=EX_TYPES.find(x=>x.met===met);return t?t.id:null;}
+function exTypeOptions(sel){return EX_TYPES.map(t=>`<option value="${t.id}"${t.id===sel?' selected':''}>${esc(t.label)}${t.met?` · ${t.met} MET`:''}</option>`).join('');}
+function renderExLib(){
+  const list=$('#ex-list');if(!list)return;
+  const tr=getTraining();
+  const f=($('#ex-filter').value||'').trim().toLowerCase();
+  const todayEx=tr.split[new Date().getDay()].ex;
+  const names=tr.exercises.filter(n=>!f||n.toLowerCase().includes(f));
+  $('#ex-count').textContent=`${tr.exercises.length} exercise${tr.exercises.length===1?'':'s'}`;
+  if(!names.length){list.innerHTML=`<div class="ex-empty">${f?'No match — add it above.':'No exercises yet — add your first above.'}</div>`;return;}
+  list.innerHTML=names.map(n=>{
+    const cm=customMET(n);
+    const met=cm!=null?cm:builtinMET(n,false);
+    const sel=cm!=null?(typeForMET(cm)||'auto'):'auto';
+    const days=tr.split.map((d,i)=>d.ex.includes(n)?['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][i]:null).filter(Boolean);
+    return `<div class="ex-row" data-ex="${esc(n)}">
+      <div class="ex-main"><span class="ex-name">${esc(n)}</span>
+        <span class="ex-meta">${met} MET · ${cm!=null?'custom':'auto'}${days.length?` · in split: ${days.join(', ')}`:''}${todayEx.includes(n)?' · <b>today</b>':''}</span></div>
+      <select class="ex-type" data-ex-type="${esc(n)}" aria-label="Burn rate for ${esc(n)}">${exTypeOptions(sel)}</select>
+      <button class="ex-del" data-ex-del="${esc(n)}" title="Remove" aria-label="Remove ${esc(n)}">✕</button>
+    </div>`;}).join('');
+}
+function exNewHint(){
+  const n=($('#ex-new-name').value||'').trim(),h=$('#ex-new-hint');if(!h)return;
+  if(!n){h.textContent='';return;}
+  const t=$('#ex-new-type').value;const ty=EX_TYPES.find(x=>x.id===t);
+  const met=ty&&ty.met?ty.met:builtinMET(n,false);
+  const dup=getTraining().exercises.some(x=>x.toLowerCase()===n.toLowerCase());
+  h.innerHTML=dup?'Already in your library.':`Will use <b>${met} MET</b>${ty&&ty.met?'':' (detected from the name)'} — about <b>${exerciseKcalWithMet(met,3,12)} kcal</b> for 3×12.`;
+}
+function exerciseKcalWithMet(met,sets,reps){const bw=(S.body&&S.body.weight)||70;return Math.round(met*bw*(sets*(reps*3+60))/3600);}
+function addLibExercise(){
+  const name=($('#ex-new-name').value||'').trim().replace(/\s+/g,' ');
+  if(!name){toast('Type the exercise name first.');return;}
+  const tr=ensureTraining();
+  if(tr.exercises.some(x=>x.toLowerCase()===name.toLowerCase())){toast('That exercise is already in your library.');return;}
+  tr.exercises.push(name);
+  const ty=EX_TYPES.find(x=>x.id===$('#ex-new-type').value);
+  if(ty&&ty.met)tr.met[name]=ty.met;
+  $('#ex-new-name').value='';$('#ex-new-type').value='auto';exNewHint();
+  save();renderExLib();toast(`Added “${name}”.`);
+}
+function removeLibExercise(name){
+  const tr=ensureTraining();
+  const inSplit=tr.split.filter(d=>d.ex.includes(name)).length;
+  if(!confirm(`Remove “${name}” from your exercise library${inSplit?` and from ${inSplit} day${inSplit===1?'':'s'} of your weekly split`:''}?\n\nWorkouts you've already logged stay as they are.`))return;
+  tr.exercises=tr.exercises.filter(x=>x!==name);
+  tr.split.forEach(d=>{d.ex=d.ex.filter(x=>x!==name);});
+  Object.keys(tr.met).forEach(k=>{if(k.toLowerCase()===name.toLowerCase())delete tr.met[k];});
+  save();renderExLib();toast(`Removed “${name}”.`);
+}
+function setLibType(name,typeId){
+  const tr=ensureTraining();
+  Object.keys(tr.met).forEach(k=>{if(k.toLowerCase()===name.toLowerCase())delete tr.met[k];});
+  const ty=EX_TYPES.find(x=>x.id===typeId);
+  if(ty&&ty.met)tr.met[name]=ty.met;
+  save();renderExLib();
+}
+function openExLib(){
+  $('#ex-new-type').innerHTML=exTypeOptions('auto');
+  $('#ex-filter').value='';$('#ex-new-name').value='';exNewHint();
+  renderExLib();$('#ex-overlay').classList.add('on');
+  setTimeout(()=>$('#ex-new-name').focus(),40);
+}
+function closeExLib(){$('#ex-overlay').classList.remove('on');const b=$('#ex-lib-open');if(b)b.focus();}
+(function wireExLib(){
+  const ov=document.getElementById('ex-overlay');if(!ov)return;
+  document.getElementById('ex-lib-open').addEventListener('click',openExLib);
+  document.getElementById('ex-close').addEventListener('click',closeExLib);
+  document.getElementById('ex-add-btn').addEventListener('click',addLibExercise);
+  ov.addEventListener('click',e=>{
+    if(e.target===ov){closeExLib();return;}
+    const d=e.target.closest('[data-ex-del]');if(d)removeLibExercise(d.dataset.exDel);
+  });
+  ov.addEventListener('change',e=>{const t=e.target.closest('[data-ex-type]');if(t)setLibType(t.dataset.exType,t.value);});
+  document.getElementById('ex-new-name').addEventListener('input',exNewHint);
+  document.getElementById('ex-new-type').addEventListener('change',exNewHint);
+  document.getElementById('ex-new-name').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addLibExercise();}});
+  document.getElementById('ex-filter').addEventListener('input',renderExLib);
+  ov.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();closeExLib();}});
+})();
+function findMET(name,timed,builtinOnly){
+  if(!builtinOnly){const cm=customMET(name);if(cm!=null)return cm;}
   const t=' '+(name||'').toLowerCase()+' ';
   const hit=EXERCISE_MET.slice().sort((a,b)=>0)
     .flatMap(e=>e.k.map(k=>({k,met:e.met})))
