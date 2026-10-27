@@ -1254,12 +1254,14 @@ code,.mono{font-family:var(--mono)}
 .ex-meta{font-family:var(--mono);font-size:10.5px;color:var(--mist-dim)}
 .ex-meta b{color:var(--pencil);font-weight:500}
 .ex-type{flex:0 1 230px;min-width:0;font-size:12.5px!important;min-height:34px!important;padding:6px 8px!important}
+.ex-uni{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;color:var(--mist);white-space:nowrap;cursor:pointer}
+.ex-uni input{accent-color:var(--pencil);width:15px;height:15px;margin:0}
 .ex-del{background:none;border:1px solid transparent;border-radius:3px;color:var(--mist-dim);cursor:pointer;font-size:13px;padding:6px 8px;min-width:32px;min-height:32px}
 .ex-del:hover{color:var(--red);border-color:rgba(255,93,93,.4)}
 .ex-empty{padding:18px;text-align:center;color:var(--mist-dim);font-size:13.5px}
 .ex-foot-note{font-size:12.5px;color:var(--mist-dim);margin:10px 0 0}
 .ex-foot-note b{color:var(--mist);font-weight:500}
-@media(max-width:560px){.ex-row{flex-wrap:wrap}.ex-type{flex:1 1 100%;order:3}}
+@media(max-width:560px){.ex-row{flex-wrap:wrap}.ex-type{flex:1 1 100%;order:4}.ex-uni{order:3;flex:1 1 100%}}
 
 /* ---- Reset to default ---- */
 .reset-sec{border-top:1px solid rgba(255,93,93,.18);padding-top:16px}
@@ -1881,11 +1883,11 @@ code,.mono{font-family:var(--mono)}
     </div>
     <div class="ex-hint" id="ex-new-hint"></div>
     <div class="ex-tools">
-      <input type="search" id="ex-filter" placeholder="Search your exercises…" autocomplete="off" aria-label="Search exercises">
+      <input type="search" id="ex-filter" placeholder="Search by name or group (e.g. Chest, Home)…" autocomplete="off" aria-label="Search exercises">
       <span class="ex-count" id="ex-count"></span>
     </div>
     <div class="ex-list" id="ex-list"></div>
-    <p class="ex-foot-note">Changing a burn rate affects new logs. Use <b>↻ Recalculate all</b> to update past entries too.</p>
+    <p class="ex-foot-note">Changing a type or <b>One side at a time</b> also corrects that exercise's past logs automatically. Names are matched with or without plurals (“Curls” = “Curl”).</p>
     <div class="modal-foot"><button class="btn ghost" id="ex-close">Done</button></div>
   </div>
 </div>
@@ -2147,7 +2149,7 @@ function freshState(){
     cats:[...CATS.map(c=>({...c})),{name:'Roadmap',color:'#6fd3ff'}],
     goals:[...goals,...defaultRoadmapGoals(todayIso(),id)],
     // every one-shot migration is already "done" for a brand-new account
-    roadmapSeedV1:true,investRemovedV1:true,
+    roadmapSeedV1:true,investRemovedV1:true,metMatchV2:true,
     habits:seedHabits(),habitSeed:2,goalCheckpointsCleanupV1:true,
     meals:[],workouts:[],body:{weight:70,startWeight:70,goalWeight:65,height:170,age:25},bodyStatsV1:true,offDays:{},
     dumps:[],reviews:[],activeCat:'all',activeTerm:'all',quotes:[],reminders:[]
@@ -3285,7 +3287,7 @@ function renderFuel(){
   const wosListFocused=wosListEl&&wosListEl.contains(document.activeElement)&&document.activeElement.matches('[data-wokcal]');
   if(wosListEl&&!wosListFocused){
     wosListEl.innerHTML=wos.length?wos.map(w=>{
-      const detail=[w.load?`${w.load}kg`:'',(w.sets&&w.reps)?`${w.sets}×${w.reps}`:(w.sets?`${w.sets} sets`:''),w.min?`${w.min} min`:'',w.sec?`${w.sec} sec`:''].filter(Boolean).join(' · ');
+      const detail=[w.load?`${w.load}kg`:'',(w.sets&&w.reps)?`${w.sets}×${w.reps}${(!w.min&&!w.sec&&isUnilateral(w.act))?' each side':''}`:(w.sets?`${w.sets} sets`:''),w.min?`${w.min} min`:'',w.sec?`${w.sec} sec`:''].filter(Boolean).join(' · ');
       return `
       <div class="log-item" data-wid="${w.id}">
         <div class="li-txt">${esc(w.act)}${detail?` <span class="li-sub">· ${detail}</span>`:''}</div>
@@ -3923,7 +3925,9 @@ function renderWoSuggest(filterStr){
   el.classList.add('show');
 }
 function hideWoSuggest(){const el=$('#wo-suggest');if(el){el.classList.remove('show');el.innerHTML='';}}
-const EXERCISE_MET=[
+/* Frozen copy of the original keyword table — used only to work out what older log entries
+   were calculated with, so they can be corrected precisely (see metMatchV2 in bootApp). */
+const LEGACY_EXERCISE_MET_V1=[
   // heavy compound lower body
   {k:['squat','deadlift','leg press','lunge','lunges','hip thrust'],met:6.0},
   // compound upper body push/pull
@@ -3934,6 +3938,35 @@ const EXERCISE_MET=[
   {k:['bicep curl','curl','tricep','triceps','lateral raise','front raise','rear delt','calf raise','shrug','wrist curl'],met:3.3},
   // core
   {k:['plank','crunch','sit-up','situp','sit up','ab wheel','leg raise','hanging leg raise','cable crunch'],met:4.0},
+  // cardio / sport
+  {k:['run','running','sprint','jog','jogging'],met:9.8},
+  {k:['walk','walking'],met:3.5},
+  {k:['cycle','cycling','bike','biking','spin'],met:7.5},
+  {k:['swim','swimming'],met:7.0},
+  {k:['basketball'],met:6.5},
+  {k:['football'],met:7.0},
+  {k:['badminton'],met:5.5},
+  {k:['tennis'],met:7.3},
+  {k:['jump rope','skipping'],met:11.0},
+  {k:['hiit'],met:8.0},
+  {k:['rowing machine','rowing','rower'],met:7.0},
+  {k:['elliptical'],met:5.0},
+  {k:['stairs','stair climb','stairmaster'],met:8.0},
+  {k:['yoga'],met:2.5},
+  {k:['stretch','stretching','physio'],met:2.5},
+  {k:['dance','dancing'],met:5.5},
+];
+const EXERCISE_MET=[
+  // heavy compound lower body
+  {k:['squat','deadlift','leg press','lunge','hip thrust','split squat','bulgarian split squat','step up','romanian deadlift','rdl'],met:6.0},
+  // compound upper body push/pull
+  {k:['bench press','overhead press','shoulder press','chest press','incline press','decline press','press','pull-up','pullup','pull up','chin-up','chin up','row','bent over row','pulldown','pull down','lat pulldown','dip','tricep dip'],met:5.5},
+  // bodyweight/explosive
+  {k:['push-up','pushup','push up','burpee','mountain climber','jumping jack','box jump'],met:6.5},
+  // isolation (arms/shoulders/calves) — lower effort per rep
+  {k:['bicep curl','curl','preacher curl','tricep','lateral raise','front raise','rear delt','raise','calf raise','shrug','wrist curl','fly','flye','pec deck','extension','pushdown','kickback','skull crusher'],met:3.3},
+  // core
+  {k:['plank','crunch','sit-up','situp','sit up','ab wheel','leg raise','hanging leg raise','cable crunch','flutter kick','russian twist','dead bug','v-up','hollow hold','bicycle','bicycle crunch','suitcase','suitcase crunch'],met:4.0},
   // cardio / sport
   {k:['run','running','sprint','jog','jogging'],met:9.8},
   {k:['walk','walking'],met:3.5},
@@ -3991,7 +4024,8 @@ function renderExLib(){
   const tr=getTraining();
   const f=($('#ex-filter').value||'').trim().toLowerCase();
   const todayEx=tr.split[new Date().getDay()].ex;
-  const names=tr.exercises.filter(n=>!f||n.toLowerCase().includes(f));
+  const grp=n=>{const g=tr.groups&&tr.groups[n];return Array.isArray(g)?g:(g?[g]:[]);};
+  const names=tr.exercises.filter(n=>!f||n.toLowerCase().includes(f)||grp(n).join(' ').toLowerCase().includes(f));
   $('#ex-count').textContent=`${tr.exercises.length} exercise${tr.exercises.length===1?'':'s'}`;
   if(!names.length){list.innerHTML=`<div class="ex-empty">${f?'No match — add it above.':'No exercises yet — add your first above.'}</div>`;return;}
   list.innerHTML=names.map(n=>{
@@ -4001,7 +4035,8 @@ function renderExLib(){
     const days=tr.split.map((d,i)=>d.ex.includes(n)?['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][i]:null).filter(Boolean);
     return `<div class="ex-row" data-ex="${esc(n)}">
       <div class="ex-main"><span class="ex-name">${esc(n)}</span>
-        <span class="ex-meta">${met} MET · ${cm!=null?'custom':'auto'}${days.length?` · in split: ${days.join(', ')}`:''}${todayEx.includes(n)?' · <b>today</b>':''}</span></div>
+        <span class="ex-meta">${grp(n).length?`${esc(grp(n).join(' / '))} · `:''}${met} MET · ${cm!=null?'custom':'auto'}${days.length?` · in split: ${days.join(', ')}`:''}${todayEx.includes(n)?' · <b>today</b>':''}</span></div>
+      <label class="ex-uni" title="Tick if you do one arm/leg at a time and log reps per side"><input type="checkbox" data-ex-uni="${esc(n)}"${isUnilateral(n)?' checked':''}> One side at a time</label>
       <select class="ex-type" data-ex-type="${esc(n)}" aria-label="Burn rate for ${esc(n)}">${exTypeOptions(sel)}</select>
       <button class="ex-del" data-ex-del="${esc(n)}" title="Remove" aria-label="Remove ${esc(n)}">✕</button>
     </div>`;}).join('');
@@ -4033,14 +4068,35 @@ function removeLibExercise(name){
   tr.exercises=tr.exercises.filter(x=>x!==name);
   tr.split.forEach(d=>{d.ex=d.ex.filter(x=>x!==name);});
   Object.keys(tr.met).forEach(k=>{if(k.toLowerCase()===name.toLowerCase())delete tr.met[k];});
+  if(tr.groups)delete tr.groups[name];
+  if(tr.unilateral)Object.keys(tr.unilateral).forEach(k=>{if(k.toLowerCase()===name.toLowerCase())delete tr.unilateral[k];});
   save();renderExLib();toast(`Removed “${name}”.`);
 }
 function setLibType(name,typeId){
   const tr=ensureTraining();
+  const uni=isUnilateral(name);
+  const before={lift:findMET(name,false),timed:findMET(name,true)};
   Object.keys(tr.met).forEach(k=>{if(k.toLowerCase()===name.toLowerCase())delete tr.met[k];});
   const ty=EX_TYPES.find(x=>x.id===typeId);
   if(ty&&ty.met)tr.met[name]=ty.met;
-  save();renderExLib();
+  const after={lift:findMET(name,false),timed:findMET(name,true)};
+  let c=0;const n=name.trim().toLowerCase();
+  (S.workouts||[]).forEach(w=>{if(String(w.act||'').trim().toLowerCase()!==n)return;
+    const t=(w.min>0||w.sec>0)?'timed':'lift';
+    if(rescaleEntry(w,before[t],uni,after[t],uni))c++;});
+  save();renderExLib();render();
+  if(c)toast(`Updated ${c} past ${name} log${c===1?'':'s'} to the new burn rate.`);
+}
+function setLibUnilateral(name,on){
+  const tr=ensureTraining();
+  if(!tr.unilateral||typeof tr.unilateral!=='object')tr.unilateral={};
+  const was=isUnilateral(name);
+  Object.keys(tr.unilateral).forEach(k=>{if(k.toLowerCase()===name.toLowerCase())delete tr.unilateral[k];});
+  tr.unilateral[name]=!!on;                                 // explicit choice (can override name detection)
+  const met=findMET(name,false);
+  const c=rescaleExerciseEntries(name,met,was,met,!!on);
+  save();renderExLib();render();
+  toast(on?`${name}: reps now count for each side${c?` — ${c} past log${c===1?'':'s'} updated`:''}.`:`${name}: back to both sides together${c?` — ${c} past log${c===1?'':'s'} updated`:''}.`);
 }
 function openExLib(){
   $('#ex-new-type').innerHTML=exTypeOptions('auto');
@@ -4058,26 +4114,83 @@ function closeExLib(){$('#ex-overlay').classList.remove('on');const b=$('#ex-lib
     if(e.target===ov){closeExLib();return;}
     const d=e.target.closest('[data-ex-del]');if(d)removeLibExercise(d.dataset.exDel);
   });
-  ov.addEventListener('change',e=>{const t=e.target.closest('[data-ex-type]');if(t)setLibType(t.dataset.exType,t.value);});
+  ov.addEventListener('change',e=>{
+    const t=e.target.closest('[data-ex-type]');if(t)setLibType(t.dataset.exType,t.value);
+    const u=e.target.closest('[data-ex-uni]');if(u)setLibUnilateral(u.dataset.exUni,u.checked);
+  });
   document.getElementById('ex-new-name').addEventListener('input',exNewHint);
   document.getElementById('ex-new-type').addEventListener('change',exNewHint);
   document.getElementById('ex-new-name').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addLibExercise();}});
   document.getElementById('ex-filter').addEventListener('input',renderExLib);
   ov.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();closeExLib();}});
 })();
-function findMET(name,timed,builtinOnly){
-  if(!builtinOnly){const cm=customMET(name);if(cm!=null)return cm;}
-  const t=' '+(name||'').toLowerCase()+' ';
-  const hit=EXERCISE_MET.slice().sort((a,b)=>0)
-    .flatMap(e=>e.k.map(k=>({k,met:e.met})))
+/* Singular form of each word, so "Preacher Bicep Curls" matches "bicep curl", "Dumbbell Rows" matches "row",
+   "Presses" → "press", "Crunches" → "crunch". Words ending in "ss" ("press") are left alone. */
+function singularWords(str){
+  return String(str||'').toLowerCase().split(/(\s+|-|\/)/).map(w=>{
+    if(w.length<=3||/ss$/.test(w))return w;
+    if(/(ss|ch|sh|x)es$/.test(w))return w.slice(0,-2);
+    if(/ies$/.test(w))return w.slice(0,-3)+'y';
+    if(/s$/.test(w)&&!/us$|is$/.test(w))return w.slice(0,-1);
+    return w;
+  }).join('');
+}
+function matchMET(table,name,timed,useSingular){
+  const raw=(name||'').toLowerCase();
+  const t=' '+raw+' '+(useSingular?'| '+singularWords(raw)+' ':'');
+  const hit=table.flatMap(e=>e.k.map(k=>({k,met:e.met})))
     .sort((a,b)=>b.k.length-a.k.length)
     .find(({k})=>new RegExp('\\b'+k.replace(/[-/\\^$*+?.()|[\]{}]/g,'\\$&')+'\\b').test(t));
   if(hit)return hit.met;
   return timed?6.0:5.0;   // unrecognised fallback: generic cardio / generic resistance
 }
+function legacyMET(name,timed){return matchMET(LEGACY_EXERCISE_MET_V1,name,timed,false);}
+function findMET(name,timed,builtinOnly){
+  if(!builtinOnly){const cm=customMET(name);if(cm!=null)return cm;}
+  return matchMET(EXERCISE_MET,name,timed,true);
+}
+const UNILATERAL_RX=/\b(one|single)[\s-]?(arm|leg|hand|sided?)\b/i;
+function isUnilateral(name){
+  const n=String(name||'').trim().toLowerCase();
+  const u=S.training&&S.training.unilateral;
+  if(u){const k=Object.keys(u).find(k=>k.toLowerCase()===n);if(k!=null)return !!u[k];}
+  return UNILATERAL_RX.test(n);
+}
+/* The two parts of a lift's burn, for a given MET and side mode — shared by the live formula and
+   by corrections to past entries (which back out the body weight used at the time). */
+function burnParts(load,sets,reps,min,sec,uni){
+  const timed=(min>0||sec>0);
+  const r=(!timed&&uni)?reps*2:reps;                       // one side at a time: both sides' reps
+  let hr;
+  if(timed) hr=((min||0)*60+(sec||0))/3600;
+  else if(sets>0&&r>0) hr=(sets*(r*3+60))/3600;
+  else if(sets>0) hr=(sets*90)/3600;
+  else hr=0;
+  let work=0;
+  if(load>0&&sets>0&&r>0) work=(load*9.81*0.5*sets*r/0.22)/4184;
+  return {timed,hr,work};
+}
+/* Re-express an old entry under new settings, keeping the body weight it was logged with. */
+function rescaleEntry(w,oldMet,oldUni,newMet,newUni){
+  if(w.steps!=null)return false;
+  const a=burnParts(w.load||0,w.sets||0,w.reps||0,w.min||0,w.sec||0,oldUni);
+  const b=burnParts(w.load||0,w.sets||0,w.reps||0,w.min||0,w.sec||0,newUni);
+  if(a.hr<=0||!oldMet)return false;
+  const bw=((w.kcal||0)-a.work)/(oldMet*a.hr);
+  if(!(bw>=35&&bw<=250))return false;                     // looks hand-edited: leave it alone
+  const nk=Math.max(0,Math.round(newMet*bw*b.hr+b.work));
+  if(nk===w.kcal)return false;
+  w.kcal=nk;return true;
+}
+function rescaleExerciseEntries(name,oldMet,oldUni,newMet,newUni){
+  const n=String(name).trim().toLowerCase();let c=0;
+  (S.workouts||[]).forEach(w=>{if(String(w.act||'').trim().toLowerCase()===n&&rescaleEntry(w,oldMet,oldUni,newMet,newUni))c++;});
+  return c;
+}
 function exerciseKcal(name,load,sets,reps,min,sec){
   const bw=(S.body&&S.body.weight)||70;
   const timed=(min>0||sec>0);
+  if(!timed&&isUnilateral(name))reps=reps*2;
   let hr;
   if(timed) hr=((min||0)*60+(sec||0))/3600;
   else if(sets>0&&reps>0) hr=(sets*(reps*3+60))/3600;   // ~3s per rep + 60s rest per set
@@ -4260,7 +4373,7 @@ function resetUiRefresh(){
   let b=null;try{b=JSON.parse(localStorage.getItem(RESET_BACKUP_KEY)||'null');}catch(e){}
   const row=$('#reset-undo-row');if(!row)return;
   row.hidden=!b;
-  if(b)$('#reset-undo-when').textContent=`from ${new Date(b.at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})} (${({all:'full reset',roadmap:'roadmap reset',patch:'patch',restore:'restore'})[b.kind]||b.kind})`;
+  if(b)$('#reset-undo-when').textContent=`from ${new Date(b.at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})} (${({all:'full reset',roadmap:'roadmap reset',patch:'patch',restore:'restore',recalc:'workout correction'})[b.kind]||b.kind})`;
 }
 function resetRoadmap(){
   if(!confirm('Replace your roadmap with the default 4 sprints, starting today?\n\nYour current sprints are kept as a backup on this device.'))return;
@@ -4426,6 +4539,25 @@ async function bootApp(){
     S.cats=S.cats.filter(c=>c.name!=='Investment');
     S.goals=S.goals.filter(g=>g.cat!=='Investment');
     S.investRemovedV1=true;
+  }
+  if(!S.metMatchV2){
+    // Improved name matching (plurals, chest press, pulldowns…). Past workouts that were calculated
+    // with the old fallback are corrected, keeping the body weight each one was logged with.
+    // Hand-edited numbers are detected and left alone. A copy is kept for "Undo last change".
+    const fixes=[];
+    (S.workouts||[]).forEach(w=>{
+      if(w.steps!=null||!w.act)return;
+      const timed=(w.min>0||w.sec>0);
+      const oldMet=legacyMET(w.act,timed),newMet=findMET(w.act,timed);
+      if(oldMet!==newMet)fixes.push({w,oldMet,newMet});
+    });
+    if(fixes.length){
+      try{stashBeforeReset('recalc');}catch(_){}
+      let c=0;fixes.forEach(f=>{if(rescaleEntry(f.w,f.oldMet,false,f.newMet,false))c++;});
+      if(c)setTimeout(()=>toast(`Improved exercise matching: ${c} past workout${c===1?'':'s'} corrected. Undo is in Backup & sync.`,6000),900);
+    }
+    S.metMatchV2=true;
+    try{save();}catch(_){}
   }
   if(!S.activeCat)S.activeCat='all';
   render();
