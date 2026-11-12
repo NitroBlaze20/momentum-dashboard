@@ -1327,6 +1327,13 @@ code,.mono{font-family:var(--mono)}
 .cd-link{background:none;border:0;padding:0;color:var(--pencil);cursor:pointer;font-size:12.5px}
 @media(max-width:640px){.cal-untracked{display:none}}
 
+/* ---- Timeline options ---- */
+.tl-opts{display:flex;flex-direction:column;gap:6px;margin-top:16px;padding-top:14px;border-top:1px solid var(--edge,#1d2228)}
+.tl-toggle{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--text);cursor:pointer;width:fit-content}
+.tl-toggle input{accent-color:var(--pencil);width:16px;height:16px;margin:0}
+.tl-hint{font-size:12.5px;color:var(--mist-dim)}
+.tl-link{background:none;border:0;padding:0;color:var(--pencil);cursor:pointer;font-size:12.5px;text-decoration:underline;text-underline-offset:3px}
+
 /* ---- TimeTree-style month: continuous bars ---- */
 .tt-month{--tt-row:20px;border:1px solid var(--edge,#1d2228);border-radius:6px;overflow:hidden;background:#0f1114}
 .tt-wd{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));background:#0d0f12;border-bottom:1px solid var(--edge,#1d2228)}
@@ -1701,7 +1708,7 @@ code,.mono{font-family:var(--mono)}
       <button data-go="habits"><span class="ic">◍</span> Habits <span class="badge" id="b-hab">0</span></button>
       <button data-go="fuel"><span class="ic">◆</span> Fuel <span class="badge" id="b-fuel">0</span></button>
       <button data-go="goals"><span class="ic">⬡</span> Goals <span class="badge" id="b-goals">0</span></button>
-      <button data-go="deadlines"><span class="ic">◷</span> Deadlines <span class="badge" id="b-dl">0</span></button>
+      <button data-go="deadlines"><span class="ic">◷</span> Calendar <span class="badge" id="b-dl">0</span></button>
       <button data-go="capture"><span class="ic">✎</span> Capture <span class="badge" id="b-cap">0</span></button>
       <button data-go="quotes"><span class="ic">❝</span> Quotes</button>
       <button id="open-sync" class="nav-util nav-section-break"><span class="ic">⤓</span> Backup &amp; sync</button>
@@ -1987,18 +1994,10 @@ code,.mono{font-family:var(--mono)}
       <div id="dl-timeline-wrap" style="display:none">
         <div id="dl-roadmap-gantt"></div>
         <div id="dl-timeline"></div>
-        <p class="fuel-tip" style="margin-top:14px">Goal deadlines show automatically, colored by urgency. Add your own reminders below — a single day, or a window if it spans a range.</p>
-        <div class="add-row" style="margin-top:16px">
-          <input id="rem-title" placeholder="What's the reminder?">
-          <input id="rem-start" type="date" style="flex:none">
-          <label class="rem-range-label"><input id="rem-range" type="checkbox"> window</label>
+        <div class="tl-opts">
+          <label class="tl-toggle"><input type="checkbox" id="tl-show-events"> Show my calendar events on the timeline</label>
+          <span class="tl-hint">The timeline shows your goal deadlines and sprints. Your own events live in <button class="tl-link" data-dlview="calendar">Calendar</button>.</span>
         </div>
-        <div id="rem-end-row" class="add-row" style="display:none;margin-top:8px">
-          <input id="rem-end" type="date" placeholder="Ends">
-        </div>
-        <div id="rem-error" class="rem-error"></div>
-        <button class="btn" id="rem-add" style="margin-top:10px">Add reminder</button>
-        <div id="rem-chips" class="rem-chips"></div>
       </div>
     </section>
 
@@ -3025,15 +3024,15 @@ function renderDeadlineTimeline(){
     sortDate:g.deadline,removable:false,
     col:(()=>{const d=daysTo(g.deadline);return d<0?'var(--coral)':d<=14?'var(--amber)':'var(--current)';})()
   }));
-  const remEvents=S.reminders.map(r=>({
+  const remEvents=(S.tlShowEvents?S.reminders:[]).map(r=>({
     id:'r'+r.id,title:r.title,start:r.start,end:r.end||null,sortDate:r.start,removable:true,col:kindOf(r).col
   }));
   const items=[...goalEvents,...remEvents];
-  renderReminderChips();
+  const tg=$('#tl-show-events');if(tg)tg.checked=!!S.tlShowEvents;
   // A selected (expanded) Roadmap sprint gets reflected on this timeline as a highlighted
   // band, even though sprint dots/bars themselves stay off it (they live on the Gantt strip).
   const selectedSprints=S.goals.filter(g=>g.cat==='Roadmap'&&g.deadline&&g.opensOn&&openGoals.has(String(g.id)));
-  if(!items.length&&!selectedSprints.length){canvas.innerHTML=`<div class="empty">Nothing dated yet — add a reminder below, or set a date on a goal.</div>`;return;}
+  if(!items.length&&!selectedSprints.length){canvas.innerHTML=`<div class="empty">No dated goals yet — set a date on a goal with ✎ and it appears here.</div>`;return;}
   const allDates=items.flatMap(it=>it.end?[it.start,it.end]:[it.start])
     .concat(selectedSprints.flatMap(g=>[g.opensOn,g.deadline]))
     .map(d=>new Date(d+'T00:00:00').getTime());
@@ -3100,7 +3099,7 @@ function renderDeadlineTimeline(){
 /* ---------------- Calendar ----------------
    Month view of everything dated: goal deadlines, roadmap sprints and your own events.
    Your events live in S.reminders (same list the Timeline uses), now with optional
-   kind / time / note. Week starts Monday. */
+   kind / time / note. Week starts Sunday. */
 const EVENT_KINDS=[
   {id:'event',label:'Event',col:'#6fd3ff'},
   {id:'timeoff',label:'Time off',col:'#4ade80'},
@@ -3160,7 +3159,7 @@ function renderCalendar(){
   if(!calSel)calSel=today;
   const [y,m]=calMonth.split('-').map(Number);
   const first=new Date(y,m-1,1);
-  const lead=(first.getDay()+6)%7;                       // Monday-first
+  const lead=first.getDay();                             // Sunday-first
   const gridStart=new Date(y,m-1,1-lead);
   const lay=calLayers();
   const monthName=first.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
@@ -3225,7 +3224,7 @@ function renderCalendar(){
       <div class="cal-layers">${lt('events','My events')}${lt('deadlines','Deadlines')}${lt('sprints','Sprints')}</div>
     </div>
     <div class="tt-month">
-      <div class="tt-wd">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(w=>`<div>${w}</div>`).join('')}</div>
+      <div class="tt-wd">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(w=>`<div>${w}</div>`).join('')}</div>
       ${weeks}
     </div>
     <div class="cal-legend">${EVENT_KINDS.map(k=>`<span><i style="background:${k.col}"></i>${k.label}</span>`).join('')}<span><i class="bar" style="background:var(--pencil)"></i>Sprint</span><span><i class="bar" style="background:#8fa3b8"></i>Goal window / deadline ⚑</span><span><i class="bar" style="background:var(--amber)"></i>Due within 14 days</span><span><i class="stripes"></i>Off day</span></div>`;
@@ -4812,6 +4811,7 @@ document.addEventListener('input',e=>{
 // focused (see renderFuel) so typing doesn't reverse itself. Once the user
 // leaves the field, do one more render so the list is back in sync.
 document.addEventListener('change',e=>{
+  if(e.target&&e.target.id==='tl-show-events'){S.tlShowEvents=e.target.checked;renderDeadlineTimeline();save();return;}
   const l=e.target.closest&&e.target.closest('[data-callayer]');
   if(l){calLayers()[l.dataset.callayer]=l.checked;renderCalendar();save();}
 });
