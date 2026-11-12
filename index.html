@@ -1231,6 +1231,84 @@ code,.mono{font-family:var(--mono)}
   .spc-body{padding-left:14px}
 }
 
+/* ---- Calendar ---- */
+.cal-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start}
+.cal-head{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;margin-bottom:12px}
+.cal-nav{display:flex;align-items:center;gap:8px}
+.cal-title{font-family:var(--display);font-size:20px;font-weight:500;letter-spacing:-.01em;min-width:170px;text-align:center;margin:0}
+.cal-arrow{background:transparent;border:1px solid var(--edge-hi,#2b323a);border-radius:4px;color:var(--text);width:34px;height:34px;font-size:18px;line-height:1;cursor:pointer}
+.cal-arrow:hover{border-color:rgba(111,211,255,.5)}
+.cal-layers{display:flex;gap:12px;flex-wrap:wrap}
+.cal-layer{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--mist);cursor:pointer}
+.cal-layer input{accent-color:var(--pencil);margin:0}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:1px;background:var(--edge,#1d2228);border:1px solid var(--edge,#1d2228);border-radius:6px;overflow:hidden}
+.cal-wd{background:#0d0f12;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mist-dim);padding:8px 8px 6px}
+.cal-cell{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:3px;min-height:104px;padding:20px 6px 6px;background:#0f1114;border:0;color:var(--text);
+  text-align:left;cursor:pointer;font-family:var(--body);min-width:0;transition:background .12s}
+.cal-cell:hover{background:#13171b}
+.cal-cell.out{background:#0b0d10}
+.cal-cell.out .cal-num,.cal-cell.out .cal-chips{opacity:.45}
+.cal-cell.offday{background-image:repeating-linear-gradient(135deg,rgba(232,163,61,.06) 0 6px,transparent 6px 12px)}
+.cal-cell.sel{box-shadow:inset 0 0 0 1.5px var(--pencil);z-index:1}
+.cal-num{position:absolute;top:5px;right:7px;font-family:var(--mono);font-size:11.5px;color:var(--mist)}
+.cal-cell.today .cal-num{background:var(--pencil);color:#06080a;border-radius:999px;padding:1px 6px;font-weight:600}
+.cal-sprint{position:absolute;top:0;left:0;right:0;height:3px;background:rgba(111,211,255,.45);font-size:0}
+.cal-sprint.s-first{left:4px;border-top-left-radius:2px;border-bottom-left-radius:2px}
+.cal-sprint.s-last{right:4px}
+.cal-sprint:not(:empty){font-size:9.5px;font-family:var(--mono);color:var(--pencil);height:auto;background:none;border-top:3px solid rgba(111,211,255,.45);
+  padding:2px 6px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;right:44px;letter-spacing:.04em;line-height:1.2}
+.cal-chips{display:flex;flex-direction:column;gap:3px;min-width:0;margin-top:4px}
+.cal-chip{display:block;font-size:11.5px;line-height:1.3;padding:2px 6px;border-radius:3px;background:color-mix(in srgb,var(--c) 16%,transparent);
+  border-left:2px solid var(--c);color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-chip em{font-style:normal;font-family:var(--mono);font-size:10px;color:var(--mist)}
+.cal-chip.cont{opacity:.7}
+.cal-chip.t-deadline{background:transparent;border-left-style:solid;font-weight:500}
+.cal-chip.t-opens{background:transparent;color:var(--mist);font-style:italic}
+.cal-more{font-family:var(--mono);font-size:10px;color:var(--mist-dim);padding-left:6px}
+.cal-dots{display:none;gap:3px;flex-wrap:wrap;margin-top:auto}
+.cal-dots i,.cal-legend i{display:inline-block;width:7px;height:7px;border-radius:999px}
+.cal-legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:11.5px;color:var(--mist-dim)}
+.cal-legend span{display:inline-flex;align-items:center;gap:6px}
+.cal-legend i.bar{width:14px;height:3px;border-radius:2px;background:rgba(111,211,255,.6)}
+.cal-day{position:sticky;top:16px;background:linear-gradient(180deg,var(--panel-top,#13161a),var(--panel,#0f1114));border:1px solid var(--edge,#1d2228);border-radius:6px;padding:16px}
+.cd-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px}
+.cd-date{font-family:var(--display);font-size:16px;font-weight:500}
+.cd-rel{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--pencil)}
+.cd-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.cal-item{display:flex;align-items:flex-start;gap:10px;padding:8px 8px 8px 0;border-bottom:1px solid var(--edge,#1d2228)}
+.ci-bar{flex:none;width:3px;align-self:stretch;border-radius:2px;background:var(--c)}
+.ci-main{flex:1;min-width:0}
+.ci-title{font-size:13.5px;font-weight:500;overflow-wrap:anywhere}
+.ci-meta{font-family:var(--mono);font-size:10.5px;color:var(--mist-dim);margin-top:2px}
+.ci-note{font-size:12.5px;color:var(--mist);margin-top:4px;white-space:pre-wrap}
+.ci-btn{background:none;border:1px solid transparent;border-radius:3px;color:var(--mist-dim);cursor:pointer;font-size:12px;padding:5px 7px;min-width:30px;min-height:30px}
+.ci-btn:hover{color:var(--pencil);border-color:var(--edge-hi,#2b323a)}
+.ci-btn.del:hover{color:var(--red);border-color:rgba(255,93,93,.4)}
+.ci-empty{font-size:13px;color:var(--mist-dim);padding:6px 0}
+.cd-form{display:flex;flex-direction:column;gap:8px;padding-top:12px;border-top:1px solid var(--edge,#1d2228)}
+.cd-form-title{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mist)}
+.cd-form input,.cd-form select,.cd-form textarea{width:100%;min-width:0;background:var(--deep-2);border:1px solid var(--edge-hi,#2b323a);border-radius:4px;color:var(--text);
+  padding:8px 10px;font-family:var(--body);font-size:13.5px;min-height:38px}
+.cd-form textarea{resize:vertical}
+.cd-form input:focus,.cd-form select:focus,.cd-form textarea:focus{outline:none;border-color:var(--pencil)}
+.cd-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cd-lbl{display:flex;flex-direction:column;gap:4px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mist-dim)}
+.cd-lbl{min-width:0;white-space:nowrap}
+.cd-lbl em{font-style:normal;text-transform:none;letter-spacing:0}
+.cal-chip.t-sprint{background:transparent;border-left-color:transparent;color:var(--pencil);font-family:var(--mono);font-size:10px;padding-left:2px;letter-spacing:.03em}
+.cd-err{color:var(--red);font-size:12.5px;min-height:16px}
+.cd-actions{display:flex;justify-content:flex-end;gap:8px}
+@media(max-width:1100px){.cal-layout{grid-template-columns:1fr}.cal-day{position:static}}
+@media(max-width:640px){
+  .cal-cell{min-height:58px;padding:18px 3px 4px;align-items:center}
+  .cal-num{right:50%;transform:translateX(50%);top:4px}
+  .cal-chips{display:none}
+  .cal-dots{display:flex;justify-content:center}
+  .cal-sprint:not(:empty){font-size:0;padding:0;height:3px;border-top:0;background:rgba(111,211,255,.45);right:0}
+  .cal-wd{padding:6px 2px;text-align:center;letter-spacing:.06em}
+  .cal-title{min-width:0;font-size:17px}
+}
+
 /* ---- Easier logging: usuals + rough day ---- */
 .usuals{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:4px 0 12px}
 .usuals:empty{display:none}
@@ -1837,8 +1915,15 @@ code,.mono{font-family:var(--mono)}
       <div class="dl-view-toggle" id="dl-view-toggle">
         <button class="dl-view-btn on" data-dlview="list">List</button>
         <button class="dl-view-btn" data-dlview="timeline">Timeline</button>
+        <button class="dl-view-btn" data-dlview="calendar">Calendar</button>
       </div>
       <div id="dl-list"></div>
+      <div id="dl-cal-wrap" style="display:none">
+        <div class="cal-layout">
+          <div class="cal-main" id="dl-cal"></div>
+          <aside class="cal-day" id="dl-cal-day" aria-live="polite"></aside>
+        </div>
+      </div>
       <div id="dl-timeline-wrap" style="display:none">
         <div id="dl-roadmap-gantt"></div>
         <div id="dl-timeline"></div>
@@ -2277,7 +2362,7 @@ function render(){
   if(view==='habits')renderHabits();
   if(view==='fuel')renderFuel();
   if(view==='goals')renderGoals();
-  if(view==='deadlines')renderDeadlines();
+  if(view==='deadlines'){renderDeadlines();applyDlView();}
   if(view==='capture')renderCapture();
   save();
 }
@@ -2881,7 +2966,7 @@ function renderDeadlineTimeline(){
     col:(()=>{const d=daysTo(g.deadline);return d<0?'var(--coral)':d<=14?'var(--amber)':'var(--current)';})()
   }));
   const remEvents=S.reminders.map(r=>({
-    id:'r'+r.id,title:r.title,start:r.start,end:r.end||null,sortDate:r.start,removable:true,col:'var(--sand)'
+    id:'r'+r.id,title:r.title,start:r.start,end:r.end||null,sortDate:r.start,removable:true,col:kindOf(r).col
   }));
   const items=[...goalEvents,...remEvents];
   renderReminderChips();
@@ -2951,6 +3036,160 @@ function renderDeadlineTimeline(){
     </div>`;
   });
   canvas.innerHTML=html;
+}
+/* ---------------- Calendar ----------------
+   Month view of everything dated: goal deadlines, roadmap sprints and your own events.
+   Your events live in S.reminders (same list the Timeline uses), now with optional
+   kind / time / note. Week starts Monday. */
+const EVENT_KINDS=[
+  {id:'event',label:'Event',col:'#6fd3ff'},
+  {id:'timeoff',label:'Time off',col:'#4ade80'},
+  {id:'reminder',label:'Reminder',col:'#e8a33d'},
+  {id:'personal',label:'Personal',col:'#b39dff'}
+];
+function kindOf(r){return EVENT_KINDS.find(k=>k.id===(r.kind||'reminder'))||EVENT_KINDS[2];}
+let calMonth=null;            // 'YYYY-MM' being shown
+let calSel=null;              // selected day 'YYYY-MM-DD'
+let calEditId=null;           // event being edited
+function isoD(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function applyDlView(){
+  const mode=S.dlView||'list';
+  $$('.dl-view-btn').forEach(b=>{const on=b.dataset.dlview===mode;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on);});
+  const L=$('#dl-list'),T=$('#dl-timeline-wrap'),C=$('#dl-cal-wrap');if(!L||!T||!C)return;
+  L.style.display=mode==='list'?'':'none';
+  T.style.display=mode==='timeline'?'':'none';
+  C.style.display=mode==='calendar'?'':'none';
+  if(mode==='timeline')renderDeadlineTimeline();
+  if(mode==='calendar')renderCalendar();
+}
+function calLayers(){S.calLayers=Object.assign({deadlines:true,sprints:true,events:true},S.calLayers||{});return S.calLayers;}
+/* Everything that touches the given day. */
+function calItemsOn(dk){
+  const lay=calLayers(),out=[];
+  if(lay.events)(S.reminders||[]).forEach(r=>{
+    const end=r.end||r.start;
+    if(dk>=r.start&&dk<=end){const k=kindOf(r);out.push({type:'event',id:r.id,title:r.title,col:k.col,kind:k.label,time:r.time||'',note:r.note||'',
+      multi:!!r.end&&r.end!==r.start,first:dk===r.start,last:dk===end,start:r.start,end:r.end||null});}
+  });
+  if(lay.deadlines)S.goals.forEach(g=>{
+    if(g.done||g.cat==='Roadmap')return;
+    if(g.deadline===dk){const d=daysTo(dk);out.push({type:'deadline',id:g.id,title:g.title,col:d<0?'var(--red)':d<=14?'var(--amber)':'var(--mist)',kind:'Deadline'});}
+    else if(g.opensOn===dk&&g.deadline)out.push({type:'opens',id:g.id,title:g.title,col:'var(--mist-dim)',kind:'Opens'});
+  });
+  if(lay.sprints)S.goals.forEach(g=>{
+    if(g.cat!=='Roadmap'||!g.opensOn||!g.deadline)return;
+    if(dk>=g.opensOn&&dk<=g.deadline)out.push({type:'sprint',id:g.id,title:sprintCleanTitle(g.title),col:'var(--pencil)',kind:'Sprint',first:dk===g.opensOn,last:dk===g.deadline,start:g.opensOn,end:g.deadline});
+  });
+  const rank={event:0,deadline:1,opens:2,sprint:3};
+  return out.sort((a,b)=>(rank[a.type]-rank[b.type])||String(a.time).localeCompare(String(b.time)));
+}
+function renderCalendar(){
+  const box=$('#dl-cal');if(!box)return;
+  const today=todayKey();
+  if(!calMonth)calMonth=today.slice(0,7);
+  if(!calSel)calSel=today;
+  const [y,m]=calMonth.split('-').map(Number);
+  const first=new Date(y,m-1,1);
+  const lead=(first.getDay()+6)%7;                       // Monday-first
+  const start=new Date(y,m-1,1-lead);
+  const lay=calLayers();
+  const monthName=first.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+  let cells='';
+  for(let i=0;i<42;i++){
+    const d=new Date(start);d.setDate(start.getDate()+i);
+    const dk=isoD(d),inMonth=d.getMonth()===m-1,items=calItemsOn(dk);
+    const sprint=items.find(x=>x.type==='sprint');
+    const shown=items.filter(x=>x.type!=='sprint');
+    const sprintChip=sprint&&(sprint.first||d.getDay()===1)?`<span class="cal-chip t-sprint" style="--c:var(--pencil)">${esc(sprint.title.replace(/^Sprint (\d+)\s*—\s*/,'S$1 · '))}</span>`:'';
+    const chips=sprintChip+shown.slice(0,sprintChip?2:3).map(x=>`<span class="cal-chip t-${x.type}${x.multi&&!x.first?' cont':''}" style="--c:${x.col}">${x.time?`<em>${esc(x.time)}</em> `:''}${esc(x.title)}</span>`).join('');
+    const dots=shown.slice(0,4).map(x=>`<i style="background:${x.col}"></i>`).join('');
+    const cap=sprintChip?2:3;
+    const more=shown.length>cap?`<span class="cal-more">+${shown.length-cap} more</span>`:'';
+    const label=`${d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}${shown.length?`, ${shown.length} item${shown.length===1?'':'s'}`:''}`;
+    cells+=`<button class="cal-cell${inMonth?'':' out'}${dk===today?' today':''}${dk===calSel?' sel':''}${(S.offDays||{})[dk]?' offday':''}" data-calday="${dk}" aria-label="${esc(label)}" aria-pressed="${dk===calSel}">
+      ${sprint?`<span class="cal-sprint${sprint.first?' s-first':''}${sprint.last?' s-last':''}" title="${esc(sprint.title)}"></span>`:''}
+      <span class="cal-num">${d.getDate()}</span>
+      <span class="cal-chips">${chips}${more}</span>
+      <span class="cal-dots">${dots}</span>
+    </button>`;
+  }
+  const lt=(k,l)=>`<label class="cal-layer"><input type="checkbox" data-callayer="${k}"${lay[k]?' checked':''}> ${l}</label>`;
+  box.innerHTML=`
+    <div class="cal-head">
+      <div class="cal-nav">
+        <button class="cal-arrow" data-calnav="-1" aria-label="Previous month">‹</button>
+        <h3 class="cal-title">${monthName}</h3>
+        <button class="cal-arrow" data-calnav="1" aria-label="Next month">›</button>
+        <button class="btn ghost tiny" data-calnav="0">Today</button>
+      </div>
+      <div class="cal-layers">${lt('events','My events')}${lt('deadlines','Deadlines')}${lt('sprints','Sprints')}</div>
+    </div>
+    <div class="cal-grid" role="grid">
+      ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(w=>`<div class="cal-wd">${w}</div>`).join('')}
+      ${cells}
+    </div>
+    <div class="cal-legend">${EVENT_KINDS.map(k=>`<span><i style="background:${k.col}"></i>${k.label}</span>`).join('')}<span><i style="background:var(--amber)"></i>Deadline soon</span><span><i class="bar"></i>Sprint</span></div>`;
+  renderCalDay();
+}
+function renderCalDay(force){
+  const box=$('#dl-cal-day');if(!box)return;
+  // don't wipe what you're typing if something else (e.g. a sync) re-renders
+  const ae=document.activeElement;
+  if(!force&&ae&&box.contains(ae)&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName))return;
+  const dk=calSel||todayKey();
+  const items=calItemsOn(dk);
+  const ev=calEditId!=null?(S.reminders||[]).find(r=>String(r.id)===String(calEditId)):null;
+  const d=new Date(dk+'T00:00:00');
+  const rel=dk===todayKey()?'Today':daysTo(dk)===1?'Tomorrow':daysTo(dk)===-1?'Yesterday':'';
+  const list=items.length?items.map(x=>`
+    <div class="cal-item" style="--c:${x.col}">
+      <span class="ci-bar"></span>
+      <div class="ci-main">
+        <div class="ci-title">${esc(x.title)}</div>
+        <div class="ci-meta">${esc(x.kind)}${x.time?` · ${esc(x.time)}`:''}${(x.type==='event'||x.type==='sprint')&&x.end?` · ${fmtDate(x.start)} → ${fmtDate(x.end)}`:''}</div>
+        ${x.note?`<div class="ci-note">${esc(x.note)}</div>`:''}
+      </div>
+      ${x.type==='event'?`<button class="ci-btn" data-caledit="${x.id}" aria-label="Edit ${esc(x.title)}">✎</button><button class="ci-btn del" data-caldel="${x.id}" aria-label="Delete ${esc(x.title)}">✕</button>`:''}
+    </div>`).join(''):`<div class="ci-empty">Nothing on this day.</div>`;
+  const val=f=>ev?esc(ev[f]||''):'';
+  const kindOpts=EVENT_KINDS.map(k=>`<option value="${k.id}"${(ev?(ev.kind||'reminder'):'event')===k.id?' selected':''}>${k.label}</option>`).join('');
+  box.innerHTML=`
+    <div class="cd-head"><div class="cd-date">${d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}</div>${rel?`<span class="cd-rel">${rel}</span>`:''}</div>
+    <div class="cd-list">${list}</div>
+    <div class="cd-form">
+      <div class="cd-form-title">${ev?'Edit event':'Add to this day'}</div>
+      <input type="text" id="cal-title" placeholder="e.g. Dinner with family, Leave, Book BTT" value="${val('title')}" autocomplete="off" aria-label="Event title">
+      <div class="cd-row">
+        <select id="cal-kind" aria-label="Type">${kindOpts}</select>
+        <input type="time" id="cal-time" value="${val('time')}" aria-label="Time (optional)">
+      </div>
+      <div class="cd-row">
+        <label class="cd-lbl">From<input type="date" id="cal-start" value="${ev?ev.start:dk}"></label>
+        <label class="cd-lbl">Until <em>(optional)</em><input type="date" id="cal-end" value="${val('end')}"></label>
+      </div>
+      <textarea id="cal-note" rows="2" placeholder="Note (optional)" aria-label="Note">${val('note')}</textarea>
+      <div class="cd-err" id="cal-err" role="alert"></div>
+      <div class="cd-actions">
+        ${ev?'<button class="btn ghost" data-calcancel>Cancel</button>':''}
+        <button class="btn" data-calsave>${ev?'Save changes':'Add event'}</button>
+      </div>
+    </div>`;
+}
+function saveCalEvent(){
+  const title=($('#cal-title').value||'').trim(),start=$('#cal-start').value,end=$('#cal-end').value,time=$('#cal-time').value,note=($('#cal-note').value||'').trim(),kind=$('#cal-kind').value;
+  const err=m=>{$('#cal-err').textContent=m;};
+  if(!title)return err('Give it a name.');
+  if(!start)return err('Pick a date.');
+  if(end&&end<start)return err('“Until” is before the start date.');
+  S.reminders=S.reminders||[];
+  let r=calEditId!=null?S.reminders.find(x=>String(x.id)===String(calEditId)):null;
+  if(!r){r={id:Date.now()};S.reminders.push(r);}
+  r.title=title;r.start=start;r.kind=kind;
+  if(end&&end!==start)r.end=end;else delete r.end;
+  if(time)r.time=time;else delete r.time;
+  if(note)r.note=note;else delete r.note;
+  const wasEdit=calEditId!=null;calEditId=null;calSel=start;calMonth=start.slice(0,7);
+  render();toast(wasEdit?'Event updated.':`Added “${title}”.`);
 }
 function renderReminderChips(){
   const el=$('#rem-chips');if(!el)return;
@@ -3698,13 +3937,31 @@ document.addEventListener('click',e=>{
   // deadlines: List / Timeline view toggle
   const dlViewBtn=e.target.closest('[data-dlview]');
   if(dlViewBtn){
-    const mode=dlViewBtn.dataset.dlview;
-    $$('.dl-view-btn').forEach(b=>b.classList.toggle('on',b.dataset.dlview===mode));
-    $('#dl-list').style.display=mode==='list'?'':'none';
-    $('#dl-timeline-wrap').style.display=mode==='timeline'?'':'none';
-    if(mode==='timeline')renderDeadlineTimeline();
+    S.dlView=dlViewBtn.dataset.dlview;
+    applyDlView();save();
     return;
   }
+
+  // calendar
+  const calDay=e.target.closest('[data-calday]');
+  if(calDay){calSel=calDay.dataset.calday;calEditId=null;
+    if(calSel.slice(0,7)!==calMonth)calMonth=calSel.slice(0,7);
+    renderCalendar();
+    if(window.matchMedia('(max-width:900px)').matches){const p=$('#dl-cal-day');if(p)p.scrollIntoView({behavior:'smooth',block:'start'});}
+    return;}
+  const calNav=e.target.closest('[data-calnav]');
+  if(calNav){const n=+calNav.dataset.calnav;
+    if(n===0){calMonth=todayKey().slice(0,7);calSel=todayKey();}
+    else{const [y,m]=calMonth.split('-').map(Number);const d=new Date(y,m-1+n,1);calMonth=isoD(d).slice(0,7);}
+    renderCalendar();return;}
+  if(e.target.closest('[data-calsave]')){saveCalEvent();return;}
+  if(e.target.closest('[data-calcancel]')){calEditId=null;renderCalDay(true);return;}
+  const calEdit=e.target.closest('[data-caledit]');
+  if(calEdit){calEditId=calEdit.dataset.caledit;renderCalDay(true);setTimeout(()=>{const t=$('#cal-title');if(t)t.focus();},30);return;}
+  const calDel=e.target.closest('[data-caldel]');
+  if(calDel){const r=(S.reminders||[]).find(x=>String(x.id)===calDel.dataset.caldel);
+    if(r&&confirm(`Delete “${r.title}”?`)){S.reminders=S.reminders.filter(x=>x!==r);if(String(calEditId)===String(r.id))calEditId=null;render();toast('Event deleted.');}
+    return;}
 
   // reminders: add / remove
   if(e.target.id==='rem-add'){addReminder();return;}
@@ -4413,6 +4670,13 @@ document.addEventListener('input',e=>{
 // The meal/workout list rebuild is skipped while one of its own inputs is
 // focused (see renderFuel) so typing doesn't reverse itself. Once the user
 // leaves the field, do one more render so the list is back in sync.
+document.addEventListener('change',e=>{
+  const l=e.target.closest&&e.target.closest('[data-callayer]');
+  if(l){calLayers()[l.dataset.callayer]=l.checked;renderCalendar();save();}
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&e.target&&e.target.id==='cal-title'){e.preventDefault();saveCalEvent();}
+});
 document.addEventListener('focusout',e=>{
   if(e.target.matches&&e.target.matches('[data-mealkcal],[data-mealmac],[data-wokcal]'))deferRender();
 });
