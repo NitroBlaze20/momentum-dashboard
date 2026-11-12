@@ -3124,12 +3124,11 @@ function renderCalendar(){
     const cap=sprintChip?2:3;
     const more=shown.length>cap?`<span class="cal-more">+${shown.length-cap} more</span>`:'';
     const label=`${d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}${shown.length?`, ${shown.length} item${shown.length===1?'':'s'}`:''}`;
-    cells+=`<button class="cal-cell${inMonth?'':' out'}${dk===today?' today':''}${dk===calSel?' sel':''}${(S.offDays||{})[dk]?' offday':''}${dayState(dk)==='untracked'?' untracked':''}" data-calday="${dk}" aria-label="${esc(label)}" aria-pressed="${dk===calSel}">
+    cells+=`<button class="cal-cell${inMonth?'':' out'}${dk===today?' today':''}${dk===calSel?' sel':''}${(S.offDays||{})[dk]?' offday':''}" data-calday="${dk}" aria-label="${esc(label)}" aria-pressed="${dk===calSel}">
       ${sprint?`<span class="cal-sprint${sprint.first?' s-first':''}${sprint.last?' s-last':''}" title="${esc(sprint.title)}"></span>`:''}
       <span class="cal-num">${d.getDate()}</span>
       <span class="cal-chips">${chips}${more}</span>
       <span class="cal-dots">${dots}</span>
-      ${dayState(dk)==='untracked'?'<span class="cal-untracked">untracked</span>':''}
     </button>`;
   }
   const lt=(k,l)=>`<label class="cal-layer"><input type="checkbox" data-callayer="${k}"${lay[k]?' checked':''}> ${l}</label>`;
@@ -3147,7 +3146,7 @@ function renderCalendar(){
       ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(w=>`<div class="cal-wd">${w}</div>`).join('')}
       ${cells}
     </div>
-    <div class="cal-legend">${EVENT_KINDS.map(k=>`<span><i style="background:${k.col}"></i>${k.label}</span>`).join('')}<span><i style="background:var(--amber)"></i>Deadline soon</span><span><i class="bar"></i>Sprint</span><span><i class="stripes"></i>Off day (planned break)</span><span><i class="ring"></i>Untracked (nothing logged)</span></div>`;
+    <div class="cal-legend">${EVENT_KINDS.map(k=>`<span><i style="background:${k.col}"></i>${k.label}</span>`).join('')}<span><i style="background:var(--amber)"></i>Deadline soon</span><span><i class="bar"></i>Sprint</span><span><i class="stripes"></i>Off day (planned break)</span></div>`;
   renderCalDay();
 }
 function renderCalDay(force){
@@ -3174,11 +3173,7 @@ function renderCalDay(force){
   const kindOpts=EVENT_KINDS.map(k=>`<option value="${k.id}"${(ev?(ev.kind||'reminder'):'event')===k.id?' selected':''}>${k.label}</option>`).join('');
   box.innerHTML=`
     <div class="cd-head"><div class="cd-date">${d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}</div>${rel?`<span class="cd-rel">${rel}</span>`:''}</div>
-    ${(()=>{const st=dayState(dk);
-      if(st==='off')return '<div class="cd-status off">☀ Planned break (off day)</div>';
-      if(st==='untracked')return `<div class="cd-status untracked">○ Untracked — nothing logged in Fuel. <button class="cd-link" data-calfuel="${dk}">Log it now →</button></div>`;
-      if(st==='rough')return '<div class="cd-status">Fuel: partly estimated</div>';
-      return '';})()}
+    ${(S.offDays||{})[dk]?'<div class="cd-status off">☀ Planned break (off day)</div>':''}
     <div class="cd-list">${list}</div>
     <div class="cd-form">
       <div class="cd-form-title">${ev?'Edit event':'Add to this day'}</div>
