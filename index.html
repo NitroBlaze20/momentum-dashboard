@@ -1327,6 +1327,48 @@ code,.mono{font-family:var(--mono)}
 .cd-link{background:none;border:0;padding:0;color:var(--pencil);cursor:pointer;font-size:12.5px}
 @media(max-width:640px){.cal-untracked{display:none}}
 
+/* ---- TimeTree-style month: continuous bars ---- */
+.tt-month{--tt-row:20px;border:1px solid var(--edge,#1d2228);border-radius:6px;overflow:hidden;background:#0f1114}
+.tt-wd{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));background:#0d0f12;border-bottom:1px solid var(--edge,#1d2228)}
+.tt-wd>div{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mist-dim);padding:8px 8px 6px}
+.tt-week{position:relative;min-height:112px;border-bottom:1px solid var(--edge,#1d2228)}
+.tt-week:last-child{border-bottom:0}
+.tt-days{position:absolute;inset:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.tt-day{position:relative;background:transparent;border:0;border-right:1px solid var(--edge,#1d2228);cursor:pointer;padding:0;min-width:0;color:var(--text)}
+.tt-day:last-child{border-right:0}
+.tt-day:hover{background:rgba(170,190,210,.03)}
+.tt-day.out{background:rgba(0,0,0,.25)}
+.tt-day.out .cal-num{opacity:.4}
+.tt-day.offday{background-image:repeating-linear-gradient(135deg,rgba(232,163,61,.06) 0 6px,transparent 6px 12px)}
+.tt-day.sel{box-shadow:inset 0 0 0 1.5px var(--pencil);z-index:0}
+.tt-day .cal-num{position:absolute;top:5px;right:7px;font-family:var(--mono);font-size:11.5px;color:var(--mist)}
+.tt-day.today .cal-num{background:var(--pencil);color:#06080a;border-radius:999px;padding:1px 6px;font-weight:600}
+.tt-lanes{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));row-gap:3px;padding:27px 2px 8px;pointer-events:none}
+.tt-bar{display:flex;align-items:center;gap:4px;min-width:0;height:var(--tt-row);margin:0 2px;padding:0 6px;font-size:11.5px;line-height:1;white-space:nowrap;overflow:hidden;color:var(--text)}
+.tt-bar.multi{background:color-mix(in srgb,var(--c) 30%,#0f1114);border-radius:4px;box-shadow:inset 3px 0 0 var(--c)}
+.tt-bar.multi.cont-l{border-top-left-radius:0;border-bottom-left-radius:0;margin-left:0;box-shadow:none}
+.tt-bar.multi.cont-r{border-top-right-radius:0;border-bottom-right-radius:0;margin-right:0}
+.tt-bar.single{background:transparent;padding-left:4px}
+.tt-bar.single::before{content:"";flex:none;width:6px;height:6px;border-radius:999px;background:var(--c)}
+.tt-bar.single.t-deadline{font-weight:500}
+.tt-bar.t-sprint{font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;color:#dff4ff}
+.tt-bar em{font-style:normal;font-family:var(--mono);font-size:10px;color:var(--mist)}
+.tt-txt{overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
+.tt-flag{flex:none;font-size:10px;color:var(--c);margin-left:auto}
+.tt-more{align-self:center;padding-left:6px;font-family:var(--mono);font-size:10px;color:var(--mist-dim)}
+.cal-legend i.stripes{width:14px;height:10px;border-radius:2px;background:repeating-linear-gradient(135deg,rgba(232,163,61,.55) 0 3px,transparent 3px 6px)}
+@media(max-width:640px){
+  .tt-month{--tt-row:15px}
+  .tt-week{min-height:72px}
+  .tt-wd>div{padding:6px 2px;text-align:center;letter-spacing:.04em}
+  .tt-lanes{padding-top:22px;row-gap:2px}
+  .tt-day .cal-num{right:50%;transform:translateX(50%);top:4px;font-size:10.5px}
+  .tt-bar{font-size:9.5px;padding:0 3px;margin:0 1px}
+  .tt-bar.t-sprint{font-size:9px}
+  .tt-bar em,.tt-flag{display:none}
+  .tt-bar.single::before{width:5px;height:5px}
+}
+
 /* ---- Easier logging: usuals + rough day ---- */
 .usuals{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:4px 0 12px}
 .usuals:empty{display:none}
@@ -3081,26 +3123,36 @@ function applyDlView(){
   if(mode==='calendar')renderCalendar();
 }
 function calLayers(){S.calLayers=Object.assign({deadlines:true,sprints:true,events:true},S.calLayers||{});return S.calLayers;}
-/* Everything that touches the given day. */
-function calItemsOn(dk){
+/* Everything dated, as spans (start..end, inclusive ISO dates).
+   Multi-day things — sprints, goal windows (opensOn→deadline), multi-day events — become
+   continuous bars across the days they cover, TimeTree-style. */
+function calAllItems(){
   const lay=calLayers(),out=[];
   if(lay.events)(S.reminders||[]).forEach(r=>{
-    const end=r.end||r.start;
-    if(dk>=r.start&&dk<=end){const k=kindOf(r);out.push({type:'event',id:r.id,title:r.title,col:k.col,kind:k.label,time:r.time||'',note:r.note||'',
-      multi:!!r.end&&r.end!==r.start,first:dk===r.start,last:dk===end,start:r.start,end:r.end||null});}
+    if(!r.start)return;const k=kindOf(r);
+    out.push({key:'e'+r.id,type:'event',id:r.id,title:r.title,start:r.start,end:(r.end&&r.end>r.start)?r.end:r.start,col:k.col,kind:k.label,time:r.time||'',note:r.note||''});
   });
   if(lay.deadlines)S.goals.forEach(g=>{
-    if(g.done||g.cat==='Roadmap')return;
-    if(g.deadline===dk){const d=daysTo(dk);out.push({type:'deadline',id:g.id,title:g.title,col:d<0?'var(--red)':d<=14?'var(--amber)':'var(--mist)',kind:'Deadline'});}
-    else if(g.opensOn===dk&&g.deadline)out.push({type:'opens',id:g.id,title:g.title,col:'var(--mist-dim)',kind:'Opens'});
+    if(g.done||g.cat==='Roadmap'||!g.deadline)return;
+    const d=daysTo(g.deadline);const col=d<0?'var(--red)':d<=14?'var(--amber)':'#8fa3b8';
+    if(g.opensOn&&g.opensOn<g.deadline)out.push({key:'g'+g.id,type:'window',id:g.id,title:g.title,start:g.opensOn,end:g.deadline,col,kind:'Goal window'});
+    else out.push({key:'g'+g.id,type:'deadline',id:g.id,title:g.title,start:g.deadline,end:g.deadline,col,kind:'Deadline'});
   });
   if(lay.sprints)S.goals.forEach(g=>{
     if(g.cat!=='Roadmap'||!g.opensOn||!g.deadline)return;
-    if(dk>=g.opensOn&&dk<=g.deadline)out.push({type:'sprint',id:g.id,title:sprintCleanTitle(g.title),col:'var(--pencil)',kind:'Sprint',first:dk===g.opensOn,last:dk===g.deadline,start:g.opensOn,end:g.deadline});
+    const t=sprintCleanTitle(g.title);
+    out.push({key:'s'+g.id,type:'sprint',id:g.id,title:t,short:t.replace(/^Sprint (\d+)\s*—\s*/,'S$1 · '),start:g.opensOn,end:g.deadline,col:'var(--pencil)',kind:'Sprint'});
   });
-  const rank={event:0,deadline:1,opens:2,sprint:3};
-  return out.sort((a,b)=>(rank[a.type]-rank[b.type])||String(a.time).localeCompare(String(b.time)));
+  return out;
 }
+/* Everything that touches the given day (for the day panel). */
+function calItemsOn(dk){
+  const rank={event:0,deadline:1,window:2,sprint:3};
+  return calAllItems().filter(x=>dk>=x.start&&dk<=x.end)
+    .map(x=>Object.assign({},x,{multi:x.end>x.start,first:dk===x.start,last:dk===x.end}))
+    .sort((a,b)=>(rank[a.type]-rank[b.type])||String(a.time).localeCompare(String(b.time)));
+}
+function dayIndex(iso,base){return Math.round((new Date(iso+'T00:00:00')-base)/864e5);}
 function renderCalendar(){
   const box=$('#dl-cal');if(!box)return;
   const today=todayKey();
@@ -3109,27 +3161,57 @@ function renderCalendar(){
   const [y,m]=calMonth.split('-').map(Number);
   const first=new Date(y,m-1,1);
   const lead=(first.getDay()+6)%7;                       // Monday-first
-  const start=new Date(y,m-1,1-lead);
+  const gridStart=new Date(y,m-1,1-lead);
   const lay=calLayers();
   const monthName=first.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
-  let cells='';
-  for(let i=0;i<42;i++){
-    const d=new Date(start);d.setDate(start.getDate()+i);
-    const dk=isoD(d),inMonth=d.getMonth()===m-1,items=calItemsOn(dk);
-    const sprint=items.find(x=>x.type==='sprint');
-    const shown=items.filter(x=>x.type!=='sprint');
-    const sprintChip=sprint&&(sprint.first||d.getDay()===1)?`<span class="cal-chip t-sprint" style="--c:var(--pencil)">${esc(sprint.title.replace(/^Sprint (\d+)\s*—\s*/,'S$1 · '))}</span>`:'';
-    const chips=sprintChip+shown.slice(0,sprintChip?2:3).map(x=>`<span class="cal-chip t-${x.type}${x.multi&&!x.first?' cont':''}" style="--c:${x.col}">${x.time?`<em>${esc(x.time)}</em> `:''}${esc(x.title)}</span>`).join('');
-    const dots=shown.slice(0,4).map(x=>`<i style="background:${x.col}"></i>`).join('');
-    const cap=sprintChip?2:3;
-    const more=shown.length>cap?`<span class="cal-more">+${shown.length-cap} more</span>`:'';
-    const label=`${d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}${shown.length?`, ${shown.length} item${shown.length===1?'':'s'}`:''}`;
-    cells+=`<button class="cal-cell${inMonth?'':' out'}${dk===today?' today':''}${dk===calSel?' sel':''}${(S.offDays||{})[dk]?' offday':''}" data-calday="${dk}" aria-label="${esc(label)}" aria-pressed="${dk===calSel}">
-      ${sprint?`<span class="cal-sprint${sprint.first?' s-first':''}${sprint.last?' s-last':''}" title="${esc(sprint.title)}"></span>`:''}
-      <span class="cal-num">${d.getDate()}</span>
-      <span class="cal-chips">${chips}${more}</span>
-      <span class="cal-dots">${dots}</span>
-    </button>`;
+  const small=window.matchMedia('(max-width:640px)').matches;
+  const MAXL=small?4:5;                                  // visible lanes per week
+  const all=calAllItems();
+  let weeks='';
+  for(let w=0;w<6;w++){
+    const ws=new Date(gridStart);ws.setDate(gridStart.getDate()+w*7);
+    const we=new Date(ws);we.setDate(ws.getDate()+6);
+    const wsK=isoD(ws),weK=isoD(we);
+    // segments of each item inside this week
+    const segs=all.filter(x=>x.start<=weK&&x.end>=wsK).map(x=>{
+      const a=Math.max(0,dayIndex(x.start,ws)),b=Math.min(6,dayIndex(x.end,ws));
+      return {x,a,b,len:b-a+1,contL:x.start<wsK,contR:x.end>weK};
+    }).sort((p,q)=>{
+      const pm=p.x.end>p.x.start,qm=q.x.end>q.x.start;
+      if(pm!==qm)return pm?-1:1;                          // multi-day bars on top
+      if(p.x.type==='sprint'!==(q.x.type==='sprint'))return p.x.type==='sprint'?-1:1;
+      return (p.a-q.a)||(q.len-p.len)||String(p.x.time||'').localeCompare(String(q.x.time||''));
+    });
+    // greedy lane packing
+    const lanes=[];
+    segs.forEach(sg=>{
+      let L=0;
+      while(lanes[L]&&lanes[L].some(o=>!(sg.b<o.a||sg.a>o.b)))L++;
+      (lanes[L]=lanes[L]||[]).push(sg);sg.lane=L;
+    });
+    const total=lanes.length;
+    const showL=total>MAXL?MAXL-1:total;
+    const hiddenPerDay=[0,0,0,0,0,0,0];
+    segs.forEach(sg=>{if(sg.lane>=showL)for(let c=sg.a;c<=sg.b;c++)hiddenPerDay[c]++;});
+    const bars=segs.filter(sg=>sg.lane<showL).map(sg=>{
+      const x=sg.x,multi=x.end>x.start;
+      const label=x.type==='sprint'?x.short:x.title;
+      const flag=(x.type==='window'||x.type==='deadline')&&!sg.contR?'<span class="tt-flag" aria-hidden="true">⚑</span>':'';
+      const cls=`tt-bar t-${x.type}${multi?' multi':' single'}${sg.contL?' cont-l':''}${sg.contR?' cont-r':''}`;
+      return `<div class="${cls}" style="grid-column:${sg.a+1} / span ${sg.len};grid-row:${sg.lane+1};--c:${x.col}" title="${esc(x.kind+': '+x.title)}">`
+        +`${!multi&&x.time?`<em>${esc(x.time)}</em>`:''}<span class="tt-txt">${esc(label)}</span>${flag}</div>`;
+    }).join('');
+    const more=hiddenPerDay.map((n,c)=>n?`<div class="tt-more" style="grid-column:${c+1};grid-row:${showL+1}">+${n}</div>`:'').join('');
+    let days='';
+    for(let c=0;c<7;c++){
+      const d=new Date(ws);d.setDate(ws.getDate()+c);
+      const dk=isoD(d),inMonth=d.getMonth()===m-1;
+      const n=all.filter(x=>dk>=x.start&&dk<=x.end).length;
+      const label=`${d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}${n?`, ${n} item${n===1?'':'s'}`:''}`;
+      days+=`<button class="tt-day${inMonth?'':' out'}${dk===today?' today':''}${dk===calSel?' sel':''}${(S.offDays||{})[dk]?' offday':''}" data-calday="${dk}" aria-label="${esc(label)}" aria-pressed="${dk===calSel}"><span class="cal-num">${d.getDate()}</span></button>`;
+    }
+    const rows=Math.max(showL+(more?1:0),1);
+    weeks+=`<div class="tt-week"><div class="tt-days">${days}</div><div class="tt-lanes" style="grid-template-rows:repeat(${rows},var(--tt-row))">${bars}${more}</div></div>`;
   }
   const lt=(k,l)=>`<label class="cal-layer"><input type="checkbox" data-callayer="${k}"${lay[k]?' checked':''}> ${l}</label>`;
   box.innerHTML=`
@@ -3142,11 +3224,11 @@ function renderCalendar(){
       </div>
       <div class="cal-layers">${lt('events','My events')}${lt('deadlines','Deadlines')}${lt('sprints','Sprints')}</div>
     </div>
-    <div class="cal-grid" role="grid">
-      ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(w=>`<div class="cal-wd">${w}</div>`).join('')}
-      ${cells}
+    <div class="tt-month">
+      <div class="tt-wd">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(w=>`<div>${w}</div>`).join('')}</div>
+      ${weeks}
     </div>
-    <div class="cal-legend">${EVENT_KINDS.map(k=>`<span><i style="background:${k.col}"></i>${k.label}</span>`).join('')}<span><i style="background:var(--amber)"></i>Deadline soon</span><span><i class="bar"></i>Sprint</span><span><i class="stripes"></i>Off day (planned break)</span></div>`;
+    <div class="cal-legend">${EVENT_KINDS.map(k=>`<span><i style="background:${k.col}"></i>${k.label}</span>`).join('')}<span><i class="bar" style="background:var(--pencil)"></i>Sprint</span><span><i class="bar" style="background:#8fa3b8"></i>Goal window / deadline ⚑</span><span><i class="bar" style="background:var(--amber)"></i>Due within 14 days</span><span><i class="stripes"></i>Off day</span></div>`;
   renderCalDay();
 }
 function renderCalDay(force){
@@ -3164,7 +3246,7 @@ function renderCalDay(force){
       <span class="ci-bar"></span>
       <div class="ci-main">
         <div class="ci-title">${esc(x.title)}</div>
-        <div class="ci-meta">${esc(x.kind)}${x.time?` · ${esc(x.time)}`:''}${(x.type==='event'||x.type==='sprint')&&x.end?` · ${fmtDate(x.start)} → ${fmtDate(x.end)}`:''}</div>
+        <div class="ci-meta">${esc(x.kind)}${x.time?` · ${esc(x.time)}`:''}${x.end>x.start?` · ${fmtDate(x.start)} → ${fmtDate(x.end)}${x.type==='window'&&x.last?' · due today':''}`:''}</div>
         ${x.note?`<div class="ci-note">${esc(x.note)}</div>`:''}
       </div>
       ${x.type==='event'?`<button class="ci-btn" data-caledit="${x.id}" aria-label="Edit ${esc(x.title)}">✎</button><button class="ci-btn del" data-caldel="${x.id}" aria-label="Delete ${esc(x.title)}">✕</button>`:''}
@@ -4736,6 +4818,8 @@ document.addEventListener('change',e=>{
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&e.target&&e.target.id==='cal-title'){e.preventDefault();saveCalEvent();}
 });
+let _calResize=null;
+window.addEventListener('resize',()=>{clearTimeout(_calResize);_calResize=setTimeout(()=>{const w=$('#dl-cal-wrap');if(view==='deadlines'&&w&&w.style.display!=='none')renderCalendar();},150);});
 document.addEventListener('focusout',e=>{
   if(e.target.matches&&e.target.matches('[data-mealkcal],[data-mealmac],[data-wokcal]'))deferRender();
 });
