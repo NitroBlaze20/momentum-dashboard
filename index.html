@@ -1231,6 +1231,35 @@ code,.mono{font-family:var(--mono)}
   .spc-body{padding-left:14px}
 }
 
+/* ---- Easier logging: usuals + rough day ---- */
+.usuals{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:4px 0 12px}
+.usuals:empty{display:none}
+.usuals-lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mist-dim);margin-right:4px}
+.usual{display:inline-flex;align-items:center;gap:8px;max-width:100%;background:transparent;border:1px solid var(--edge-hi,#2b323a);border-radius:999px;
+  color:var(--text);padding:6px 6px 6px 12px;font-family:var(--body);font-size:13px;cursor:pointer;min-height:34px;transition:border-color .15s,background .15s}
+.usual:hover,.usual:focus-visible{border-color:rgba(111,211,255,.55);background:rgba(111,211,255,.06)}
+.usual:active{transform:translateY(1px)}
+.u-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
+.u-k{font-family:var(--mono);font-size:11px;color:var(--mist);background:rgba(170,190,210,.08);border-radius:999px;padding:2px 7px}
+.rough{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-top:12px;padding:12px 14px;border:1px dashed var(--edge-hi,#2b323a);border-radius:6px}
+.rough-lbl{font-size:13px;color:var(--mist)}
+.rough-opts{display:flex;flex-wrap:wrap;gap:6px}
+.rough-btn{background:transparent;border:1px solid var(--edge-hi,#2b323a);border-radius:4px;color:var(--text);padding:6px 10px;font-family:var(--body);font-size:12.5px;cursor:pointer;min-height:32px}
+.rough-btn b{font-family:var(--mono);font-weight:500;color:var(--mist);margin-left:4px}
+.rough-btn:hover{border-color:rgba(111,211,255,.5)}
+.rough-btn.on{background:rgba(111,211,255,.1);border-color:rgba(111,211,255,.55)}
+.rough-btn.on b{color:var(--pencil)}
+.rough-btn.clear{color:var(--mist-dim)}
+.rough-note{flex-basis:100%;font-size:12px;color:var(--mist-dim)}
+.log-item.rough-item{border-style:dashed!important;opacity:.9}
+.log-item.rough-item .li-txt{font-style:italic;color:var(--mist)}
+@media(max-width:560px){
+  .usuals{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px;max-width:100%}
+  .usuals::-webkit-scrollbar{display:none}
+  .usual{flex:0 0 auto}.u-name{max-width:160px}
+}
+.mac input[data-mealmac]{min-width:52px}
+
 /* ---- Exercise library ---- */
 .fuel-sec h3{flex-wrap:wrap;row-gap:6px}
 .ex-modal{max-width:680px;width:100%}
@@ -1743,12 +1772,14 @@ code,.mono{font-family:var(--mono)}
       <div class="fuel-sec">
         <h3>Meals <small id="meal-total"></small></h3>
         <div id="macro-card"></div>
+        <div class="usuals" id="meal-usuals" aria-label="Your usual foods — tap to log"></div>
         <div id="meals-list"></div>
         <div class="fuel-add" style="position:relative">
           <input type="text" id="meal-text" placeholder="What did you eat? e.g. chicken rice + iced milo" autocomplete="off">
           <button class="btn" id="meal-add">Add</button>
           <div id="meal-suggest" class="ms-drop"></div>
         </div>
+        <div class="rough" id="meal-rough"></div>
         <div class="fuel-tip" style="margin-top:8px">Tap the input to see meals you log often — tap one to add it instantly with its last macros. I'll match common foods (incl. hawker dishes) to estimate <b>kcal / protein / carbs / fat</b> automatically otherwise — no internet needed.</div>
       </div>
 
@@ -3269,7 +3300,7 @@ function renderFuel(){
   const mealsListFocused=mealsListEl&&mealsListEl.contains(document.activeElement)&&document.activeElement.matches('[data-mealkcal],[data-mealmac]');
   if(mealsListEl&&!mealsListFocused){
     mealsListEl.innerHTML=meals.length?meals.map(m=>`
-      <div class="log-item meal" data-mid="${m.id}">
+      <div class="log-item meal${isRough(m)?' rough-item':''}" data-mid="${m.id}">
         <div class="li-txt">${esc(m.text)}${estimating.has(m.id)?' <span class="est">estimating…</span>':''}</div>
         <div class="mac-row">
           <label class="mac"><input type="number" min="0" step="0.1" inputmode="decimal" value="${m.protein??''}" data-mealmac="${m.id}:protein" placeholder="–">P</label>
@@ -3280,6 +3311,7 @@ function renderFuel(){
         </div>
       </div>`).join(''):`<div class="empty">Nothing logged yet today.</div>`;
   }
+  renderEasyLogging(fuelDate||todayKey());
 
   // movement
   $('#move-total').textContent=wos.length?`~${outK} kcal`:'';
@@ -3718,6 +3750,20 @@ document.addEventListener('click',e=>{
   // -- Fuel: meal actions (delete, autocomplete suggestions) --
   const mealEl=e.target.closest('[data-mid]');
   if(mealEl&&e.target.closest('[data-act="mealdel"]')){S.meals=S.meals.filter(x=>x.id!=mealEl.dataset.mid);render();return;}
+  const usual=e.target.closest('[data-usual]');
+  if(usual){
+    const src=lastLoggedFood(usual.dataset.usual);
+    if(src){logFoodLike(src);render();toast(`Logged ${src.text} · ${src.kcal} kcal`);}
+    return;
+  }
+  const rough=e.target.closest('[data-rough]');
+  if(rough){
+    const dk=fuelDate||todayKey();
+    setRough(dk,rough.dataset.rough||null);
+    render();
+    if(rough.dataset.rough)toast(`Added a ${rough.dataset.rough} estimate for the rest of the day.`);
+    return;
+  }
   const sugg=e.target.closest('[data-sugg-text]');
   if(sugg){
     const ds=sugg.dataset;
@@ -3817,6 +3863,13 @@ function deferRender(){if(_deferredRender)return;_deferredRender=setTimeout(()=>
 function parseMacro(v){if(v===''||v==null)return null;const n=parseFloat(String(v).replace(',','.'));return isNaN(n)||n<0?null:r1(n);}
 function addMeal(){
   const t=$('#meal-text').value.trim();if(!t)return;
+  const prev=lastLoggedFood(t);
+  if(prev){
+    logFoodLike(prev);
+    $('#meal-text').value='';hideMealSuggest();render();
+    toast(`Logged “${prev.text}” with your saved numbers · ${prev.kcal} kcal`);
+    return;
+  }
   const id=Date.now();
   S.meals.push({id,date:(fuelDate||todayKey()),text:t,kcal:null,protein:null,carbs:null,fat:null});
   $('#meal-text').value='';hideMealSuggest();
@@ -3825,9 +3878,72 @@ function addMeal(){
 bindEnter('#meal-text',addMeal);
 
 /* --- meal autocomplete: surfaces foods you've logged before, ranked by how often + how recently --- */
+/* ---------------- Easier logging ----------------
+   • Usuals: your most-eaten foods as one-tap buttons (uses your latest numbers for each).
+   • Enter uses your history: a food you've logged before gets YOUR numbers, not the rough estimate.
+   • Rough day: when you didn't log everything, add an estimate for the rest of the day
+     (sized from your own typical meal) instead of writing the day off. */
+const ROUGH_TAG='rest-of-day';
+function isRough(m){return m&&m.est===ROUGH_TAG;}
+function lastLoggedFood(text){
+  const key=String(text||'').trim().toLowerCase();if(!key)return null;
+  let best=null;
+  S.meals.forEach(m=>{if(isRough(m))return;if((m.text||'').trim().toLowerCase()===key&&m.kcal!=null&&(!best||m.id>best.id))best=m;});
+  return best;
+}
+function mealUsuals(n){
+  const now=Date.now(),map={};
+  S.meals.forEach(m=>{
+    if(isRough(m)||m.kcal==null)return;
+    const key=(m.text||'').trim().toLowerCase();if(!key)return;
+    const ageDays=Math.max(0,(now-m.id)/864e5);
+    const w=Math.exp(-ageDays/30);                       // recent habits count more than old ones
+    if(!map[key])map[key]={score:0,count:0,last:0,m:null};
+    map[key].score+=w;map[key].count++;
+    if(m.id>=map[key].last){map[key].last=m.id;map[key].m=m;}
+  });
+  return Object.values(map).filter(x=>x.count>=2&&x.score>=0.6).sort((a,b)=>b.score-a.score).slice(0,n).map(x=>x.m);
+}
+function logFoodLike(src,dk){
+  S.meals.push({id:Date.now(),date:dk||(fuelDate||todayKey()),text:src.text,kcal:src.kcal,protein:src.protein??null,carbs:src.carbs??null,fat:src.fat??null});
+}
+function typicalMealKcal(){
+  // median of your meal-sized entries (≥300 kcal) over the last 60 days; 650 if there's not enough data
+  const cut=Date.now()-60*864e5;
+  const v=S.meals.filter(m=>!isRough(m)&&m.kcal>=300&&m.id>=cut).map(m=>m.kcal).sort((a,b)=>a-b);
+  if(v.length<5)return 650;
+  const mid=Math.floor(v.length/2);
+  return Math.round((v.length%2?v[mid]:(v[mid-1]+v[mid])/2)/10)*10;
+}
+function roughSizes(){const t=typicalMealKcal();return {light:Math.round(t*0.5/10)*10,normal:t,heavy:Math.round(t*1.75/10)*10};}
+function setRough(dk,size){
+  S.meals=S.meals.filter(m=>!(isRough(m)&&m.date===dk));
+  if(size){
+    const k=roughSizes()[size];
+    S.meals.push({id:Date.now(),date:dk,text:`≈ Rest of day (${size}) — estimate`,kcal:k,protein:null,carbs:null,fat:null,est:ROUGH_TAG,size});
+  }
+}
+function renderEasyLogging(dk){
+  const u=$('#meal-usuals');
+  if(u){
+    const list=mealUsuals(8);
+    u.innerHTML=list.length?`<span class="usuals-lbl">Your usuals</span>`+list.map(m=>
+      `<button class="usual" data-usual="${esc(m.text)}" title="Log ${esc(m.text)} · ${m.kcal} kcal"><span class="u-name">${esc(m.text)}</span><span class="u-k">${m.kcal}</span></button>`).join(''):'';
+  }
+  const r=$('#meal-rough');
+  if(r){
+    const cur=S.meals.find(m=>isRough(m)&&m.date===dk);
+    const z=roughSizes();
+    const btn=(k,l)=>`<button class="rough-btn${cur&&cur.size===k?' on':''}" data-rough="${k}" aria-pressed="${cur&&cur.size===k?'true':'false'}">${l} <b>~${z[k]}</b></button>`;
+    r.innerHTML=`<span class="rough-lbl">Didn't log everything? Add the rest as an estimate:</span>
+      <span class="rough-opts">${btn('light','Light')}${btn('normal','Normal')}${btn('heavy','Heavy')}${cur?'<button class="rough-btn clear" data-rough="">Clear</button>':''}</span>
+      <span class="rough-note">Sized from your typical meal (~${z.normal} kcal). A rough day beats an off day.</span>`;
+  }
+}
 function mealFrequencyList(filterStr){
   const map={};
   S.meals.forEach(m=>{
+    if(isRough(m))return;
     const key=(m.text||'').trim().toLowerCase();if(!key)return;
     if(!map[key])map[key]={text:m.text,count:0,last:0,kcal:null,protein:null,carbs:null,fat:null};
     map[key].count++;
