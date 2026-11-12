@@ -1309,6 +1309,24 @@ code,.mono{font-family:var(--mono)}
   .cal-title{min-width:0;font-size:17px}
 }
 
+/* ---- Off day vs untracked ---- */
+.def-card.untracked{border-style:dashed!important;border-color:var(--edge-hi,#2b323a)!important}
+.def-card.untracked .def-verdict{color:var(--mist)}
+.untracked-hint{font-size:13px;color:var(--mist);margin:8px 0 4px;line-height:1.5}
+.untracked-hint b{color:var(--text);font-weight:500}
+.def-hist .dh.untracked{background:transparent!important;border:1px dashed rgba(170,190,210,.35)!important;color:var(--mist-dim)}
+.ds-counts{font-family:var(--mono);font-size:11.5px;color:var(--mist)}
+.ds-convert{background:none;border:0;padding:0;margin-left:6px;color:var(--pencil);font-size:12.5px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.cal-untracked{position:absolute;left:7px;bottom:5px;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--mist-dim);opacity:.8}
+.cal-cell.untracked .cal-num{outline:1px dashed rgba(170,190,210,.35);outline-offset:2px;border-radius:999px}
+.cal-legend i.stripes{width:14px;height:10px;border-radius:2px;background:repeating-linear-gradient(135deg,rgba(232,163,61,.55) 0 3px,transparent 3px 6px)}
+.cal-legend i.ring{width:9px;height:9px;border-radius:999px;background:transparent;border:1px dashed rgba(170,190,210,.6)}
+.cd-status{font-size:12.5px;color:var(--mist);margin:-2px 0 10px;padding:6px 8px;border-radius:4px;background:rgba(170,190,210,.05)}
+.cd-status.off{color:var(--amber);background:rgba(232,163,61,.06)}
+.cd-status.untracked{border:1px dashed rgba(170,190,210,.3);background:none}
+.cd-link{background:none;border:0;padding:0;color:var(--pencil);cursor:pointer;font-size:12.5px}
+@media(max-width:640px){.cal-untracked{display:none}}
+
 /* ---- Easier logging: usuals + rough day ---- */
 .usuals{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:4px 0 12px}
 .usuals:empty{display:none}
@@ -3106,11 +3124,12 @@ function renderCalendar(){
     const cap=sprintChip?2:3;
     const more=shown.length>cap?`<span class="cal-more">+${shown.length-cap} more</span>`:'';
     const label=`${d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}${shown.length?`, ${shown.length} item${shown.length===1?'':'s'}`:''}`;
-    cells+=`<button class="cal-cell${inMonth?'':' out'}${dk===today?' today':''}${dk===calSel?' sel':''}${(S.offDays||{})[dk]?' offday':''}" data-calday="${dk}" aria-label="${esc(label)}" aria-pressed="${dk===calSel}">
+    cells+=`<button class="cal-cell${inMonth?'':' out'}${dk===today?' today':''}${dk===calSel?' sel':''}${(S.offDays||{})[dk]?' offday':''}${dayState(dk)==='untracked'?' untracked':''}" data-calday="${dk}" aria-label="${esc(label)}" aria-pressed="${dk===calSel}">
       ${sprint?`<span class="cal-sprint${sprint.first?' s-first':''}${sprint.last?' s-last':''}" title="${esc(sprint.title)}"></span>`:''}
       <span class="cal-num">${d.getDate()}</span>
       <span class="cal-chips">${chips}${more}</span>
       <span class="cal-dots">${dots}</span>
+      ${dayState(dk)==='untracked'?'<span class="cal-untracked">untracked</span>':''}
     </button>`;
   }
   const lt=(k,l)=>`<label class="cal-layer"><input type="checkbox" data-callayer="${k}"${lay[k]?' checked':''}> ${l}</label>`;
@@ -3128,7 +3147,7 @@ function renderCalendar(){
       ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(w=>`<div class="cal-wd">${w}</div>`).join('')}
       ${cells}
     </div>
-    <div class="cal-legend">${EVENT_KINDS.map(k=>`<span><i style="background:${k.col}"></i>${k.label}</span>`).join('')}<span><i style="background:var(--amber)"></i>Deadline soon</span><span><i class="bar"></i>Sprint</span></div>`;
+    <div class="cal-legend">${EVENT_KINDS.map(k=>`<span><i style="background:${k.col}"></i>${k.label}</span>`).join('')}<span><i style="background:var(--amber)"></i>Deadline soon</span><span><i class="bar"></i>Sprint</span><span><i class="stripes"></i>Off day (planned break)</span><span><i class="ring"></i>Untracked (nothing logged)</span></div>`;
   renderCalDay();
 }
 function renderCalDay(force){
@@ -3155,6 +3174,11 @@ function renderCalDay(force){
   const kindOpts=EVENT_KINDS.map(k=>`<option value="${k.id}"${(ev?(ev.kind||'reminder'):'event')===k.id?' selected':''}>${k.label}</option>`).join('');
   box.innerHTML=`
     <div class="cd-head"><div class="cd-date">${d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}</div>${rel?`<span class="cd-rel">${rel}</span>`:''}</div>
+    ${(()=>{const st=dayState(dk);
+      if(st==='off')return '<div class="cd-status off">☀ Planned break (off day)</div>';
+      if(st==='untracked')return `<div class="cd-status untracked">○ Untracked — nothing logged in Fuel. <button class="cd-link" data-calfuel="${dk}">Log it now →</button></div>`;
+      if(st==='rough')return '<div class="cd-status">Fuel: partly estimated</div>';
+      return '';})()}
     <div class="cd-list">${list}</div>
     <div class="cd-form">
       <div class="cd-form-title">${ev?'Edit event':'Add to this day'}</div>
@@ -3436,6 +3460,24 @@ function mealKcal(m){return m.kcal||0;}
 function dayIntake(dk){return S.meals.filter(m=>m.date===dk).reduce((s,m)=>s+mealKcal(m),0);}
 function dayBurn(dk){return S.workouts.filter(w=>w.date===dk).reduce((s,w)=>s+(w.kcal||0),0);}
 function dayTracked(dk){return S.meals.some(m=>m.date===dk);}
+/* What kind of day it was:
+   off       = you marked a planned break (holiday, celebration)
+   rough     = some or all of it is a rough estimate
+   tracked   = meals logged
+   untracked = a past day with nothing logged (worked out automatically, no button)
+   today / future = nothing yet */
+function firstLogDay(){let f=null;(S.meals||[]).forEach(m=>{if(m.date&&(!f||m.date<f))f=m.date;});return f;}
+function dayState(dk){
+  if((S.offDays||{})[dk])return 'off';
+  const ms=S.meals.filter(m=>m.date===dk);
+  if(ms.some(m=>m.est===ROUGH_TAG))return 'rough';
+  if(ms.length)return 'tracked';
+  const t=todayKey();
+  if(dk>t)return 'future';
+  if(dk===t)return 'today';
+  const f=firstLogDay();
+  return f&&dk>=f?'untracked':'before';
+}
 function dayDeficit(dk){return (maintenance()+dayBurn(dk))-dayIntake(dk);}
 
 function todayKey(){return dKey(new Date());}
@@ -3471,14 +3513,16 @@ function renderFuel(){
   const tracked=meals.length>0;
   S.offDays=S.offDays||{};
   const isOff=!!S.offDays[tk];
+  const isUntracked=!isOff&&dayState(tk)==='untracked';
 
   // today's balance card
   $('#deficit-card').innerHTML=`
-    <div class="def-card ${isOff?'off':!tracked?'idle':def>0?'good':'over'}">
-      <div class="def-verdict">${isOff?'☀ Off day':!tracked?'Log a meal to begin':def>0?'✓ Still in a deficit':'✕ Not in a deficit'}</div>
+    <div class="def-card ${isOff?'off':isUntracked?'untracked':!tracked?'idle':def>0?'good':'over'}">
+      <div class="def-verdict">${isOff?'☀ Off day — planned break':isUntracked?'○ Untracked day':!tracked?'Log a meal to begin':def>0?'✓ Still in a deficit':'✕ Not in a deficit'}</div>
       <div class="def-num">${isOff?'—':!tracked?'—':(def>=0?'−':'+')+Math.abs(def)} <small>${isOff?'breaks the streak, same as a surplus':tracked?'kcal '+(def>=0?'under maintenance':'over — surplus'):''}</small></div>
       <div class="def-break">${isOff?'Marked as off — this still counts as a missed day for your streak, not a free pass.':`Burned ~${exp} <span style="opacity:.6">(maintenance ${maint} + movement ${outK})</span> · Eaten ~${inK}`}</div>
-      <button class="off-toggle" data-act="offday">${isOff?'✕ Remove off-day status':'☀ Mark this day as off'}</button>
+      ${isUntracked?'<div class="untracked-hint">Nothing logged for this day. Add what you remember below, then tap <b>Light / Normal / Heavy</b> to estimate the rest. A rough number beats a blank.</div>':''}
+      <button class="off-toggle" data-act="offday">${isOff?'✕ Not a planned break — remove off day':'☀ Mark as a planned break (off day)'}</button>
     </div>`;
   $('#deficit-science').innerHTML=`Your BMR ≈ <b>${bmr()}</b> kcal (Mifflin–St Jeor) · maintenance ≈ <b>${maint}</b> kcal/day at a desk. A steady ~0.4 kg/week loss means eating around <b>${targetIntake()}</b> kcal on a rest day and a bit more when you train — never below ~${kcalFloor()}.`;
 
@@ -3490,12 +3534,19 @@ function renderFuel(){
     const off=!!S.offDays[dk];
     const t=dayTracked(dk);const v=dayDeficit(dk);const dd=new Date(dk+'T00:00:00').getDate();
     if(!off&&t){trackedDays++;if(v>0)defDays++;}
-    const cls=off?'off':!t?'':v>0?'def':'sur';
+    const st=dayState(dk);
+    const cls=off?'off':!t?(st==='untracked'?'untracked':''):v>0?'def':'sur';
     const sel=dk===tk?' sel':'';
-    const label=off?' · off day':t?' · '+(v>0?'−':'+')+Math.abs(v)+' kcal':' · no data';
+    const label=off?' · planned break':t?' · '+(v>0?'−':'+')+Math.abs(v)+' kcal'+(st==='rough'?' (part estimate)':''):st==='untracked'?' · untracked':' · no data';
     return `<div class="dh ${cls}${sel}" data-histdate="${dk}" title="${dayLabel(dk)}${label} — tap to open">${dd}</div>`;
   }).join('');
-  $('#deficit-summary').textContent=trackedDays?`${defDays} of ${trackedDays} tracked days in a deficit. Tap any day to view or edit it.`:'Log meals across a few days to see your pattern here.';
+  const counts={tracked:0,rough:0,off:0,untracked:0};
+  hist.forEach(dk=>{const st=dayState(dk);if(st in counts)counts[st]++;});
+  const parts=[`${counts.tracked} tracked`,counts.rough?`${counts.rough} rough`:'',`${counts.off} off`,`${counts.untracked} untracked`].filter(Boolean).join(' · ');
+  const pastOffNoMeals=Object.keys(S.offDays||{}).filter(dk=>dk<todayKey()&&!dayTracked(dk)).length;
+  $('#deficit-summary').innerHTML=(trackedDays?`${defDays} of ${trackedDays} tracked days in a deficit. `:'')
+    +`<span class="ds-counts">${parts}</span>`
+    +(pastOffNoMeals?` <button class="ds-convert" data-act="convertoff">Convert ${pastOffNoMeals} empty off day${pastOffNoMeals===1?'':'s'} to untracked</button>`:'');
   const rangeEl=$('#def-hist-range');
   if(rangeEl){
     rangeEl.innerHTML=`${fmtDate(hist[0])} – ${fmtDate(hist[13])}${O===0?'<small>most recent</small>':''}`;
@@ -3955,6 +4006,8 @@ document.addEventListener('click',e=>{
     else{const [y,m]=calMonth.split('-').map(Number);const d=new Date(y,m-1+n,1);calMonth=isoD(d).slice(0,7);}
     renderCalendar();return;}
   if(e.target.closest('[data-calsave]')){saveCalEvent();return;}
+  const calFuel=e.target.closest('[data-calfuel]');
+  if(calFuel){fuelDate=calFuel.dataset.calfuel;go('fuel');return;}
   if(e.target.closest('[data-calcancel]')){calEditId=null;renderCalDay(true);return;}
   const calEdit=e.target.closest('[data-caledit]');
   if(calEdit){calEditId=calEdit.dataset.caledit;renderCalDay(true);setTimeout(()=>{const t=$('#cal-title');if(t)t.focus();},30);return;}
@@ -4056,11 +4109,22 @@ document.addEventListener('click',e=>{
   if(fday){const v=fday.dataset.fday;if(v==='today'){fuelDate=todayKey();renderFuel();}else{shiftFuelDate(parseInt(v,10));}return;}
   const fhCell=e.target.closest('[data-histdate]');
   if(fhCell){fuelDate=fhCell.dataset.histdate;renderFuel();return;}
+  const convBtn=e.target.closest('[data-act="convertoff"]');
+  if(convBtn){
+    const days=Object.keys(S.offDays||{}).filter(dk=>dk<todayKey()&&!dayTracked(dk)).sort();
+    if(!days.length)return;
+    if(!confirm(`Change ${days.length} off day${days.length===1?'':'s'} with nothing logged into Untracked?\n\nUse this if most of them were days you just didn\u2019t log, not planned breaks. You can re-mark any real break afterwards. Undo is in Backup & sync.`))return;
+    try{stashBeforeReset('offdays');}catch(_){}
+    days.forEach(dk=>delete S.offDays[dk]);
+    render();toast(`${days.length} day${days.length===1?'':'s'} now show as Untracked.`);return;
+  }
   const offBtn=e.target.closest('[data-act="offday"]');
   if(offBtn){
     const dk=fuelDate||todayKey();
     S.offDays=S.offDays||{};
-    if(S.offDays[dk])delete S.offDays[dk];else S.offDays[dk]=true;
+    if(S.offDays[dk]){delete S.offDays[dk];render();return;}
+    if(!confirm('Mark this as a planned break?\n\nUse this for holidays, celebrations or rest days you chose on purpose.\n\nIf you just didn\u2019t log, tap Cancel — the day shows as Untracked on its own, and you can add a rough estimate under Meals instead.'))return;
+    S.offDays[dk]=true;
     render();return;
   }
   const histShift=e.target.closest('[data-histshift]');
@@ -4758,7 +4822,7 @@ function resetUiRefresh(){
   let b=null;try{b=JSON.parse(localStorage.getItem(RESET_BACKUP_KEY)||'null');}catch(e){}
   const row=$('#reset-undo-row');if(!row)return;
   row.hidden=!b;
-  if(b)$('#reset-undo-when').textContent=`from ${new Date(b.at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})} (${({all:'full reset',roadmap:'roadmap reset',patch:'patch',restore:'restore',recalc:'workout correction'})[b.kind]||b.kind})`;
+  if(b)$('#reset-undo-when').textContent=`from ${new Date(b.at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})} (${({all:'full reset',roadmap:'roadmap reset',patch:'patch',restore:'restore',recalc:'workout correction',offdays:'off-day conversion'})[b.kind]||b.kind})`;
 }
 function resetRoadmap(){
   if(!confirm('Replace your roadmap with the default 4 sprints, starting today?\n\nYour current sprints are kept as a backup on this device.'))return;
