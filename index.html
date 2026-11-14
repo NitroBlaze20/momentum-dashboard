@@ -1327,6 +1327,84 @@ code,.mono{font-family:var(--mono)}
 .cd-link{background:none;border:0;padding:0;color:var(--pencil);cursor:pointer;font-size:12.5px}
 @media(max-width:640px){.cal-untracked{display:none}}
 
+/* ---- Focus (Pomodoro) ---- */
+.pomo-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:start}
+.pomo-grid>*{min-width:0}
+.pomo-side{display:flex;flex-direction:column;gap:18px}
+.pomo-main{display:flex;flex-direction:column;align-items:center;gap:16px;padding:26px 24px!important}
+.pomo-modes{display:flex;gap:4px;padding:3px;border:1px solid var(--edge-hi,#2b323a);border-radius:6px;background:var(--deep-2)}
+.pomo-modes button{background:none;border:0;color:var(--mist);font-family:var(--body);font-size:13px;padding:7px 12px;border-radius:4px;cursor:pointer}
+.pomo-modes button.on{background:rgba(111,211,255,.12);color:#fff}
+.pomo-ring{position:relative;width:min(300px,78vw);aspect-ratio:1}
+.pomo-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.pr-track{fill:none;stroke:#161a1f;stroke-width:8}
+.pr-fill{fill:none;stroke:var(--pencil);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .5s linear;filter:drop-shadow(0 0 6px rgba(111,211,255,.35))}
+.pomo-main[data-mode="short"] .pr-fill,.pomo-main[data-mode="long"] .pr-fill{stroke:#4ade80;filter:drop-shadow(0 0 6px rgba(74,222,128,.35))}
+.pomo-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.pomo-time{font-family:var(--mono);font-weight:300;font-size:clamp(48px,9vw,68px);letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.pomo-state{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mist-dim)}
+.pomo-main.running .pomo-state{color:var(--pencil)}
+.pomo-main.running[data-mode="short"] .pomo-state,.pomo-main.running[data-mode="long"] .pomo-state{color:#4ade80}
+.pomo-rounds{display:flex;align-items:center;gap:6px}
+.pomo-rounds i{width:9px;height:9px;border-radius:999px;border:1px solid var(--edge-hi,#2b323a)}
+.pomo-rounds i.on{background:var(--pencil);border-color:var(--pencil)}
+.pomo-rounds span{font-family:var(--mono);font-size:10.5px;color:var(--mist-dim);margin-left:6px}
+.pomo-label{display:flex;flex-direction:column;gap:6px;width:100%;max-width:360px;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mist-dim)}
+.pomo-label input{background:var(--deep-2);border:1px solid var(--edge-hi,#2b323a);border-radius:4px;color:var(--text);padding:9px 11px;font-family:var(--body);font-size:14px;letter-spacing:0;text-transform:none}
+.pomo-label input:focus{outline:none;border-color:var(--pencil)}
+.pomo-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.pomo-go{min-width:130px;font-size:15px!important;padding:10px 22px!important}
+.pomo-perm{font-size:12.5px;color:var(--mist-dim);text-align:center;max-width:380px}
+.pomo-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.pomo-stats div{display:flex;flex-direction:column;gap:2px}
+.pomo-stats b{font-family:var(--mono);font-weight:300;font-size:24px;letter-spacing:-.02em}
+.pomo-stats span{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mist-dim)}
+.pomo-week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;height:84px;margin-bottom:12px}
+.pw-col{display:flex;flex-direction:column;align-items:center;gap:4px;font-family:var(--mono);font-size:10px;color:var(--mist-dim)}
+.pw-col.today{color:var(--pencil)}
+.pw-bar{flex:1;width:100%;max-width:22px;background:#161a1f;border-radius:3px;display:flex;align-items:flex-end;overflow:hidden}
+.pw-bar i{display:block;width:100%;background:rgba(111,211,255,.6);border-radius:3px 3px 0 0}
+.pl-row{display:grid;grid-template-columns:48px 1fr auto;gap:8px;font-size:12.5px;padding:6px 0;border-top:1px solid var(--edge,#1d2228)}
+.pl-row span:first-child,.pl-row span:last-child{font-family:var(--mono);color:var(--mist-dim)}
+.pl-empty{font-size:12.5px;color:var(--mist-dim)}
+.pomo-note{font-size:12.5px;color:var(--mist);margin:0 0 10px;line-height:1.55}
+.pomo-note b{color:var(--text);font-weight:500}
+.pomo-toggle{display:flex;align-items:center;gap:8px;font-size:13.5px;margin:6px 0;cursor:pointer;width:fit-content}
+.pomo-toggle input{accent-color:var(--pencil);width:16px;height:16px;margin:0}
+#blk-sites{width:100%;margin-top:8px;background:var(--deep-2);border:1px solid var(--edge-hi,#2b323a);border-radius:4px;color:var(--text);padding:9px 11px;font-family:var(--mono);font-size:12.5px;resize:vertical}
+#blk-sites:focus{outline:none;border-color:var(--pencil)}
+.blk-presets{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--mist-dim);margin:8px 0 12px}
+.blk-presets button{background:none;border:1px solid var(--edge-hi,#2b323a);border-radius:999px;color:var(--mist);font-size:12px;padding:3px 10px;cursor:pointer}
+.blk-presets button:hover{border-color:rgba(111,211,255,.5);color:#fff}
+.blk-status{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em}
+.blk-status.ok{color:#4ade80}.blk-status.off{color:var(--mist-dim)}
+.blk-ext details{margin-top:10px;font-size:12.5px;color:var(--mist)}
+.blk-ext summary{cursor:pointer;color:var(--text)}
+.blk-ext ol{padding-left:18px;margin:8px 0;display:flex;flex-direction:column;gap:4px}
+.blk-ext code{font-family:var(--mono);font-size:11.5px;background:rgba(170,190,210,.08);padding:1px 5px;border-radius:3px}
+.pomo-set{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:8px}
+.pomo-set label{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13.5px}
+.pomo-set span{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mist-dim)}
+.pomo-set input{width:64px;background:var(--deep-2);border:1px solid var(--edge-hi,#2b323a);border-radius:4px;color:var(--text);padding:6px 8px;font-family:var(--mono);font-size:13px;text-align:right}
+.pomo-pill{display:block;width:100%;margin:8px 0 0;background:rgba(111,211,255,.08);border:1px solid rgba(111,211,255,.35);border-radius:4px;color:#fff;
+  font-family:var(--mono);font-size:11.5px;padding:7px 10px;text-align:left;cursor:pointer}
+.pomo-pill[data-mode="short"],.pomo-pill[data-mode="long"]{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.35)}
+.pomo-pill[hidden]{display:none!important}
+.mbar-pill{display:none}
+.confetti-canvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9999}
+.pomo-banner{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:9998;width:min(440px,calc(100vw - 32px));
+  background:linear-gradient(180deg,#14171b,#0e1013);border:1px solid rgba(111,211,255,.45);border-radius:8px;padding:14px 40px 14px 16px;
+  box-shadow:0 20px 50px -12px rgba(0,0,0,.8);animation:pbIn .35s ease}
+.pb-title{font-weight:600;font-size:15px}
+.pb-body{font-size:13px;color:var(--mist);margin-top:3px;line-height:1.5}
+.pb-x{position:absolute;top:8px;right:8px;background:none;border:0;color:var(--mist-dim);font-size:14px;cursor:pointer;padding:6px}
+@keyframes pbIn{from{opacity:0;transform:translate(-50%,-10px)}to{opacity:1;transform:translate(-50%,0)}}
+@media(prefers-reduced-motion:reduce){.pomo-banner{animation:none}.pr-fill{transition:none}}
+@media(max-width:1000px){.pomo-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:400px){.pomo-main{padding:20px 12px!important}.pomo-modes button{padding:7px 8px;font-size:12px}.pomo-set input{width:54px}.pomo-set label{font-size:12.5px}}
+@media(max-width:760px){.mbar-pill{display:block;width:auto;margin:0 0 0 auto;padding:5px 8px;font-size:11px}.mbar-pill[hidden]{display:none!important}}
+@media(min-width:761px) and (max-width:1100px){.side .pomo-pill{font-size:0;padding:6px;text-align:center}.side .pomo-pill::before{content:"◔";font-size:14px}}
+
 /* ---- Timeline options ---- */
 .tl-opts{display:flex;flex-direction:column;gap:6px;margin-top:16px;padding-top:14px;border-top:1px solid var(--edge,#1d2228)}
 .tl-toggle{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--text);cursor:pointer;width:fit-content}
@@ -1691,6 +1769,7 @@ code,.mono{font-family:var(--mono)}
   <header class="mbar">
     <div class="mbar-brand">MOMENTUM</div>
     <div class="mbar-day" id="mbar-day"></div>
+    <button class="pomo-pill mbar-pill" data-go="focus" hidden></button>
     <button id="m-menu" class="mbar-menu" aria-label="Open menu" aria-expanded="false" aria-controls="side">☰</button>
   </header>
   <div class="drawer-scrim" id="drawer-scrim"></div>
@@ -1711,11 +1790,13 @@ code,.mono{font-family:var(--mono)}
       <button data-go="deadlines"><span class="ic">◷</span> Calendar <span class="badge" id="b-dl">0</span></button>
       <button data-go="capture"><span class="ic">✎</span> Capture <span class="badge" id="b-cap">0</span></button>
       <button data-go="quotes"><span class="ic">❝</span> Quotes</button>
+      <button data-go="focus"><span class="ic">◔</span> Focus</button>
       <button id="open-sync" class="nav-util nav-section-break"><span class="ic">⤓</span> Backup &amp; sync</button>
       <button id="cloud-refresh" class="nav-util"><span class="ic">⟳</span> Refresh from cloud</button>
       <button id="cloud-save" class="nav-util"><span class="ic">☁</span> Save to cloud</button>
       <button id="auth-logout" class="nav-util"><span class="ic">⏻</span> Log out</button>
     </nav>
+    <button class="pomo-pill" data-go="focus" hidden></button>
     <div class="side-foot">
       <div class="day" id="today-date"></div>
       <div class="store" id="store-state"><span class="dot"></span> Synced to your account</div>
@@ -2002,6 +2083,79 @@ code,.mono{font-family:var(--mono)}
     </section>
 
     <!-- CAPTURE -->
+    <section class="panel" id="p-focus">
+      <div class="eyebrow">One block at a time</div>
+      <h2 class="h2">Focus</h2>
+      <p class="sub">Work in focused blocks with short breaks. Distracting sites can be blocked while a focus block runs.</p>
+      <div class="pomo-grid">
+        <div class="card pomo-main">
+          <div class="pomo-modes" role="tablist">
+            <button data-pomomode="focus" role="tab">Focus</button>
+            <button data-pomomode="short" role="tab">Short break</button>
+            <button data-pomomode="long" role="tab">Long break</button>
+          </div>
+          <div class="pomo-ring">
+            <svg viewBox="0 0 220 220" aria-hidden="true"><circle cx="110" cy="110" r="100" class="pr-track"/><circle cx="110" cy="110" r="100" class="pr-fill" id="pomo-arc"/></svg>
+            <div class="pomo-center">
+              <div class="pomo-time" id="pomo-time" aria-live="off">25:00</div>
+              <div class="pomo-state" id="pomo-state">Ready</div>
+            </div>
+          </div>
+          <div class="pomo-rounds" id="pomo-rounds" aria-label="Rounds this cycle"></div>
+          <label class="pomo-label">Focusing on
+            <input id="pomo-what" list="pomo-goals" placeholder="e.g. AWS module 3, Leetcode" autocomplete="off">
+            <datalist id="pomo-goals"></datalist>
+          </label>
+          <div class="pomo-btns">
+            <button class="btn ghost" data-pomo="reset" title="Reset this block">↺ Reset</button>
+            <button class="btn pomo-go" data-pomo="toggle" id="pomo-toggle">Start</button>
+            <button class="btn ghost" data-pomo="skip" title="Skip to the next block">Skip ⏭</button>
+          </div>
+          <div class="pomo-perm" id="pomo-perm"></div>
+        </div>
+        <div class="pomo-side">
+          <div class="card">
+            <div class="card-head"><h3>Today</h3></div>
+            <div class="pomo-stats" id="pomo-stats"></div>
+            <div class="pomo-week" id="pomo-week"></div>
+            <div class="pomo-log" id="pomo-log"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Website blocker</h3><span class="blk-status" id="blk-status"></span></div>
+            <p class="pomo-note">These sites are blocked only while a <b>focus</b> block is running, and unblock automatically when it ends or you pause. Blocking needs the free Momentum Blocker browser extension (Chrome, Edge, Brave, Arc).</p>
+            <label class="pomo-toggle"><input type="checkbox" id="blk-on"> Block sites during focus</label>
+            <textarea id="blk-sites" rows="6" spellcheck="false" placeholder="youtube.com&#10;instagram.com"></textarea>
+            <div class="blk-presets">Add: <button data-blkadd="social">Social</button><button data-blkadd="video">Video</button><button data-blkadd="news">News</button><button data-blkadd="shop">Shopping</button></div>
+            <div class="blk-ext">
+              <button class="btn ghost" id="blk-download">⤓ Download blocker extension</button>
+              <details><summary>How to install (2 minutes, once)</summary>
+                <ol>
+                  <li>Download and unzip the file.</li>
+                  <li>Open <code>chrome://extensions</code> and turn on <b>Developer mode</b> (top right).</li>
+                  <li>Click <b>Load unpacked</b> and choose the unzipped <code>momentum-blocker</code> folder.</li>
+                  <li>Reload this page. The status above should say <b>Connected</b>.</li>
+                </ol>
+                <p>It only works with this copy of Momentum (it's locked to <code id="blk-origin"></code>), only blocks during focus blocks, and turns itself off when a block ends, even if this tab is closed.</p>
+              </details>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Settings</h3></div>
+            <div class="pomo-set">
+              <label>Focus <span><input type="number" min="1" max="180" data-pomoset="focus"> min</span></label>
+              <label>Short break <span><input type="number" min="1" max="60" data-pomoset="short"> min</span></label>
+              <label>Long break <span><input type="number" min="1" max="90" data-pomoset="long"> min</span></label>
+              <label>Long break every <span><input type="number" min="2" max="12" data-pomoset="every"> focus blocks</span></label>
+            </div>
+            <label class="pomo-toggle"><input type="checkbox" data-pomoflag="autoBreak"> Start breaks automatically</label>
+            <label class="pomo-toggle"><input type="checkbox" data-pomoflag="autoFocus"> Start the next focus block automatically</label>
+            <label class="pomo-toggle"><input type="checkbox" data-pomoflag="sound"> Play a chime</label>
+            <label class="pomo-toggle"><input type="checkbox" data-pomoflag="confetti"> Confetti when a focus block ends</label>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="panel" id="p-capture">
       <div class="eyebrow">Out of your head</div>
       <h2 class="h2">Capture</h2>
@@ -2423,6 +2577,7 @@ function render(){
   if(view==='goals')renderGoals();
   if(view==='deadlines'){renderDeadlines();applyDlView();}
   if(view==='capture')renderCapture();
+  if(view==='focus')renderFocus();
   save();
 }
 /* Keeps a "Calorie Deficit" habit in sync with Fuel — only an actual logged deficit day
@@ -5178,6 +5333,325 @@ const cloudRefreshBtn=document.getElementById('cloud-refresh');
 if(cloudRefreshBtn)cloudRefreshBtn.addEventListener('click',forceRefreshFromCloud);
 const cloudSaveBtn=document.getElementById('cloud-save');
 if(cloudSaveBtn)cloudSaveBtn.addEventListener('click',forceSaveToCloud);
+
+/* =====================================================================
+   FOCUS — Pomodoro timer, website blocker bridge, break celebration.
+   Settings, blocklist and history live in S.focus (synced).
+   The running timer lives in localStorage (this device only), keyed on an
+   end timestamp so it stays correct across reloads and background tabs.
+   ===================================================================== */
+const POMO_KEY='momentum:pomo';
+const BLOCK_PRESETS={
+  social:['instagram.com','tiktok.com','facebook.com','x.com','twitter.com','reddit.com','snapchat.com','threads.net'],
+  video:['youtube.com','netflix.com','twitch.tv','disneyplus.com','primevideo.com'],
+  news:['news.google.com','cnn.com','bbc.com','straitstimes.com','mothership.sg'],
+  shop:['shopee.sg','lazada.sg','amazon.com','amazon.sg','taobao.com']
+};
+function focusData(){
+  const f=S.focus=S.focus&&typeof S.focus==='object'?S.focus:{};
+  f.settings=Object.assign({focus:25,short:5,long:15,every:4,autoBreak:true,autoFocus:false,sound:true,confetti:true},f.settings||{});
+  if(!Array.isArray(f.sites))f.sites=['youtube.com','instagram.com','tiktok.com','reddit.com','x.com','twitter.com','facebook.com','netflix.com'];
+  if(typeof f.block!=='boolean')f.block=true;
+  f.log=f.log&&typeof f.log==='object'?f.log:{};
+  return f;
+}
+const POMO_DEFAULTS={focus:25,short:5,long:15,every:4};
+function pomoDur(mode){const st=(typeof S!=='undefined'&&S)?focusData().settings:POMO_DEFAULTS;return Math.max(1,+st[mode]||1)*60000;}
+function pomoLoad(){
+  let r=null;try{r=JSON.parse(localStorage.getItem(POMO_KEY)||'null');}catch(_){}
+  if(!r||!['focus','short','long'].includes(r.mode))r={mode:'focus',running:false,remaining:null,endAt:0,round:0,label:''};
+  if(r.remaining==null)r.remaining=pomoDur(r.mode);
+  return r;
+}
+let pomo=pomoLoad();
+function pomoSave(){try{localStorage.setItem(POMO_KEY,JSON.stringify(pomo));}catch(_){}}
+function pomoLeft(){return pomo.running?Math.max(0,pomo.endAt-Date.now()):pomo.remaining;}
+function fmtMS(ms){const t=Math.ceil(ms/1000),m=Math.floor(t/60),sec=t%60;return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');}
+const POMO_NAMES={focus:'Focus',short:'Short break',long:'Long break'};
+
+/* ---------- notifications, sound, confetti ---------- */
+function pomoNotify(title,body){
+  try{if('Notification' in window&&Notification.permission==='granted'){const n=new Notification(title,{body,tag:'momentum-pomo',renotify:true});n.onclick=()=>{window.focus();go('focus');n.close();};}}catch(_){}
+}
+function pomoAskPermission(){
+  try{if('Notification' in window&&Notification.permission==='default')Notification.requestPermission().then(()=>renderFocus());}catch(_){}
+}
+let _actx=null;
+function pomoChime(up){
+  if(!focusData().settings.sound)return;
+  try{
+    _actx=_actx||new (window.AudioContext||window.webkitAudioContext)();
+    const notes=up?[523.25,659.25,783.99,1046.5]:[783.99,659.25,523.25];
+    notes.forEach((f,i)=>{
+      const o=_actx.createOscillator(),g=_actx.createGain(),t=_actx.currentTime+i*0.14;
+      o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.18,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+0.5);
+      o.connect(g);g.connect(_actx.destination);o.start(t);o.stop(t+0.55);
+    });
+  }catch(_){}
+}
+function confettiBurst(){
+  if(!focusData().settings.confetti)return;
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const c=document.createElement('canvas');c.className='confetti-canvas';c.setAttribute('aria-hidden','true');document.body.appendChild(c);
+  const ctx=c.getContext('2d'),dpr=Math.min(2,window.devicePixelRatio||1);
+  const W=c.width=innerWidth*dpr,H=c.height=innerHeight*dpr;
+  const cols=['#6fd3ff','#4ade80','#f2c94c','#ff7a6b','#b39dff','#ffffff'];
+  const ps=[];
+  [[0.2,-60],[0.8,-120],[0.5,-90]].forEach(([x0,ang])=>{
+    for(let i=0;i<70;i++){
+      const a=(ang+(Math.random()-.5)*70)*Math.PI/180,v=(9+Math.random()*9)*dpr;
+      ps.push({x:W*x0,y:H*0.95,vx:Math.cos(a)*v,vy:Math.sin(a)*v,w:(5+Math.random()*6)*dpr,h:(3+Math.random()*4)*dpr,r:Math.random()*6,vr:(Math.random()-.5)*.3,c:cols[i%cols.length],l:0});
+    }
+  });
+  const start=performance.now();
+  (function frame(t){
+    const el=t-start;ctx.clearRect(0,0,W,H);
+    ps.forEach(p=>{p.vy+=0.32*dpr;p.vx*=0.99;p.vy*=0.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;
+      ctx.save();ctx.globalAlpha=Math.max(0,1-el/3200);ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.c;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h*Math.abs(Math.cos(p.r*2)));ctx.restore();});
+    if(el<3300)requestAnimationFrame(frame);else c.remove();
+  })(start);
+}
+function pomoBanner(title,body){
+  const old=document.querySelector('.pomo-banner');if(old)old.remove();
+  const b=document.createElement('div');b.className='pomo-banner';b.setAttribute('role','status');
+  b.innerHTML=`<div class="pb-title">${esc(title)}</div><div class="pb-body">${esc(body)}</div><button class="pb-x" aria-label="Dismiss">✕</button>`;
+  document.body.appendChild(b);
+  b.querySelector('.pb-x').onclick=()=>b.remove();
+  setTimeout(()=>{if(b.isConnected)b.remove();},9000);
+}
+
+/* ---------- blocker bridge (talks to the Momentum Blocker extension) ---------- */
+let blockerConnected=false,blockerVersion='';
+function blockerSync(){
+  if(typeof S==='undefined'||!S)return;
+  const f=focusData();
+  const active=!!(f.block&&pomo.running&&pomo.mode==='focus');
+  try{window.postMessage({source:'momentum',type:'focus',active,until:active?pomo.endAt:0,sites:f.sites},location.origin==='null'?'*':location.origin);}catch(_){}
+}
+window.addEventListener('message',e=>{
+  if(e.source!==window||!e.data||e.data.source!=='momentum-blocker')return;
+  if(e.data.type==='pong'||e.data.type==='ack'){
+    const was=blockerConnected;blockerConnected=true;blockerVersion=e.data.version||'';
+    if(!was){blockerSync();if(S&&view==='focus')renderFocus();}
+  }
+});
+function blockerPing(){try{window.postMessage({source:'momentum',type:'ping'},location.origin==='null'?'*':location.origin);}catch(_){}}
+function normSite(v){
+  let t=String(v||'').trim().toLowerCase();if(!t)return '';
+  t=t.replace(/^[a-z]+:\/\//,'').replace(/^www\./,'').split(/[\/?#:\s]/)[0];
+  return /^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(t)?t:'';
+}
+
+/* ---------- timer engine ---------- */
+function pomoStart(){
+  if(pomo.running)return;
+  pomoAskPermission();
+  pomo.running=true;pomo.endAt=Date.now()+pomo.remaining;pomo.label=($('#pomo-what')&&$('#pomo-what').value.trim())||pomo.label||'';
+  pomoSave();blockerSync();pomoTick();
+}
+function pomoPause(){
+  if(!pomo.running)return;
+  pomo.remaining=Math.max(0,pomo.endAt-Date.now());pomo.running=false;pomoSave();blockerSync();pomoTick();
+}
+function pomoSetMode(mode,keepRunning){
+  pomo.mode=mode;pomo.remaining=pomoDur(mode);pomo.running=!!keepRunning;
+  if(pomo.running)pomo.endAt=Date.now()+pomo.remaining;
+  pomoSave();blockerSync();
+}
+function pomoComplete(viaSkip){
+  const f=focusData(),st=f.settings;
+  if(pomo.mode==='focus'){
+    let next;
+    if(!viaSkip){
+      const dk=todayKey();const d=f.log[dk]=f.log[dk]||{n:0,min:0,items:[]};
+      d.n++;d.min+=st.focus;
+      if(!Array.isArray(d.items))d.items=[];
+      d.items.push({at:Date.now(),min:st.focus,label:pomo.label||''});
+      if(d.items.length>40)d.items=d.items.slice(-40);
+      pomo.round=(pomo.round||0)+1;
+      next=pomo.round%st.every===0?'long':'short';
+      const bmin=st[next];
+      const title=next==='long'?'🎉 Long break earned!':'🎉 Focus block done — break time';
+      const body=`${st.focus} min of focus${pomo.label?` on ${pomo.label}`:''}. Take ${bmin} min: stand up, drink water, look away from the screen.`;
+      pomoNotify(title,body);pomoBanner(title,body);confettiBurst();pomoChime(true);
+      save();
+    }else next=((pomo.round||0)+1)%st.every===0?'long':'short';
+    pomoSetMode(next,st.autoBreak);
+  }else{
+    if(!viaSkip){
+      const title='Break over — back to focus';
+      const body=`Next: ${st.focus} min focus block${pomo.label?` on ${pomo.label}`:''}.`;
+      pomoNotify(title,body);pomoBanner(title,body);pomoChime(false);
+    }
+    pomoSetMode('focus',st.autoFocus);
+  }
+  if(view==='focus')renderFocus();
+}
+const BASE_TITLE=document.title;
+function pomoTick(){
+  if(typeof S==='undefined'||!S)return;
+  if(pomo.running&&Date.now()>=pomo.endAt){pomoComplete(false);}
+  const left=pomoLeft(),total=pomoDur(pomo.mode),txt=fmtMS(left);
+  const tEl=$('#pomo-time');if(tEl)tEl.textContent=txt;
+  const arc=$('#pomo-arc');if(arc){const C=2*Math.PI*100;arc.style.strokeDasharray=C;arc.style.strokeDashoffset=C*(left/total);}
+  const sEl=$('#pomo-state');if(sEl)sEl.textContent=pomo.running?(pomo.mode==='focus'?'Focusing':'On a break'):(left<total?'Paused':'Ready');
+  const tg=$('#pomo-toggle');if(tg)tg.textContent=pomo.running?'Pause':(left<total?'Resume':'Start');
+  const main=document.querySelector('.pomo-main');if(main){main.dataset.mode=pomo.mode;main.classList.toggle('running',pomo.running);}
+  const active=pomo.running||left<total;
+  $$('.pomo-pill').forEach(p=>{p.hidden=!active;p.textContent=(pomo.running?'▶ ':'❚❚ ')+txt+' · '+(pomo.mode==='focus'?'Focus':'Break');p.dataset.mode=pomo.mode;});
+  document.title=pomo.running?`${txt} · ${POMO_NAMES[pomo.mode]} — Momentum`:BASE_TITLE;
+}
+setInterval(pomoTick,500);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)pomoTick();});
+
+/* ---------- page ---------- */
+function renderFocus(){
+  const f=focusData(),st=f.settings;
+  $$('[data-pomomode]').forEach(b=>{const on=b.dataset.pomomode===pomo.mode;b.classList.toggle('on',on);b.setAttribute('aria-selected',on);});
+  $$('[data-pomoset]').forEach(i=>{if(document.activeElement!==i)i.value=st[i.dataset.pomoset];});
+  $$('[data-pomoflag]').forEach(i=>{i.checked=!!st[i.dataset.pomoflag];});
+  const what=$('#pomo-what');if(what&&document.activeElement!==what)what.value=pomo.label||'';
+  const dl=$('#pomo-goals');if(dl)dl.innerHTML=S.goals.filter(g=>!g.done&&(g.star||g.cat==='Roadmap')).map(g=>`<option value="${esc(sprintCleanTitle(g.title))}">`).join('')
+    +S.goals.filter(g=>g.cat==='Roadmap'&&!g.done).flatMap(g=>(g.subs||[]).filter(x=>!x.done).map(x=>`<option value="${esc(x.text.replace(/^\S+\s/,''))}">`)).slice(0,40).join('');
+  const r=$('#pomo-rounds');if(r){const done=(pomo.round||0)%st.every;r.innerHTML=Array.from({length:st.every},(_,i)=>`<i class="${i<done?'on':''}"></i>`).join('')+`<span>${done}/${st.every} until long break</span>`;}
+  // permission hint
+  const pm=$('#pomo-perm');
+  if(pm){let h='';
+    if(!('Notification' in window))h='This browser can’t show notifications — you’ll still get a banner, chime and confetti here.';
+    else if(Notification.permission==='default')h='<button class="tl-link" data-pomo="perm">Turn on notifications</button> so you’re told when a block ends, even in another tab.';
+    else if(Notification.permission==='denied')h='Notifications are blocked for this site — allow them in your browser’s site settings to get alerts in other tabs.';
+    pm.innerHTML=h;}
+  // stats
+  const tk=todayKey(),d=f.log[tk]||{n:0,min:0};
+  const streak=(()=>{let n=0,dt=new Date(tk+'T00:00:00');if(!f.log[tk])dt.setDate(dt.getDate()-1);while(f.log[isoD(dt)]&&f.log[isoD(dt)].n>0){n++;dt.setDate(dt.getDate()-1);}return n;})();
+  const st2=$('#pomo-stats');if(st2)st2.innerHTML=`<div><b>${d.n}</b><span>blocks</span></div><div><b>${Math.floor(d.min/60)}h ${d.min%60}m</b><span>focused</span></div><div><b>${streak}</b><span>day streak</span></div>`;
+  const wk=$('#pomo-week');
+  if(wk){const days=[];for(let i=6;i>=0;i--){const dt=new Date(tk+'T00:00:00');dt.setDate(dt.getDate()-i);days.push(isoD(dt));}
+    const mx=Math.max(60,...days.map(k=>(f.log[k]||{}).min||0));
+    wk.innerHTML=days.map(k=>{const m=(f.log[k]||{}).min||0;const dd=new Date(k+'T00:00:00');
+      return `<div class="pw-col${k===tk?' today':''}" title="${dd.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})}: ${m} min"><div class="pw-bar"><i style="height:${Math.round(m/mx*100)}%"></i></div><span>${'SMTWTFS'[dd.getDay()]}</span></div>`;}).join('');}
+  const lg=$('#pomo-log');
+  if(lg){const items=((f.log[tk]||{}).items||[]).slice().reverse();
+    lg.innerHTML=items.length?items.map(x=>`<div class="pl-row"><span>${new Date(x.at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span><span>${esc(x.label||'Focus block')}</span><span>${x.min}m</span></div>`).join(''):'<div class="pl-empty">No focus blocks yet today.</div>';}
+  // blocker
+  const on=$('#blk-on');if(on)on.checked=!!f.block;
+  const ta=$('#blk-sites');if(ta&&document.activeElement!==ta)ta.value=f.sites.join('\n');
+  const bs=$('#blk-status');
+  if(bs){bs.className='blk-status '+(blockerConnected?'ok':'off');
+    bs.textContent=blockerConnected?(pomo.running&&pomo.mode==='focus'&&f.block?'● Blocking now':'● Connected'):'○ Not installed';}
+  const og=$('#blk-origin');if(og)og.textContent=location.origin==='null'?'local files (file://)':location.origin;
+  blockerPing();
+  pomoTick();
+}
+
+/* ---------- controls ---------- */
+document.addEventListener('click',e=>{
+  const pb=e.target.closest('[data-pomo]');
+  if(pb){const a=pb.dataset.pomo;
+    if(a==='toggle'){pomo.running?pomoPause():pomoStart();}
+    else if(a==='reset'){pomo.running=false;pomo.remaining=pomoDur(pomo.mode);pomoSave();blockerSync();}
+    else if(a==='skip'){if(pomo.mode==='focus'&&(pomo.running||pomo.remaining<pomoDur('focus'))&&!confirm('Skip this focus block? It won’t be counted.'))return;pomoComplete(true);}
+    else if(a==='perm'){try{Notification.requestPermission().then(()=>renderFocus());}catch(_){}}
+    renderFocus();return;}
+  const mb=e.target.closest('[data-pomomode]');
+  if(mb){const m=mb.dataset.pomomode;if(m===pomo.mode)return;
+    if(pomo.running&&!confirm(`Switch to ${POMO_NAMES[m]}? The current block will stop.`))return;
+    pomoSetMode(m,false);renderFocus();return;}
+  const add=e.target.closest('[data-blkadd]');
+  if(add){const f=focusData();BLOCK_PRESETS[add.dataset.blkadd].forEach(x=>{if(!f.sites.includes(x))f.sites.push(x);});save();blockerSync();renderFocus();toast('Added to your block list.');return;}
+  if(e.target.id==='blk-download'){downloadBlocker();return;}
+});
+document.addEventListener('change',e=>{
+  const t=e.target;if(!t||!t.closest)return;
+  if(t.matches('[data-pomoset]')){const f=focusData(),k=t.dataset.pomoset;const v=Math.round(+t.value);
+    const lim={focus:[1,180],short:[1,60],long:[1,90],every:[2,12]}[k];
+    f.settings[k]=Math.min(lim[1],Math.max(lim[0],isNaN(v)?f.settings[k]:v));
+    if(!pomo.running&&pomo.remaining>=pomoDur(pomo.mode)-1||!pomo.running&&k===pomo.mode)pomo.remaining=pomoDur(pomo.mode);
+    pomoSave();save();renderFocus();return;}
+  if(t.matches('[data-pomoflag]')){focusData().settings[t.dataset.pomoflag]=t.checked;save();return;}
+  if(t.id==='blk-on'){focusData().block=t.checked;save();blockerSync();renderFocus();return;}
+  if(t.id==='blk-sites'){const f=focusData();const bad=[];
+    f.sites=[...new Set(t.value.split(/[\n,]+/).map(x=>{const n=normSite(x);if(x.trim()&&!n)bad.push(x.trim());return n;}).filter(Boolean))];
+    save();blockerSync();renderFocus();if(bad.length)toast(`Skipped: ${bad.slice(0,3).join(', ')} (not a website address)`);return;}
+  if(t.id==='pomo-what'){pomo.label=t.value.trim();pomoSave();return;}
+});
+document.addEventListener('keydown',e=>{
+  if(view!=='focus'||e.target.matches('input,textarea,select'))return;
+  if(e.code==='Space'){e.preventDefault();pomo.running?pomoPause():pomoStart();renderFocus();}
+});
+
+/* ---------- blocker extension download (built here, locked to this app's address) ---------- */
+function blockerFiles(){
+  const origin=location.origin;
+  const match=origin==='null'||location.protocol==='file:'?'file:///*':origin+'/*';
+  const manifest={manifest_version:3,name:'Momentum Blocker',version:'1.0.0',
+    description:'Blocks the sites on your Momentum list only while a focus block is running.',
+    permissions:['declarativeNetRequest','storage','alarms','tabs'],host_permissions:['<all_urls>'],
+    background:{service_worker:'background.js'},
+    content_scripts:[{matches:[match],js:['bridge.js'],run_at:'document_start'}],
+    web_accessible_resources:[{resources:['blocked.html','blocked.js'],matches:['<all_urls>']}]};
+  const bridge=`// Runs only on your Momentum page. Relays focus on/off to the extension.
+window.addEventListener('message',e=>{
+  if(e.source!==window||!e.data||e.data.source!=='momentum')return;
+  const d=e.data;
+  if(d.type==='ping'){window.postMessage({source:'momentum-blocker',type:'pong',version:'1.0.0'},'*');return;}
+  if(d.type==='focus'){
+    chrome.runtime.sendMessage({type:'focus',active:!!d.active,until:+d.until||0,sites:Array.isArray(d.sites)?d.sites.slice(0,300):[]},()=>{void chrome.runtime.lastError;});
+    window.postMessage({source:'momentum-blocker',type:'ack',version:'1.0.0'},'*');
+  }
+});
+window.postMessage({source:'momentum-blocker',type:'pong',version:'1.0.0'},'*');
+`;
+  const bg=`// Momentum Blocker — blocks listed sites only between focus start and its end time.
+const OK=/^[a-z0-9-]+(\\.[a-z0-9-]+)+$/;
+async function clearRules(){const r=await chrome.declarativeNetRequest.getDynamicRules();if(r.length)await chrome.declarativeNetRequest.updateDynamicRules({removeRuleIds:r.map(x=>x.id)});}
+function hostMatch(url,sites){try{const h=new URL(url).hostname.replace(/^www\\./,'');return sites.some(s=>h===s||h.endsWith('.'+s));}catch(e){return false;}}
+async function apply(st){
+  await chrome.alarms.clear('end');
+  await clearRules();
+  const now=Date.now();
+  if(!st||!st.active||!(st.until>now)){await chrome.storage.local.set({state:{active:false}});return;}
+  const sites=[...new Set((st.sites||[]).map(s=>String(s).toLowerCase().trim()).filter(s=>OK.test(s)))].slice(0,300);
+  if(!sites.length){await chrome.storage.local.set({state:{active:false}});return;}
+  await chrome.declarativeNetRequest.updateDynamicRules({addRules:sites.map((s,i)=>({id:i+1,priority:1,
+    action:{type:'redirect',redirect:{extensionPath:'/blocked.html'}},
+    condition:{requestDomains:[s],resourceTypes:['main_frame']}}))});
+  await chrome.storage.local.set({state:{active:true,until:st.until,sites}});
+  chrome.alarms.create('end',{when:st.until});
+  const tabs=await chrome.tabs.query({});
+  for(const t of tabs){if(t.url&&hostMatch(t.url,sites))chrome.tabs.update(t.id,{url:chrome.runtime.getURL('blocked.html')});}
+}
+chrome.runtime.onMessage.addListener((m,sender,reply)=>{if(m&&m.type==='focus'){apply(m).then(()=>reply({ok:true}));return true;}});
+chrome.alarms.onAlarm.addListener(a=>{if(a.name==='end')apply({active:false});});
+chrome.runtime.onStartup.addListener(async()=>{const {state}=await chrome.storage.local.get('state');apply(state&&state.until>Date.now()?state:{active:false});});
+chrome.runtime.onInstalled.addListener(()=>apply({active:false}));
+`;
+  const html=`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Focus block running</title>
+<style>html,body{margin:0;height:100%;background:#08090b;color:#e7eaee;font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+main{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;text-align:center}
+.k{font:500 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.2em;text-transform:uppercase;color:#6fd3ff}
+h1{font-weight:500;font-size:28px;margin:6px 0}#t{font:300 64px/1 ui-monospace,Menlo,monospace;letter-spacing:-.03em}p{color:#a3acb7;max-width:420px}</style></head>
+<body><main><div class="k">Momentum · focus block</div><h1>This site is blocked right now</h1><div id="t">--:--</div><p>It unblocks automatically when your focus block ends. Back to the thing that matters.</p></main><script src="blocked.js"><\/script></body></html>`;
+  const bjs=`function f(ms){const t=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');}
+async function tick(){const {state}=await chrome.storage.local.get('state');const el=document.getElementById('t');
+  if(!state||!state.active||state.until<=Date.now()){el.textContent='00:00';document.querySelector('h1').textContent='Focus block finished — you can go back now';return;}
+  el.textContent=f(state.until-Date.now());}
+tick();setInterval(tick,1000);
+`;
+  return {'momentum-blocker/manifest.json':JSON.stringify(manifest,null,2),'momentum-blocker/bridge.js':bridge,'momentum-blocker/background.js':bg,'momentum-blocker/blocked.html':html,'momentum-blocker/blocked.js':bjs};
+}
+function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s);});}
+async function downloadBlocker(){
+  try{
+    if(!window.JSZip)await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+    const z=new JSZip();const files=blockerFiles();Object.keys(files).forEach(k=>z.file(k,files[k]));
+    const blob=await z.generateAsync({type:'blob'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='momentum-blocker.zip';document.body.appendChild(a);a.click();
+    setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},2000);
+    toast('Downloaded — unzip it, then follow the install steps.');
+  }catch(err){toast('Couldn’t build the download — check your connection and try again.');}
+}
+
 /* ---------------- Responsive shell (phone menu + rail tooltips) ---------------- */
 (function(){
   const app=document.querySelector('.app');
