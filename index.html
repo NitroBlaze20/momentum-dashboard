@@ -1377,7 +1377,7 @@ code,.mono{font-family:var(--mono)}
 .blk-presets button{background:none;border:1px solid var(--edge-hi,#2b323a);border-radius:999px;color:var(--mist);font-size:12px;padding:3px 10px;cursor:pointer}
 .blk-presets button:hover{border-color:rgba(111,211,255,.5);color:#fff}
 .blk-status{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em}
-.blk-status.ok{color:#4ade80}.blk-status.off{color:var(--mist-dim)}
+.blk-status.ok{color:#4ade80}.blk-status.upd{color:var(--amber)}.blk-status.off{color:var(--mist-dim)}
 .blk-ext details{margin-top:10px;font-size:12.5px;color:var(--mist)}
 .blk-ext summary{cursor:pointer;color:var(--text)}
 .blk-ext ol{padding-left:18px;margin:8px 0;display:flex;flex-direction:column;gap:4px}
@@ -5426,7 +5426,8 @@ function blockerSync(){
   if(typeof S==='undefined'||!S)return;
   const f=focusData();
   const active=!!(f.block&&pomo.running&&pomo.mode==='focus');
-  try{window.postMessage({source:'momentum',type:'focus',active,until:active?pomo.endAt:0,sites:f.sites},location.origin==='null'?'*':location.origin);}catch(_){}
+  const quotes=(S.quotes||[]).map(q=>typeof q==='string'?q:(q&&q.text)||'').filter(q=>q&&q.length<=200).slice(0,40);
+  try{window.postMessage({source:'momentum',type:'focus',active,until:active?pomo.endAt:0,sites:f.sites,label:pomo.label||'',quotes},location.origin==='null'?'*':location.origin);}catch(_){}
 }
 window.addEventListener('message',e=>{
   if(e.source!==window||!e.data||e.data.source!=='momentum-blocker')return;
@@ -5488,6 +5489,16 @@ function pomoComplete(viaSkip){
   if(view==='focus')renderFocus();
 }
 const BASE_TITLE=document.title;
+/* Emoji tab icon: 🧠 normally, 🎯 during focus, ☕ on a break */
+let _fav='';
+function setFavicon(e){
+  if(e===_fav)return;_fav=e;
+  let l=document.querySelector('link[rel="icon"]');
+  if(!l){l=document.createElement('link');l.rel='icon';document.head.appendChild(l);}
+  l.type='image/svg+xml';
+  l.href='data:image/svg+xml,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="50" y="54" font-size="84" text-anchor="middle" dominant-baseline="middle">${e}</text></svg>`);
+}
+setFavicon('🧠');
 function pomoTick(){
   if(typeof S==='undefined'||!S)return;
   if(pomo.running&&Date.now()>=pomo.endAt){pomoComplete(false);}
@@ -5500,6 +5511,7 @@ function pomoTick(){
   const active=pomo.running||left<total;
   $$('.pomo-pill').forEach(p=>{p.hidden=!active;p.textContent=(pomo.running?'▶ ':'❚❚ ')+txt+' · '+(pomo.mode==='focus'?'Focus':'Break');p.dataset.mode=pomo.mode;});
   document.title=pomo.running?`${txt} · ${POMO_NAMES[pomo.mode]} — Momentum`:BASE_TITLE;
+  setFavicon(pomo.running?(pomo.mode==='focus'?'🎯':'☕'):'🧠');
 }
 setInterval(pomoTick,500);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)pomoTick();});
@@ -5538,7 +5550,8 @@ function renderFocus(){
   const ta=$('#blk-sites');if(ta&&document.activeElement!==ta)ta.value=f.sites.join('\n');
   const bs=$('#blk-status');
   if(bs){bs.className='blk-status '+(blockerConnected?'ok':'off');
-    bs.textContent=blockerConnected?(pomo.running&&pomo.mode==='focus'&&f.block?'● Blocking now':'● Connected'):'○ Not installed';}
+    bs.textContent=blockerConnected?(blockerVersion&&blockerVersion!==BLOCKER_VERSION?'● Update available':(pomo.running&&pomo.mode==='focus'&&f.block?'● Blocking now':'● Connected')):'○ Not installed';
+    if(blockerConnected&&blockerVersion&&blockerVersion!==BLOCKER_VERSION)bs.className='blk-status upd';}
   const og=$('#blk-origin');if(og)og.textContent=location.origin==='null'?'local files (file://)':location.origin;
   blockerPing();
   pomoTick();
@@ -5581,70 +5594,202 @@ document.addEventListener('keydown',e=>{
 });
 
 /* ---------- blocker extension download (built here, locked to this app's address) ---------- */
+const BLOCKER_VERSION='1.1.0';
 function blockerFiles(){
   const origin=location.origin;
   const match=origin==='null'||location.protocol==='file:'?'file:///*':origin+'/*';
-  const manifest={manifest_version:3,name:'Momentum Blocker',version:'1.0.0',
-    description:'Blocks the sites on your Momentum list only while a focus block is running.',
+  const V=BLOCKER_VERSION;
+  const manifest={manifest_version:3,name:'Momentum Focus Blocker',short_name:'Momentum',version:V,
+    description:'🎯 Blocks distracting sites only while a Momentum focus block is running. Unblocks itself when the block ends.',
+    icons:{16:'icons/16.png',32:'icons/32.png',48:'icons/48.png',128:'icons/128.png'},
+    action:{default_title:'Momentum Focus Blocker',default_popup:'popup.html',default_icon:{16:'icons/16.png',32:'icons/32.png'}},
     permissions:['declarativeNetRequest','storage','alarms','tabs'],host_permissions:['<all_urls>'],
     background:{service_worker:'background.js'},
     content_scripts:[{matches:[match],js:['bridge.js'],run_at:'document_start'}],
-    web_accessible_resources:[{resources:['blocked.html','blocked.js'],matches:['<all_urls>']}]};
+    web_accessible_resources:[{resources:['blocked.html','blocked.js','style.css','icons/128.png'],matches:['<all_urls>']}]};
   const bridge=`// Runs only on your Momentum page. Relays focus on/off to the extension.
 window.addEventListener('message',e=>{
   if(e.source!==window||!e.data||e.data.source!=='momentum')return;
   const d=e.data;
-  if(d.type==='ping'){window.postMessage({source:'momentum-blocker',type:'pong',version:'1.0.0'},'*');return;}
+  if(d.type==='ping'){window.postMessage({source:'momentum-blocker',type:'pong',version:'${V}'},'*');return;}
   if(d.type==='focus'){
-    chrome.runtime.sendMessage({type:'focus',active:!!d.active,until:+d.until||0,sites:Array.isArray(d.sites)?d.sites.slice(0,300):[]},()=>{void chrome.runtime.lastError;});
-    window.postMessage({source:'momentum-blocker',type:'ack',version:'1.0.0'},'*');
+    chrome.runtime.sendMessage({type:'focus',active:!!d.active,until:+d.until||0,
+      sites:Array.isArray(d.sites)?d.sites.slice(0,300):[],
+      label:String(d.label||'').slice(0,120),
+      quotes:Array.isArray(d.quotes)?d.quotes.filter(q=>typeof q==='string').slice(0,40).map(q=>q.slice(0,200)):[]},()=>{void chrome.runtime.lastError;});
+    window.postMessage({source:'momentum-blocker',type:'ack',version:'${V}'},'*');
   }
 });
-window.postMessage({source:'momentum-blocker',type:'pong',version:'1.0.0'},'*');
+window.postMessage({source:'momentum-blocker',type:'pong',version:'${V}'},'*');
 `;
-  const bg=`// Momentum Blocker — blocks listed sites only between focus start and its end time.
+  const bg=`// Momentum Focus Blocker — blocks listed sites only between focus start and its end time.
 const OK=/^[a-z0-9-]+(\\.[a-z0-9-]+)+$/;
 async function clearRules(){const r=await chrome.declarativeNetRequest.getDynamicRules();if(r.length)await chrome.declarativeNetRequest.updateDynamicRules({removeRuleIds:r.map(x=>x.id)});}
-function hostMatch(url,sites){try{const h=new URL(url).hostname.replace(/^www\\./,'');return sites.some(s=>h===s||h.endsWith('.'+s));}catch(e){return false;}}
+function hostOf(url){try{return new URL(url).hostname.replace(/^www\\./,'');}catch(e){return '';}}
+function hostMatch(url,sites){const h=hostOf(url);return !!h&&sites.some(s=>h===s||h.endsWith('.'+s));}
+function badge(on){chrome.action.setBadgeText({text:on?'ON':''});chrome.action.setBadgeBackgroundColor({color:'#0ea5e9'});}
 async function apply(st){
   await chrome.alarms.clear('end');
   await clearRules();
   const now=Date.now();
-  if(!st||!st.active||!(st.until>now)){await chrome.storage.local.set({state:{active:false}});return;}
+  if(!st||!st.active||!(st.until>now)){await chrome.storage.local.set({state:{active:false,lastEnd:now}});badge(false);return;}
   const sites=[...new Set((st.sites||[]).map(s=>String(s).toLowerCase().trim()).filter(s=>OK.test(s)))].slice(0,300);
-  if(!sites.length){await chrome.storage.local.set({state:{active:false}});return;}
+  if(!sites.length){await chrome.storage.local.set({state:{active:false}});badge(false);return;}
+  const page='chrome-extension://'+chrome.runtime.id+'/blocked.html?site=\\\\1';
   await chrome.declarativeNetRequest.updateDynamicRules({addRules:sites.map((s,i)=>({id:i+1,priority:1,
-    action:{type:'redirect',redirect:{extensionPath:'/blocked.html'}},
-    condition:{requestDomains:[s],resourceTypes:['main_frame']}}))});
-  await chrome.storage.local.set({state:{active:true,until:st.until,sites}});
+    action:{type:'redirect',redirect:{regexSubstitution:page}},
+    condition:{regexFilter:'^https?://(?:www\\\\.)?([^/?#:]+).*$',requestDomains:[s],resourceTypes:['main_frame']}}))});
+  const prev=(await chrome.storage.local.get('state')).state||{};
+  await chrome.storage.local.set({state:{active:true,until:st.until,sites,label:st.label||'',quotes:(st.quotes&&st.quotes.length?st.quotes:prev.quotes)||[],
+    started:prev.active?prev.started:now,blockedCount:prev.active?(prev.blockedCount||0):0}});
   chrome.alarms.create('end',{when:st.until});
+  badge(true);
   const tabs=await chrome.tabs.query({});
-  for(const t of tabs){if(t.url&&hostMatch(t.url,sites))chrome.tabs.update(t.id,{url:chrome.runtime.getURL('blocked.html')});}
+  for(const t of tabs){if(t.url&&hostMatch(t.url,sites))chrome.tabs.update(t.id,{url:chrome.runtime.getURL('blocked.html')+'?site='+encodeURIComponent(hostOf(t.url))});}
 }
-chrome.runtime.onMessage.addListener((m,sender,reply)=>{if(m&&m.type==='focus'){apply(m).then(()=>reply({ok:true}));return true;}});
+chrome.runtime.onMessage.addListener((m,sender,reply)=>{
+  if(m&&m.type==='focus'){apply(m).then(()=>reply({ok:true}));return true;}
+  if(m&&m.type==='blockedHit'){chrome.storage.local.get('state').then(({state})=>{if(state&&state.active){state.blockedCount=(state.blockedCount||0)+1;chrome.storage.local.set({state});}});}
+});
 chrome.alarms.onAlarm.addListener(a=>{if(a.name==='end')apply({active:false});});
 chrome.runtime.onStartup.addListener(async()=>{const {state}=await chrome.storage.local.get('state');apply(state&&state.until>Date.now()?state:{active:false});});
 chrome.runtime.onInstalled.addListener(()=>apply({active:false}));
 `;
-  const html=`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Focus block running</title>
-<style>html,body{margin:0;height:100%;background:#08090b;color:#e7eaee;font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
-main{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;text-align:center}
-.k{font:500 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.2em;text-transform:uppercase;color:#6fd3ff}
-h1{font-weight:500;font-size:28px;margin:6px 0}#t{font:300 64px/1 ui-monospace,Menlo,monospace;letter-spacing:-.03em}p{color:#a3acb7;max-width:420px}</style></head>
-<body><main><div class="k">Momentum · focus block</div><h1>This site is blocked right now</h1><div id="t">--:--</div><p>It unblocks automatically when your focus block ends. Back to the thing that matters.</p></main><script src="blocked.js"><\/script></body></html>`;
-  const bjs=`function f(ms){const t=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');}
-async function tick(){const {state}=await chrome.storage.local.get('state');const el=document.getElementById('t');
-  if(!state||!state.active||state.until<=Date.now()){el.textContent='00:00';document.querySelector('h1').textContent='Focus block finished — you can go back now';return;}
-  el.textContent=f(state.until-Date.now());}
-tick();setInterval(tick,1000);
+  const css=`:root{--bg:#07080a;--card:#0f1216;--edge:#1f252c;--text:#eef1f4;--mist:#a3acb7;--dim:#6b7580;--cy:#6fd3ff;--gr:#4ade80}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+body{background:radial-gradient(900px 500px at 50% -10%,rgba(111,211,255,.12),transparent 70%),radial-gradient(700px 400px at 50% 110%,rgba(74,222,128,.06),transparent 70%),var(--bg)}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+main{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px 18px}
+.card{width:min(520px,100%);background:linear-gradient(180deg,#12161b,var(--card));border:1px solid var(--edge);border-radius:20px;padding:36px 32px 28px;text-align:center;
+  box-shadow:0 1px 0 rgba(255,255,255,.04) inset,0 40px 80px -30px rgba(0,0,0,.9);animation:in .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes in{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+.emoji{font-size:56px;line-height:1;display:inline-block;animation:float 4s ease-in-out infinite;filter:drop-shadow(0 8px 18px rgba(111,211,255,.25))}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.eyebrow{margin-top:16px;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--cy)}
+h1{font-size:28px;font-weight:600;letter-spacing:-.02em;margin:8px 0 6px}
+.lead{color:var(--mist);margin:0 auto;max-width:380px}
+.lead b{color:var(--text);font-weight:600}
+.ring{position:relative;width:184px;height:184px;margin:26px auto 18px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .tr{fill:none;stroke:#1a2027;stroke-width:6}
+.ring .fl{fill:none;stroke:var(--cy);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1s linear;filter:drop-shadow(0 0 6px rgba(111,211,255,.45))}
+.ring .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.time{font-size:44px;font-weight:300;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.left{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-top:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 18px}
+.chip{font-size:12.5px;color:var(--mist);background:rgba(255,255,255,.035);border:1px solid var(--edge);border-radius:999px;padding:5px 12px}
+.chip b{color:var(--text);font-weight:500}
+blockquote{margin:6px auto 22px;max-width:400px;padding:14px 16px;border-left:2px solid var(--cy);background:rgba(111,211,255,.04);border-radius:0 10px 10px 0;
+  text-align:left;color:#d7dde3;font-size:14px;font-style:italic}
+.btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn{appearance:none;border:1px solid var(--edge);background:transparent;color:var(--text);border-radius:10px;padding:10px 18px;font:500 14px/1 inherit;cursor:pointer;transition:border-color .15s,background .15s}
+.btn:hover{border-color:rgba(111,211,255,.5);background:rgba(111,211,255,.06)}
+.btn.primary{background:var(--text);color:#07080a;border-color:var(--text)}
+.btn.primary:hover{background:#fff}
+.foot{margin-top:22px;font-size:11.5px;color:var(--dim);display:flex;gap:8px;justify-content:center;align-items:center}
+.done .emoji{filter:drop-shadow(0 8px 18px rgba(74,222,128,.3))}
+.done .eyebrow{color:var(--gr)}.done .fl{stroke:var(--gr)}
+@media (prefers-reduced-motion:reduce){.card,.emoji{animation:none}.ring .fl{transition:none}}
+/* popup */
+.pop{width:300px;padding:16px;background:var(--bg)}
+.pop-h{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.pop-h .e{font-size:26px}.pop-h .t{font-weight:600;font-size:14px}.pop-h .s{font-size:11px;color:var(--dim)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.06em;padding:4px 10px;border-radius:999px;border:1px solid var(--edge);color:var(--mist)}
+.pill.on{color:var(--cy);border-color:rgba(111,211,255,.4);background:rgba(111,211,255,.06)}
+.pill i{width:6px;height:6px;border-radius:99px;background:currentColor}
+.pop-time{font-size:34px;font-weight:300;letter-spacing:-.03em;margin:10px 0 2px;font-variant-numeric:tabular-nums}
+.pop-row{display:flex;justify-content:space-between;font-size:12px;color:var(--mist);padding:7px 0;border-top:1px solid var(--edge)}
+.pop-row b{color:var(--text);font-weight:500}
+.pop-sites{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.pop-sites span{font-size:11px;color:var(--mist);background:rgba(255,255,255,.04);border:1px solid var(--edge);border-radius:6px;padding:2px 7px}
+.pop-note{font-size:12px;color:var(--dim);margin-top:10px;line-height:1.5}
 `;
-  return {'momentum-blocker/manifest.json':JSON.stringify(manifest,null,2),'momentum-blocker/bridge.js':bridge,'momentum-blocker/background.js':bg,'momentum-blocker/blocked.html':html,'momentum-blocker/blocked.js':bjs};
+  const html=`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🎯 Focus mode</title><link rel="icon" href="icons/32.png"><link rel="stylesheet" href="style.css"></head>
+<body><main><section class="card" id="card">
+  <div class="emoji" id="emoji">🎯</div>
+  <div class="eyebrow mono" id="eyebrow">Momentum · Focus mode</div>
+  <h1 id="h">Stay in the zone.</h1>
+  <p class="lead" id="lead"><b id="site">This site</b> is paused until your focus block ends.</p>
+  <div class="ring"><svg viewBox="0 0 120 120"><circle class="tr" cx="60" cy="60" r="54"/><circle class="fl" id="arc" cx="60" cy="60" r="54"/></svg>
+    <div class="c"><div class="time mono" id="t">--:--</div><div class="left mono" id="tl">remaining</div></div></div>
+  <div class="chips" id="chips"></div>
+  <blockquote id="q" hidden></blockquote>
+  <div class="btns"><button class="btn primary" id="back">← Back to work</button><button class="btn" id="cont" hidden>Continue to site →</button></div>
+  <div class="foot mono" id="foot"></div>
+</section></main><script src="blocked.js"><\/script></body></html>`;
+  const bjs=`const P=new URLSearchParams(location.search);const site=(P.get('site')||'').replace(/^www\\./,'');
+const $=id=>document.getElementById(id);const C=2*Math.PI*54;$('arc').style.strokeDasharray=C;
+if(site)$('site').textContent=site;
+function fmt(ms){const t=Math.max(0,Math.ceil(ms/1000)),m=Math.floor(t/60),s=t%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
+let st=null,quoteShown=false;
+$('back').onclick=()=>{if(history.length>1)history.back();else window.close();};
+$('cont').onclick=()=>{if(site)location.href='https://'+site;};
+chrome.runtime.sendMessage({type:'blockedHit'},()=>void chrome.runtime.lastError);
+async function load(){st=(await chrome.storage.local.get('state')).state||null;render();}
+function render(){
+  const now=Date.now();
+  if(!st||!st.active||st.until<=now){
+    document.body.classList.add('done');$('emoji').textContent='🎉';$('eyebrow').textContent='Momentum · Focus block complete';
+    $('h').textContent='Nice work — break time.';$('lead').innerHTML=site?'<b></b> is available again. Take a real break first.':'Your sites are available again.';
+    if(site)$('lead').querySelector('b').textContent=site;
+    $('t').textContent='00:00';$('tl').textContent='done';$('arc').style.strokeDashoffset=0;
+    $('back').textContent='Close tab';$('back').onclick=()=>window.close();$('cont').hidden=!site;
+    document.title='🎉 Focus block complete';$('foot').textContent='';return;}
+  const left=st.until-now,total=Math.max(left,st.until-(st.started||now));
+  $('t').textContent=fmt(left);$('arc').style.strokeDashoffset=C*(1-left/total);
+  document.title='🎯 '+fmt(left)+' left · Focus mode';
+  const end=new Date(st.until).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  const chips=[];
+  if(st.label)chips.push('<span class="chip">Focusing on <b></b></span>');
+  chips.push('<span class="chip">'+(st.sites||[]).length+' sites paused</span>');
+  if(st.blockedCount)chips.push('<span class="chip">🛡️ '+st.blockedCount+' distraction'+(st.blockedCount===1?'':'s')+' blocked</span>');
+  if($('chips').dataset.k!==chips.join('')){$('chips').innerHTML=chips.join('');$('chips').dataset.k=chips.join('');if(st.label)$('chips').querySelector('b').textContent=st.label;}
+  if(!quoteShown&&st.quotes&&st.quotes.length){const q=st.quotes[Math.floor(Math.random()*st.quotes.length)];$('q').textContent='“'+q+'”';$('q').hidden=false;quoteShown=true;}
+  $('foot').textContent='Unblocks automatically at '+end;
+}
+chrome.storage.onChanged.addListener(c=>{if(c.state){st=c.state.newValue;render();}});
+load();setInterval(render,1000);
+`;
+  const pop=`<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="style.css"></head><body class="pop">
+<div class="pop-h"><span class="e" id="e">🎯</span><div><div class="t">Momentum Focus Blocker</div><div class="s mono">v${V}</div></div></div>
+<span class="pill" id="pill"><i></i><span id="ps">Idle</span></span>
+<div id="body"></div><script src="popup.js"><\/script></body></html>`;
+  const popjs=`function fmt(ms){const t=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');}
+const b=document.getElementById('body');
+async function r(){const {state:s}=(await chrome.storage.local.get('state'));const on=s&&s.active&&s.until>Date.now();
+  document.getElementById('pill').classList.toggle('on',!!on);document.getElementById('ps').textContent=on?'Blocking now':'Idle';
+  document.getElementById('e').textContent=on?'🎯':'😌';
+  if(!on){b.innerHTML='<p class="pop-note">Nothing is blocked right now. Start a focus block in Momentum and your list is blocked until it ends.</p>';return;}
+  const end=new Date(s.until).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  b.innerHTML='<div class="pop-time mono">'+fmt(s.until-Date.now())+'</div>'
+   +'<div class="pop-row"><span>Ends at</span><b>'+end+'</b></div>'
+   +(s.label?'<div class="pop-row"><span>Focusing on</span><b class="lbl"></b></div>':'')
+   +'<div class="pop-row"><span>Distractions blocked</span><b>'+(s.blockedCount||0)+'</b></div>'
+   +'<div class="pop-sites">'+(s.sites||[]).slice(0,18).map(x=>'<span>'+x.replace(/[<>&]/g,'')+'</span>').join('')+'</div>'
+   +'<p class="pop-note">Pause or stop the timer in Momentum to unblock.</p>';
+  const l=b.querySelector('.lbl');if(l)l.textContent=s.label;}
+r();setInterval(r,1000);
+`;
+  return {'momentum-blocker/manifest.json':JSON.stringify(manifest,null,2),'momentum-blocker/bridge.js':bridge,'momentum-blocker/background.js':bg,
+    'momentum-blocker/blocked.html':html,'momentum-blocker/blocked.js':bjs,'momentum-blocker/style.css':css,'momentum-blocker/popup.html':pop,'momentum-blocker/popup.js':popjs};
+}
+/* Extension icon: dark rounded tile + 🎯, drawn here so it matches your system's emoji. */
+function blockerIcon(size){
+  const c=document.createElement('canvas');c.width=c.height=size;const x=c.getContext('2d');
+  const r=size*0.22;x.beginPath();x.moveTo(r,0);x.arcTo(size,0,size,size,r);x.arcTo(size,size,0,size,r);x.arcTo(0,size,0,0,r);x.arcTo(0,0,size,0,r);x.closePath();
+  const g=x.createLinearGradient(0,0,0,size);g.addColorStop(0,'#16202a');g.addColorStop(1,'#07090c');x.fillStyle=g;x.fill();
+  x.strokeStyle='rgba(111,211,255,.55)';x.lineWidth=Math.max(1,size/32);x.stroke();
+  x.font=`${Math.round(size*0.64)}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`;x.textAlign='center';x.textBaseline='middle';
+  x.fillText('🎯',size/2,size*0.54);
+  return c.toDataURL('image/png').split(',')[1];
 }
 function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s);});}
 async function downloadBlocker(){
   try{
     if(!window.JSZip)await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
     const z=new JSZip();const files=blockerFiles();Object.keys(files).forEach(k=>z.file(k,files[k]));
+    [16,32,48,128].forEach(n=>z.file(`momentum-blocker/icons/${n}.png`,blockerIcon(n),{base64:true}));
     const blob=await z.generateAsync({type:'blob'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='momentum-blocker.zip';document.body.appendChild(a);a.click();
     setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},2000);
